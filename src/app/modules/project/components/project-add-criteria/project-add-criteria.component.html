@@ -1,0 +1,61 @@
+<div class="back" (click)="navigateBack()">
+  <mat-icon>arrow_back</mat-icon>
+  {{ comingFromDetailsPage ? 'Project Details' : 'Project List' }}
+</div>
+
+<h2>Add criteria</h2>
+
+<form [formGroup]="projectCriteria" (ngSubmit)="onSubmit()">
+
+  <div formArrayName="criteriaList">
+
+    <div *ngFor="let criteriaGroup of criteriaGroups; let i = index" [formGroupName]="i" class="fieldContainer">
+      <div class="criteriaContainer">
+        <mat-form-field appearance="fill">
+          <mat-label>Criteria title</mat-label>
+          <input matInput formControlName="criterium" />
+          <mat-error *ngIf="criteriaGroup.get('criterium')?.invalid">
+           <!-- {{ getErrorMessage('levelOfRealization', criteriaGroup) }} -->
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="levelOfRealization">
+            <mat-option value="To do">To do</mat-option>
+            <mat-option value="In progress">In progress</mat-option>
+            <mat-option value="Done">Done</mat-option>
+          </mat-select>
+          <mat-error *ngIf="criteriaGroup.get('levelOfRealization')?.invalid">
+           <!-- {{ getErrorMessage('levelOfRealization', criteriaGroup) }} -->
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Semester</mat-label>
+          <mat-select formControlName="semester">
+            <mat-option *ngFor="let s of semesters" [value]="s">{{ s }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="criteriaGroup.get('semester')?.invalid">
+            <!-- {{ getErrorMessage('levelOfRealization', criteriaGroup) }} -->
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-icon-button color="warn" type="button" (click)="removeCriteria(i)" *ngIf="criteriaList.length > 1">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" mat-stroked-button color="primary" (click)="addCriteria()">
+    <mat-icon>add</mat-icon> Add Criteria
+  </button>
+
+  <div class="buttons-container">
+    <button color="primary" type="submit" mat-raised-button [disabled]="!projectCriteria.valid" cdkFocusInitial>
+      Submit
+    </button>
+  </div>
+
+</form>

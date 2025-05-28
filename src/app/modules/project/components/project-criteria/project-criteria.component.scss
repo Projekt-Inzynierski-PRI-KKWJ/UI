@@ -1,0 +1,212 @@
+:host {
+    position: relative;
+    form { 
+        padding: 0px 30px; 
+    }
+    overflow: hidden;
+}
+
+
+.back {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    width: fit-content;
+}
+
+.grade-table {
+    border-collapse: collapse;
+    margin-top: 50px;    
+    width: 100%;
+    overflow: hidden;
+
+        .criterion-title-column {
+            width: 400px;
+            box-sizing: border-box;
+        }
+
+        .points-and-criterion-columns {
+            width: 800px;
+            box-sizing: border-box;
+
+            .points {
+                width: 300px;
+                box-sizing: border-box;
+            }
+
+            .criterion-header-and-expand-button {
+                width: 500px;
+                box-sizing: border-box;
+            }
+        }
+
+        tbody tr {
+            vertical-align: baseline;
+            border-bottom: 1px solid #e7e7e7;
+        }
+
+        td h2 {
+            margin: 0px;
+        }
+
+        th {
+            font-weight: normal;
+            font-size: 1em;
+            text-align: left
+        }
+
+      
+
+        th span {
+            display: block;
+            width: 70px;
+        }
+
+        td, th {
+            padding: 10px;
+            border-right: 1px solid #e7e7e7;
+        }
+        tbody tr:last-of-type {
+            border-bottom: none;
+        }
+
+        td:last-of-type {
+            border-right: none;
+        }
+        th:last-of-type {
+            border-right: none;
+        }
+
+        .centered-cell {
+            text-align: center;
+        }
+
+        .section-name-row {
+            border-bottom: 0px !important;
+        }
+}
+
+.points-and-criterion-columns {
+    display: flex;
+    .points {
+        display: flex;
+        align-items: center;
+    }
+
+    .criterion-header-and-expand-button {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+
+        p {
+            margin: 0;
+        }
+    }
+}
+
+.selected-criterion {
+    min-width: 400px;
+    display: grid;
+
+    span {
+        text-align: right;
+        font-size: 12px;
+        color: #757575;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
+
+
+
+
+
+.expand-more-cell {
+    div {
+        cursor: pointer;
+        height: 18px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+
+        mat-icon {
+            position: absolute;
+            top: 0;
+        }
+    }
+}
+
+td h3 {
+    margin-left: 30px;
+    margin-top: 16px;
+}
+
+.semester-select {
+    display: flex;
+    column-gap: 20px;
+}
+
+.radio-criterion-select-container {
+    width: 300px;
+    box-sizing: border-box;
+}
+
+.radio-buttons-and-criteria-description {
+    width: 800px;
+    box-sizing: border-box;
+}
+
+.criteria-group-name {
+    width: 400px;
+    box-sizing: border-box;
+    margin: 0px;
+
+    h3 {
+        margin-bottom: 5px;
+
+        p {
+            font-size: 10px;
+        }
+    }
+
+    span {
+        text-align: right;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+}
+
+
+.buttons-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.criterion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttons-container {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background: #fafafa;
+    padding: 20px 0px;
+
+    div {
+        display: flex;
+        column-gap: 20px;
+    }
+}
+
+

@@ -18,6 +18,8 @@ import { EvaluationCards, PhaseChangeResponse } from '../../models/grade.model';
 import { GradeService } from '../../services/grade.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AreYouSureDialogComponent } from 'src/app/modules/shared/are-you-sure-dialog/are-you-sure-dialog.component';
+import { FormGroup, FormArray, FormBuilder, Validators, FormControl } from '@angular/forms';
+
 
 enum ROLE {
   FRONTEND = 'front-end',
@@ -31,6 +33,7 @@ enum ROLE {
     templateUrl: './project-details.component.html',
     styleUrls: ['./project-details.component.scss']
 })
+
 export class ProjectDetailsComponent implements OnInit, OnDestroy {
   members!: MatTableDataSource<Student>;
   selection = new SelectionModel<Student>(false, []);
@@ -42,6 +45,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   user!: UserState;
   evaluationCards!: EvaluationCards;
   gradesShown = true;
+  criteriaShown = true;
   grade: string = '0%';
   criteriaMet = false;
   objectKeys = Object.keys;
@@ -58,6 +62,17 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     1: 'DEFENSE_PHASE',
     2: 'RETAKE_PHASE'
   }
+
+  criteriaData = {
+    firstSemester: [
+      { name: 'Attendance', value: '95%' },
+      { name: 'Assignments', value: 'A' }
+    ],
+    secondSemester: [
+      { name: 'Attendance', value: '90%' },
+      { name: 'Project', value: 'B+' }
+    ]
+  };
   
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -66,12 +81,28 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private router: Router,
     private _snackbar: MatSnackBar,
-    private gradeService: GradeService
+    private gradeService: GradeService,
+    private fb: FormBuilder
   ){}
+
+  projectCriteria: FormGroup = this.fb.group({
+    criteriaList: this.fb.array([]) // <-- lista dodanych kryteriów
+  });
+
+  criteriaList: any[] = [
+    { criterium: 'Współpraca', levelOfRealization: 3, semester: 'semester1' },
+    { criterium: 'Kreatywność', levelOfRealization: 4, semester: 'semester2' },
+    // dodaj więcej danych zgodnie z potrzebą
+  ];
+
+  getCriteriaForSemester(semester: string) {
+    return this.criteriaList.filter(c => c.semester === semester);
+    
+  }
    
   ngOnInit(): void {
     document.getElementsByClassName('mat-drawer-content')[0].scrollTo(0, 0);
-
+    
     this.activatedRoute.data.subscribe(({projectDetails, supervisorAvailability, evaluationCards}) => {
       this.data = projectDetails;
       this.members = new MatTableDataSource<Student>([
@@ -161,6 +192,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     this.router.navigate([{outlets: {modal: `projects/form/${this.data.id}`}}], { queryParams: {comingFromDetailsPage: true} });
   }
 
+  addCriteria(){
+    this.router.navigate([{outlets: {modal: `projects/add-criteria/${this.data.id}`}}], { queryParams: {comingFromDetailsPage: true} });
+  }
+
   openRemoveProjectDialog(){
     const dialogRef = this.dialog.open(ProjectRemoveDialogComponent, {
       data: { projectName: this.data.name},
@@ -204,10 +239,16 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSemesterTabChange(event: MatTabChangeEvent){
-    this.selectedSemesterIndex = event.index;
+  onSemesterTabChange(event: MatTabChangeEvent) {
+  this.selectedSemesterIndex = event.index;
+
+  // Załóżmy, że zakładka "Criteria" ma indeks 2
+  this.criteriaShown = event.index !== 2;
+
+  if (this.gradesShown && this.criteriaShown) {
     this.grade = this.evaluationCards[this.semesterMap[this.selectedSemesterIndex]][this.phaseMap[this.selectedPhaseIndex]].grade!;
   }
+}
 
   onPhaseTabChange(event: MatTabChangeEvent){
     this.selectedPhaseIndex = event.index;
@@ -369,6 +410,23 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       )
       ||
       (this.user.role === 'COORDINATOR')
+    ){
+      return true
+    } else {
+      return false
+    }
+  }
+
+  get showAddCriteriaButton(){
+    if(
+      (this.user.role === 'PROJECT_ADMIN' && 
+       this.user.acceptedProjects.includes(this.data.id!)
+      )
+      ||
+      (this.user.role === 'COORDINATOR')
+      ||
+      ((this.user.role === 'SUPERVISOR') &&
+      this.user.acceptedProjects.includes(this.data.id!))
     ){
       return true
     } else {

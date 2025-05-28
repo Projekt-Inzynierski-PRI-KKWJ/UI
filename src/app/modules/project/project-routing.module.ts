@@ -10,6 +10,7 @@ import { SupervisorAvailabilityFormComponent } from './components/supervisor-ava
 import { evaulationCardsResolver } from './resolvers/evaluation-cards.resolver';
 import { studentResolver } from '../user/resolvers/student.resolver';
 import { supervisorResolver } from '../user/resolvers/supervisor.resolver';
+import { ProjectAddCriteriaComponent } from './components/project-add-criteria/project-add-criteria.component';
 
 const routes: Routes = [
   { 
@@ -42,6 +43,10 @@ const routes: Routes = [
       supervisorAvailability: supervisorAvailabilityResolver,
       evaluationCards: evaulationCardsResolver
     },
+  },
+  { 
+    path: 'add-criteria/:id',
+    component: ProjectAddCriteriaComponent
   },
   { path: '', component: ProjectComponent },
 ];

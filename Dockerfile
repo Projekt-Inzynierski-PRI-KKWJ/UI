@@ -12,7 +12,6 @@ RUN npm run build
 FROM nginx:latest
 ARG NGINX_CONF
 RUN rm -rf /usr/share/nginx/html/*
-COPY $NGINX_CONF /etc/nginx/nginx.conf
 COPY --from=builder /app/dist/pri /usr/share/nginx/html
 
 EXPOSE 80

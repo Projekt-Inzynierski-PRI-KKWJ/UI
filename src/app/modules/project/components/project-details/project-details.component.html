@@ -78,37 +78,73 @@
       <button *ngIf="showEditButton" (click)="editProject()" mat-raised-button color="primary" cdkFocusInitial>Edit project</button>
       <button *ngIf="showRemoveButton" (click)="openRemoveProjectDialog()" mat-raised-button color="primary" cdkFocusInitial>Remove project</button>
       <button *ngIf="showAcceptButton" (click)="acceptProject()" mat-raised-button color="primary" cdkFocusInitial>Accept project</button>
-      <button *ngIf="showUnacceptButton" (click)="unacceptProject()" mat-raised-button color="primary" cdkFocusInitial>Unaccept project</button>  
+      <button *ngIf="showUnacceptButton" (click)="unacceptProject()" mat-raised-button color="primary" cdkFocusInitial>Unaccept project</button>
+      <button *ngIf="showAddCriteriaButton" (click)="addCriteria()" mat-raised-button color="primary" cdkFocusInitial>Add criteria</button>
     </div>
   </div>
 </div>
 <mat-tab-group (selectedTabChange)="onSemesterTabChange($event)" [selectedIndex]="selectedSemesterIndex" *ngIf="gradesShown" class="mat-elevation-z8">
+  
+  <!-- Istniejące semestry -->
   <mat-tab #semesterTab *ngFor="let semester of objectKeys(evaluationCards)" [label]="getEvaluationCardsTranslations(semester)">
+    
     <mat-tab-group (selectedTabChange)="onPhaseTabChange($event)" [selectedIndex]="selectedPhaseIndex">
       <mat-tab 
         #phaseTab
         *ngFor="let phase of objectKeys(evaluationCards[semester])"
         [label]="getEvaluationCardsTranslations(phase)"
       >
-        <project-grade 
-          [isActive]="phaseTab.isActive && semesterTab.isActive"
-          (gradeChange)="onGradeChange($event)"
-          [projectId]="data.id!"
-          [semester]="semester"
-          [evaulationCard]="evaluationCards[semester][phase]"
-        />
+        <div class="tab-content-container">
+          <project-grade 
+            [isActive]="phaseTab.isActive && semesterTab.isActive"
+            (gradeChange)="onGradeChange($event)"
+            [projectId]="data.id!"
+            [semester]="semester"
+            [evaulationCard]="evaluationCards[semester][phase]"
+          ></project-grade>
+        </div>
       </mat-tab>
     </mat-tab-group>
+
   </mat-tab>
+
+  <!-- Nowa zakładka: Criteria -->
+  <mat-tab label="Criteria">
+  <mat-tab-group>
+    <!-- Criteria - First Semester -->
+    <mat-tab label="First semester">
+      <div class="tab-content-container">
+        <project-criteria></project-criteria>
+      </div>
+    </mat-tab>
+
+    <!-- Criteria - Second Semester -->
+    <mat-tab label="Second semester">
+      <div class="tab-content-container">
+        <div *ngIf="criteriaData.secondSemester.length > 0; else noCriteriaSecond">
+          <ul>
+            <li *ngFor="let item of criteriaData.secondSemester">
+              {{ item.name }} - {{ item.value }}
+            </li>
+          </ul>
+          
+        </div>
+        <ng-template #noCriteriaSecond>
+          <p>No criteria available for the second semester.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-tab>
+
 </mat-tab-group>
 
-<div *ngIf="gradesShown" class="grade-info mat-elevation-z8">
+
+
+<div *ngIf="gradesShown && criteriaShown" class="grade-info mat-elevation-z8">
   <h2>Grade: {{grade}}</h2>
   <div>
     <h2 class="criteriaMet">Criteria met: <div [class.accepted]="criteriaMet" class="ellipse"></div></h2>
     <h2>Selected criteria: {{selectedCriteria}}</h2>
   </div>
 </div>
-
-
-
