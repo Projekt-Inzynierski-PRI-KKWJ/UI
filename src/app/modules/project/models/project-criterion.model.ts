@@ -1,7 +1,7 @@
 export interface CriteriaProjectDTO {
   criterium: string;
   levelOfRealization: number;
-  semester: 'WINTER_2024' | 'SUMMER_2024' | 'WINTER_2025' | 'SUMMER_2025';
+  semester: 'FIRST' | 'SECOND';
   projectId: number;
   userId: number;
 }

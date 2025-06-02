@@ -5,7 +5,7 @@ import { CriteriaProjectDTO } from '../models/project-criterion.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectCriteriaService {
-  private baseUrl = 'http://localhost:8080/api/criteria-projects';
+  private baseUrl = 'http://localhost:8080/pri/api/criteria-projects';
 
   constructor(private http: HttpClient) {}
 

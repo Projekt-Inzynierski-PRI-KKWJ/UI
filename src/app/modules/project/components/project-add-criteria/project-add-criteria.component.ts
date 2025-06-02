@@ -25,7 +25,7 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
   comingFromDetailsPage = false;
   private unsubscribe$ = new Subject<void>();
 
-  semesters = ['WINTER_2024', 'SUMMER_2024', 'WINTER_2025', 'SUMMER_2025'];
+  semesters = ['FIRST', 'SECOND'];
 
   constructor(
     private fb: FormBuilder,
