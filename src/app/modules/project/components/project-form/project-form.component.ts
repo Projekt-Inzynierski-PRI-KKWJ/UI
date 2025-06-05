@@ -95,7 +95,7 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
             indexNumber: this.user.indexNumber,
             email: this.students.find(student => student.indexNumber === user.indexNumber)?.email,
             accepted: true,
-            role: [null] // Removed Validators.required to make project role optional
+            role: [null]
           }));
         }
       }
@@ -138,7 +138,7 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
   onMemberSelect(member: Student): void {
     this.members.push(this.fb.group({
       ...member,
-      role: [null] // Removed Validators.required to make project role optional
+      role: [null]
     }));
     this.selectedMembers.push(member);
     this.memberInput.reset()
