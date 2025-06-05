@@ -9,7 +9,7 @@ import { UserState } from 'src/app/modules/user/state/user.state';
 import { Supervisor } from 'src/app/modules/user/models/supervisor.model';
 import { State } from 'src/app/app.state';
 import { Store } from '@ngrx/store';
-import { addProject, addProjectSuccess, updateProject, updateProjectSuccess } from '../../state/project.actions';
+import { addProject, addProjectSuccess, addProjectFailure, updateProject, updateProjectSuccess, updateProjectFailure } from '../../state/project.actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExternalLink } from '../../models/external-link.model';
@@ -66,7 +66,7 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
         this.projectDetails.students.forEach(student => {
           this.members.push(this.fb.group({
             ...student,
-            role: [student.role, Validators.required]
+            role: [student.role]
           }));
           this.selectedMembers.push(student);
         })
@@ -95,7 +95,7 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
             indexNumber: this.user.indexNumber,
             email: this.students.find(student => student.indexNumber === user.indexNumber)?.email,
             accepted: true,
-            role: [null, Validators.required]
+            role: [null]
           }));
         }
       }
@@ -138,7 +138,7 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
   onMemberSelect(member: Student): void {
     this.members.push(this.fb.group({
       ...member,
-      role: [null, Validators.required]
+      role: [null]
     }));
     this.selectedMembers.push(member);
     this.memberInput.reset()
@@ -271,11 +271,20 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
           this._snackbar.open('Project successfully updated', 'close');
           this.router.navigate([{outlets: {modal: null}}]);
         });
+        this.actions$.pipe(ofType(updateProjectFailure),takeUntil(this.unsubscribe$)).subscribe(() => {
+          this._snackbar.open('Something went wrong while updating the project', 'close');
+        });
       } else {
         this.store.dispatch(addProject({project: projectDetails, userRole: this.user.role}))
         this.actions$.pipe(ofType(addProjectSuccess),takeUntil(this.unsubscribe$)).subscribe((project) => {
           this._snackbar.open('Project successfully created', 'close');
           this.router.navigate([{outlets: {modal: null}}]);
+        });
+        this.actions$.pipe(ofType(addProjectFailure),takeUntil(this.unsubscribe$)).subscribe((action) => {
+          const errorMessage = (action.error as any)?.status === 412 
+            ? 'Please make sure that all necessary files have been uploaded before creating the project'
+            : 'Something went wrong while creating the project';
+          this._snackbar.open(errorMessage, 'close');
         });
       }
     }
