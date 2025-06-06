@@ -65,7 +65,7 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
       criterium: ['', Validators.required],
       levelOfRealization: [0, [Validators.required, Validators.min(0)]],
       semester: ['', Validators.required],
-      type: ['Required', Validators.required],
+      type: ['REQUIRED', Validators.required],
       enableForModification: [true]
     });
   }
