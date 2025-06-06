@@ -63,9 +63,9 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
   createCriteriaGroup(): FormGroup {
     return this.fb.group({
       criterium: ['', Validators.required],
-      levelOfRealization: [0, [Validators.required, Validators.min(0)]],
-      semester: ['', Validators.required],
-      type: ['Required', Validators.required],
+      levelOfRealization: ['IN_PROGRESS', [Validators.required]],
+      semester: ['FIRST', Validators.required],
+      type: ['EXPECTED', Validators.required],
       enableForModification: [true]
     });
   }
@@ -91,20 +91,11 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  private mapLevelOfRealization(value: number): 'IN_PROGRESS' | 'PARTIALLY_COMPLETED' | 'COMPLETED' {
-    switch (value) {
-      case 0: return 'IN_PROGRESS';
-      case 1: return 'PARTIALLY_COMPLETED';
-      case 2: return 'COMPLETED';
-      default: return 'IN_PROGRESS';
-    }
-  }
-
   onSubmit(): void {
     if (this.projectCriteria.valid) {
       const payload: CriteriaProjectDTO[] = this.criteriaGroups.map(group => ({
         criterium: group.get('criterium')?.value,
-        levelOfRealization: this.mapLevelOfRealization(group.get('levelOfRealization')?.value),
+        levelOfRealization: group.get('levelOfRealization')?.value,
         semester: group.get('semester')?.value,
         projectId: this.projectId,
         userId: this.userId,

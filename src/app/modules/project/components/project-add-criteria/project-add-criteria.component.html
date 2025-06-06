@@ -24,9 +24,9 @@
         <mat-form-field appearance="fill">
           <mat-label>Status</mat-label>
           <mat-select formControlName="levelOfRealization">
-            <mat-option [value]="0">To do</mat-option>
-            <mat-option [value]="1">In progress</mat-option>
-            <mat-option [value]="2">Done</mat-option>
+            <mat-option value="IN_PROGRESS">To do</mat-option>
+            <mat-option value="PARTIALLY_COMPLETED">Partially Completed</mat-option>
+            <mat-option value="COMPLETED">Completed</mat-option>
           </mat-select>
           <mat-error *ngIf="criteriaGroup.get('levelOfRealization')?.invalid">
             {{ getErrorMessage('levelOfRealization', criteriaGroup) }}
@@ -48,9 +48,9 @@
         <mat-form-field appearance="fill">
           <mat-label>Type</mat-label>
           <mat-select formControlName="type">
-            <mat-option value="Required">Required</mat-option>
-            <mat-option value="Expected">Expected</mat-option>
-            <mat-option value="Implementation Indicator">Implementation Indicator</mat-option>
+            <mat-option value="REQUIRED">Required</mat-option>
+            <mat-option value="EXPECTED">Expected</mat-option>
+            <mat-option value="MEASURABLE_IMPLEMENTATION_INDICATORS">Implementation Indicator</mat-option>
           </mat-select>
         </mat-form-field>
 

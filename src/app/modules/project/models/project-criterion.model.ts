@@ -11,7 +11,7 @@ export interface CriteriaProjectDTO {
 export interface CriteriaProject {
   id: number;
   criterium: string;
-  levelOfRealization: number;
+  levelOfRealization: string;
   semester: string;
   userThatAddedTheCriterium: {
     id: number;
