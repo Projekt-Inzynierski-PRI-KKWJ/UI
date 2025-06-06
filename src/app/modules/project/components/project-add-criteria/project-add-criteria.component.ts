@@ -1,15 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, Observable, map, startWith, takeUntil } from 'rxjs';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
 
-import { ProjectDetails } from '../../models/project.model';
-import { ExternalLink } from '../../models/external-link.model';
-import { Student } from 'src/app/modules/user/models/student.model';
-import { Supervisor } from 'src/app/modules/user/models/supervisor.model';
-import { UserState } from 'src/app/modules/user/state/user.state';
 import { ProjectCriteriaService } from '../../services/project-criterion.service';
 import { CriteriaProjectDTO } from '../../models/project-criterion.model';
 
@@ -48,8 +43,8 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
       this.comingFromDetailsPage = params['comingFromDetailsPage'] === 'true';
     });
 
-    // Fetch or set userId here (e.g. from AuthService, or use mock for now)
-    this.userId = 1; // TODO: Replace with real logged-in user ID
+    // Replace with real logged-in user ID if available
+    this.userId = 1;
   }
 
   ngOnDestroy(): void {
@@ -69,7 +64,9 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
     return this.fb.group({
       criterium: ['', Validators.required],
       levelOfRealization: [0, [Validators.required, Validators.min(0)]],
-      semester: ['', Validators.required]
+      semester: ['', Validators.required],
+      type: ['Required', Validators.required],
+      enableForModification: [true]
     });
   }
 
@@ -94,27 +91,41 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  onSubmit(): void {
-  if (this.projectCriteria.valid) {
-    const payload = this.criteriaGroups.map(group => ({
-      criterium: group.get('criterium')?.value,
-      levelOfRealization: +group.get('levelOfRealization')?.value,
-      semester: group.get('semester')?.value,
-      projectId: this.projectId,
-      userId: this.userId
-    }));
-
-    this.criteriaService.addCriteria(payload).subscribe({
-      next: () => {
-        this.snackBar.open('Criteria successfully submitted', 'Close', { duration: 3000 });
-        this.navigateBack();
-      },
-      error: () => {
-        this.snackBar.open('Error submitting criteria', 'Close', { duration: 3000 });
-      }
-    });
+  private mapLevelOfRealization(value: number): 'IN_PROGRESS' | 'PARTIALLY_COMPLETED' | 'COMPLETED' {
+    switch (value) {
+      case 0: return 'IN_PROGRESS';
+      case 1: return 'PARTIALLY_COMPLETED';
+      case 2: return 'COMPLETED';
+      default: return 'IN_PROGRESS';
+    }
   }
-}
+
+  onSubmit(): void {
+    if (this.projectCriteria.valid) {
+      const payload: CriteriaProjectDTO[] = this.criteriaGroups.map(group => ({
+        criterium: group.get('criterium')?.value,
+        levelOfRealization: this.mapLevelOfRealization(group.get('levelOfRealization')?.value),
+        semester: group.get('semester')?.value,
+        projectId: this.projectId,
+        userId: this.userId,
+        enableForModification: group.get('enableForModification')?.value,
+        type: group.get('type')?.value as 'Required' | 'Expected' | 'Implementation Indicator'
+      }));
+
+      console.log('Sending payload:', JSON.stringify(payload, null, 2));
+
+      this.criteriaService.addCriteria(payload).subscribe({
+        next: () => {
+          this.snackBar.open('Criteria successfully submitted', 'Close', { duration: 3000 });
+          this.navigateBack();
+        },
+        error: (err) => {
+          console.error('Submission error:', err);
+          this.snackBar.open('Error submitting criteria', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  }
 
   navigateBack(): void {
     this.location.back();

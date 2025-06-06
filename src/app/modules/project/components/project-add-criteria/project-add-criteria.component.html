@@ -8,39 +8,58 @@
 <form [formGroup]="projectCriteria" (ngSubmit)="onSubmit()">
 
   <div formArrayName="criteriaList">
-
     <div *ngFor="let criteriaGroup of criteriaGroups; let i = index" [formGroupName]="i" class="fieldContainer">
       <div class="criteriaContainer">
+        
+        <!-- Criterium Input -->
         <mat-form-field appearance="fill">
           <mat-label>Criteria title</mat-label>
           <input matInput formControlName="criterium" />
           <mat-error *ngIf="criteriaGroup.get('criterium')?.invalid">
-           <!-- {{ getErrorMessage('levelOfRealization', criteriaGroup) }} -->
+            {{ getErrorMessage('criterium', criteriaGroup) }}
           </mat-error>
         </mat-form-field>
 
+        <!-- Level of Realization -->
         <mat-form-field appearance="fill">
           <mat-label>Status</mat-label>
           <mat-select formControlName="levelOfRealization">
-            <mat-option value="To do">To do</mat-option>
-            <mat-option value="In progress">In progress</mat-option>
-            <mat-option value="Done">Done</mat-option>
+            <mat-option [value]="0">To do</mat-option>
+            <mat-option [value]="1">In progress</mat-option>
+            <mat-option [value]="2">Done</mat-option>
           </mat-select>
           <mat-error *ngIf="criteriaGroup.get('levelOfRealization')?.invalid">
-           <!-- {{ getErrorMessage('levelOfRealization', criteriaGroup) }} -->
+            {{ getErrorMessage('levelOfRealization', criteriaGroup) }}
           </mat-error>
         </mat-form-field>
 
+        <!-- Semester -->
         <mat-form-field appearance="fill">
           <mat-label>Semester</mat-label>
           <mat-select formControlName="semester">
             <mat-option *ngFor="let s of semesters" [value]="s">{{ s }}</mat-option>
           </mat-select>
           <mat-error *ngIf="criteriaGroup.get('semester')?.invalid">
-            <!-- {{ getErrorMessage('levelOfRealization', criteriaGroup) }} -->
+            {{ getErrorMessage('semester', criteriaGroup) }}
           </mat-error>
         </mat-form-field>
 
+        <!-- Type -->
+        <mat-form-field appearance="fill">
+          <mat-label>Type</mat-label>
+          <mat-select formControlName="type">
+            <mat-option value="Required">Required</mat-option>
+            <mat-option value="Expected">Expected</mat-option>
+            <mat-option value="Implementation Indicator">Implementation Indicator</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Enable for Modification -->
+        <mat-checkbox formControlName="enableForModification">
+          Enable for Modification
+        </mat-checkbox>
+
+        <!-- Remove Button -->
         <button mat-icon-button color="warn" type="button" (click)="removeCriteria(i)" *ngIf="criteriaList.length > 1">
           <mat-icon>delete</mat-icon>
         </button>
@@ -48,10 +67,12 @@
     </div>
   </div>
 
+  <!-- Add Criteria Button -->
   <button type="button" mat-stroked-button color="primary" (click)="addCriteria()">
     <mat-icon>add</mat-icon> Add Criteria
   </button>
 
+  <!-- Submit Button -->
   <div class="buttons-container">
     <button color="primary" type="submit" mat-raised-button [disabled]="!projectCriteria.valid" cdkFocusInitial>
       Submit
