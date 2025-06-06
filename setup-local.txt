@@ -1,0 +1,27 @@
+BACKEND
+
+1. utworzyc sobie plik application.properties i skopiowac dane z application-local.properties
+2. Uruchomic PriApplication w debugu albo jako run
+3. Appka powinna uruchomic sie bez problemu
+
+UWAGA!!
+Trzeba miec postawiona baze danych i nalezy sprawdzic czy jej adres w application.properties jest poprawny
+
+UWAGA!!
+Jeeli chcemy by backend działał bez autentykacji mozemy ustawic zmienna:
+auth.enabled=false
+
+
+FRONTEND
+By uruchomic lokalnie z backendem uruchomionym nie na dockerze (zeby latwiej debugowac)
+1. jest plik nginx-local.conf
+2. majac dockera wykonujemy polecenie docker build --build-arg NGINX_CONF=nginx-local.conf -t moja-aplikacja .
+3. docker build --build-arg NGINX_CONF=nginx.conf -t moja-aplikacja .
+4. docker run -p 80:80 moja-aplikacja
+5. localhost:80/login powinien zadziałać
+6. zalogowac sie
+
+
+Przydatne komendy dockera
+1. Wejscie w kontener: docker exec -it nazwa_kontenera bash
+2. Wywołanie CURL: docker exec -it nazwa_kontenera curl endpoint_na_ktory_chce_uderzyc
