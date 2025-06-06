@@ -109,7 +109,7 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
         projectId: this.projectId,
         userId: this.userId,
         enableForModification: group.get('enableForModification')?.value,
-        type: group.get('type')?.value as 'Required' | 'Expected' | 'Implementation Indicator'
+        type: group.get('type')?.value as 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS'
       }));
 
       console.log('Sending payload:', JSON.stringify(payload, null, 2));

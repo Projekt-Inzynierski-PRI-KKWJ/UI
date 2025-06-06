@@ -5,7 +5,7 @@ export interface CriteriaProjectDTO {
   projectId: number;
   userId: number;
   enableForModification: boolean;
-  type: 'Required' | 'Expected' | 'Implementation Indicator';
+  type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS';
 }
 
 export interface CriteriaProject {
