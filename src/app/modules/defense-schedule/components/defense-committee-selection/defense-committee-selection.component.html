@@ -53,7 +53,7 @@
         <h3>Current phase: <b>{{currentPhase}}</b></h3>
         <div *ngIf="user.role === 'COORDINATOR'"  class="buttons-container"> 
             <button (click)="getDefenseSummary()" mat-button color="primary">Export summary</button>
-            <button (click)="openRegistration()" mat-button color="primary">Open registration</button>
+            <button (click)="openRegistrationDialog()" mat-button color="primary">Open registration</button>
             <button (click)="closeRegistration()" mat-button color="primary">Close registration</button>
         </div>
         <div *ngIf="user.role === 'COORDINATOR'" class="committee-config-container">
