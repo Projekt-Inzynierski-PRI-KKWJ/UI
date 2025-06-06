@@ -413,7 +413,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
   openRegistrationDialog(): void {
   const dialogRef = this.dialog.open(RegistrationDialogComponent, {
     width: '800px',
-    data: { studyYear: 'FULL_TIME%232023', templateName: 'PROJECT_DEFENSE_REGISTRATION_OPEN'} 
+    data: { templateName: 'PROJECT_DEFENSE_REGISTRATION_OPEN'} 
   });
 
   dialogRef.afterClosed().subscribe(result => {
@@ -426,7 +426,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
   closeRegistrationDialog(): void {
   const dialogRef = this.dialog.open(RegistrationDialogComponent, {
     width: '800px',
-    data: { studyYear: 'FULL_TIME%232023', templateName: 'PROJECT_DEFENSE_REGISTRATION_CLOSE'} 
+    data: { templateName: 'PROJECT_DEFENSE_REGISTRATION_CLOSE'} 
   });
 
     dialogRef.afterClosed().subscribe(result => {
