@@ -24,7 +24,7 @@ export class DataFeedComponent implements OnDestroy {
   uploadStudents(event: any) {
     const file: File = event.target.files[0];
     if (file) {
-      this.studentsFileName= file.name;
+      this.studentsFileName = file.name;
       this.studentsFile = new FormData();
       this.studentsFile.append("data", file);
     }
@@ -56,10 +56,7 @@ export class DataFeedComponent implements OnDestroy {
           this.studentsFile = new FormData();
           this._snackBar.open('Students successfully uploaded', 'close');
         },
-        error: (error) => {
-          const errorMessage = error.error?.errorMessage || 'Unknown error occurred';
-          this._snackBar.open('Error: ' + errorMessage, 'close', { duration: 5000 });
-        }
+        error: (error) => this.handleUploadError(error)
       });
     }
 
@@ -70,10 +67,7 @@ export class DataFeedComponent implements OnDestroy {
           this.supervisorsFile = new FormData();
           this._snackBar.open('Supervisors successfully uploaded', 'close');
         },
-        error: (error) => {
-          const errorMessage = error.error?.errorMessage || 'Unknown error occurred';
-          this._snackBar.open('Error: ' + errorMessage, 'close', { duration: 5000 });
-        }
+        error: (error) => this.handleUploadError(error)
       });
     }
 
@@ -84,46 +78,54 @@ export class DataFeedComponent implements OnDestroy {
           this.criteriaFile = new FormData();
           this._snackBar.open('Criteria successfully uploaded', 'close');
         },
-        error: (error) => {
-          const errorMessage = error.error?.errorMessage || 'Unknown error occurred';
-          this._snackBar.open('Error: ' + errorMessage, 'close', { duration: 5000 });
-        }
+        error: (error) => this.handleUploadError(error)
       });
     }
   }
 
-  exportStudents(){
+  exportStudents() {
     this.dataFeedService.exportStudents().pipe(takeUntil(this.unsubscribe$)).subscribe(
       (file: HttpResponse<Blob>) => {
-        if(file?.body){
-          saveAs(file.body!, 'students.csv')
+        if (file?.body) {
+          saveAs(file.body!, 'students.csv');
         }
       }
-    )
+    );
   }
 
-  exportCriteria(){
+  exportCriteria() {
     this.dataFeedService.exportCriteria().pipe(takeUntil(this.unsubscribe$)).subscribe(
       (file: HttpResponse<Blob>) => {
-        if(file?.body){
-          saveAs(file.body!, 'criteria.json')
+        if (file?.body) {
+          saveAs(file.body!, 'criteria.json');
         }
       }
-    )
+    );
   }
 
-  exportGrades(){
+  exportGrades() {
     this.dataFeedService.exportGrades().pipe(takeUntil(this.unsubscribe$)).subscribe(
       (file: HttpResponse<Blob>) => {
-        if(file?.body){
-          saveAs(file.body!, 'grades.csv')
+        if (file?.body) {
+          saveAs(file.body!, 'grades.csv');
         }
       }
-    )
+    );
+  }
+
+  private handleUploadError(error: any) {
+    if (error.status === 413) {
+      this._snackBar.open('File is too large. Maximum allowed size exceeded.', 'close', { duration: 5000 });
+    } else if (error.status === 0 && error instanceof ProgressEvent) {
+      this._snackBar.open('Upload failed. Possibly due to file size too large (NGINX limit).', 'close', { duration: 5000 });
+    } else {
+      const errorMessage = error.error?.errorMessage || 'Unknown error occurred';
+      this._snackBar.open('Error: ' + errorMessage, 'close', { duration: 5000 });
+    }
   }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next(null);
-    this.unsubscribe$.complete()
+    this.unsubscribe$.complete();
   }
 }
