@@ -27,6 +27,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DefenseAdditonalDayFormComponent } from './components/defense-additional-day-form/defense-additional-day-form.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDividerModule } from '@angular/material/divider';
+import { RegistrationDialogComponent } from './components/defense-committee-selection/registration-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     DefenseCommitteeSelectionComponent,
     DefenseCommitteeStatisticsComponent,
     DefenseScheduleSelectionComponent,
-    DefenseAdditonalDayFormComponent
+    DefenseAdditonalDayFormComponent,
+    RegistrationDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -48,6 +51,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatProgressSpinnerModule,
     MatNativeDateModule,
     MatSelectModule,
+    MatDividerModule,
     MatSlideToggleModule,
     MatTableModule,
     MatSnackBarModule,
