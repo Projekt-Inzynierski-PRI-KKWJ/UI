@@ -12,6 +12,8 @@ import { User } from 'src/app/modules/user/models/user.model';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/app.state';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { RegistrationDialogComponent } from './registration-dialog.component';
 
 interface SupervisorTimeReference {
   supervisor: string,
@@ -82,6 +84,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
     private userService: UserService,
     private store: Store<State>,
     private _snackbar: MatSnackBar,
+    private dialog: MatDialog,
   )
   {
     this.userService.supervisors$.pipe(takeUntil(this.unsubscribe$)).subscribe(
@@ -407,6 +410,29 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
     this.unsubscribe$.complete()
   }
 
+  openRegistrationDialog(): void {
+  const dialogRef = this.dialog.open(RegistrationDialogComponent, {
+    width: '800px',
+    data: { templateName: 'PROJECT_DEFENSE_REGISTRATION_OPEN'}
+  });
 
+  dialogRef.afterClosed().subscribe(result => {
+    if (result === 'send') {
+      this.openRegistration();
+    }
+  });
+}
 
+  closeRegistrationDialog(): void {
+  const dialogRef = this.dialog.open(RegistrationDialogComponent, {
+    width: '800px',
+    data: { templateName: 'PROJECT_DEFENSE_REGISTRATION_CLOSE'}
+  });
+
+    dialogRef.afterClosed().subscribe(result => {
+    if (result === 'send') {
+      this.closeRegistration();
+    }
+  });
+}
 }
