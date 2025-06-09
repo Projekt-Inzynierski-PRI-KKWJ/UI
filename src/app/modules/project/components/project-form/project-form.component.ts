@@ -9,7 +9,7 @@ import { UserState } from 'src/app/modules/user/state/user.state';
 import { Supervisor } from 'src/app/modules/user/models/supervisor.model';
 import { State } from 'src/app/app.state';
 import { Store } from '@ngrx/store';
-import { addProject, addProjectSuccess, updateProject, updateProjectSuccess } from '../../state/project.actions';
+import { addProject, addProjectSuccess, addProjectFailure, updateProject, updateProjectSuccess, updateProjectFailure } from '../../state/project.actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExternalLink } from '../../models/external-link.model';
@@ -271,11 +271,20 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
           this._snackbar.open('Project successfully updated', 'close');
           this.router.navigate([{outlets: {modal: null}}]);
         });
+        this.actions$.pipe(ofType(updateProjectFailure),takeUntil(this.unsubscribe$)).subscribe(() => {
+          this._snackbar.open('Something went wrong while updating the project', 'close');
+        });
       } else {
         this.store.dispatch(addProject({project: projectDetails, userRole: this.user.role}))
         this.actions$.pipe(ofType(addProjectSuccess),takeUntil(this.unsubscribe$)).subscribe((project) => {
           this._snackbar.open('Project successfully created', 'close');
           this.router.navigate([{outlets: {modal: null}}]);
+        });
+        this.actions$.pipe(ofType(addProjectFailure),takeUntil(this.unsubscribe$)).subscribe((action) => {
+          const errorMessage = (action.error as any)?.status === 412 
+            ? 'Please make sure that all necessary files have been uploaded before creating the project'
+            : 'Something went wrong while creating the project';
+          this._snackbar.open(errorMessage, 'close');
         });
       }
     }
