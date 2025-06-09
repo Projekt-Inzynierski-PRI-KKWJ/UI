@@ -6,7 +6,7 @@ import { Subject, combineLatest, takeUntil, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { getFilters, getProjects } from '../../state/project.selectors';
 import { State } from 'src/app/app.state';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { changeFilters, loadProjects } from '../../state/project.actions';
 import { Project } from '../../models/project.model';
 import { ExternalLinkService } from '../../services/external-link.service';
@@ -105,6 +105,35 @@ export class ProjectListComponent implements OnDestroy, OnInit{
 
   navigateToDetails(projectId: string){
     this.router.navigate([{outlets: {modal: `projects/details/${projectId}`}}]) 
+  }
+
+  downloadExternalLinkFile(projectId: string, externalLinkId: string): void {
+    const downloadUrl = this.externalLinkService.getExternalLinkFileDownloadUrl(
+      projectId, 
+      externalLinkId
+    );
+    
+    // Create a temporary a element and trigger download
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    
+    // Find the project and external link to get filename
+    const project = this.projects.data.find(p => p.id === projectId);
+    const externalLink = project?.externalLinks?.find(link => link.id === externalLinkId);
+    if (externalLink?.originalFileName) {
+      link.download = externalLink.originalFileName;
+    }
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  getSortedExternalLinks(project: Project): any[] {
+    if (!project?.externalLinks) {
+      return [];
+    }
+    return [...project.externalLinks].sort((a, b) => a.name.localeCompare(b.name));
   }
 
   ngOnDestroy(): void {
