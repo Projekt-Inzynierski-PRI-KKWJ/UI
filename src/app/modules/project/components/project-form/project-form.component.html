@@ -47,8 +47,9 @@
                         <p>{{getMemberData(member).email}}</p>
                     </div>
                     <mat-form-field appearance="fill">
-                        <mat-label>Select role</mat-label>
+                        <mat-label>Select role (optional)</mat-label>
                         <mat-select [formControl]="getMemberData(member).role">
+                            <mat-option [value]="null">None</mat-option>
                             <mat-option value="FRONTEND">Front-end</mat-option>
                             <mat-option value="BACKEND">Back-end</mat-option>
                             <mat-option value="FULLSTACK">Full stack</mat-option>
