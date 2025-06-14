@@ -37,6 +37,6 @@ export class RegistrationDialogComponent implements OnInit {
   }
 
   send(): void {
-    this.dialogRef.close('send'); 
+    this.dialogRef.close('send');
   }
 }
