@@ -34,11 +34,98 @@
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="addTechnology($event)" />
             </mat-form-field>
         
-            <mat-form-field *ngFor="let externalLink of externalLinks.controls" appearance="fill">
-                <mat-label>{{getExternalLinkFormControl(externalLink).name}}</mat-label>
-                <span>Share a link before: {{getExternalLinkFormControl(externalLink).deadline}}</span>
-                <input matInput [formControl]="getExternalLinkFormControl(externalLink).url">
-            </mat-form-field>
+            <!-- External Links -->
+            <div *ngFor="let externalLink of externalLinks.controls" class="external-link-container">
+                <h3>{{getExternalLinkFormControl(externalLink).name}}</h3>
+                <p class="deadline-info">Share before: {{getExternalLinkFormControl(externalLink).deadline}}</p>
+                
+                <div *ngIf="hasExternalLinkContent(externalLink) && hasModificationDate(externalLink)" class="date-info">
+                    <!-- Modification Date -->
+                    <p class="date-display">
+                        <mat-icon class="date-icon">edit</mat-icon>
+                        <span class="date-label">Modified:</span> 
+                        <span class="date-value" [class.after-deadline]="isModifiedAfterDeadline(externalLink)">
+                            {{formatDateTime(externalLink.get('modificationDate')?.value)}}
+                        </span>
+                        <span *ngIf="isModifiedAfterDeadline(externalLink)" class="warning-text">(after deadline)</span>
+                    </p>
+                </div>
+                
+                <!-- Toggle Link or File -->
+                <mat-radio-group 
+                    [value]="externalLinkModes[externalLink.get('id')?.value] || 'URL'" 
+                    (change)="onExternalLinkModeChange(externalLink.get('id')?.value, $event.value)"
+                    class="mode-toggle">
+                    <mat-radio-button value="URL">URL Link</mat-radio-button>
+                    <mat-radio-button value="FILE">File Upload</mat-radio-button>
+                </mat-radio-group>
+
+                <!-- URL Mode -->
+                <div *ngIf="(externalLinkModes[externalLink.get('id')?.value] || 'URL') === 'URL'" class="url-mode">
+                    <mat-form-field appearance="fill">
+                        <mat-label>Enter URL</mat-label>
+                        <input matInput [formControl]="getExternalLinkFormControl(externalLink).url" placeholder="https://...">
+                        <mat-icon matSuffix>link</mat-icon>
+                    </mat-form-field>
+                </div>
+
+                <!-- File Mode -->
+                <div *ngIf="externalLinkModes[externalLink.get('id')?.value] === 'FILE'" class="file-mode">
+                    <div class="file-upload-section">
+                        <input 
+                            type="file" 
+                            class="file-input" 
+                            (change)="onExternalLinkFileSelect($event, externalLink.get('id')?.value)" 
+                            #fileInput>
+                        <div class="file-upload-controls">
+                            <button 
+                                type="button"
+                                mat-raised-button 
+                                color="primary" 
+                                (click)="fileInput.click()"
+                                class="file-select-btn">
+                                <mat-icon>attach_file</mat-icon>
+                                Select File
+                            </button>
+                            <span class="file-name" *ngIf="externalLinkFiles[externalLink.get('id')?.value]">
+                                {{externalLinkFiles[externalLink.get('id')?.value].name}}
+                            </span>
+                            <span class="file-name" *ngIf="!externalLinkFiles[externalLink.get('id')?.value] && externalLink.get('originalFileName')?.value">
+                                {{externalLink.get('originalFileName')?.value}}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- For Editing -->
+                    <div *ngIf="projectDetails && externalLink.get('linkType')?.value === 'INTERNAL' && externalLink.get('originalFileName')?.value" class="existing-file-actions">
+                        <div class="file-info">
+                            <mat-icon>description</mat-icon>
+                            <span>{{externalLink.get('originalFileName')?.value}}</span>
+                            <span class="file-size" *ngIf="externalLink.get('fileSize')?.value">
+                                ({{(externalLink.get('fileSize')?.value / 1024 / 1024).toFixed(2)}} MB)
+                            </span>
+                        </div>
+                        <div class="file-actions">
+                            <button 
+                                type="button"
+                                mat-icon-button 
+                                color="primary" 
+                                (click)="downloadExternalLinkFile(externalLink.get('id')?.value)"
+                                matTooltip="Download file">
+                                <mat-icon>download</mat-icon>
+                            </button>
+                            <button 
+                                type="button"
+                                mat-icon-button 
+                                color="warn" 
+                                (click)="deleteExternalLinkFile(externalLink.get('id')?.value)"
+                                matTooltip="Delete file">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div>
             <div *ngIf="showMembersField">

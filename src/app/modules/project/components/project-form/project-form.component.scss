@@ -116,6 +116,139 @@
         display: flex;
         justify-content: flex-end;
     }
-    
+
+    // External Links Styling
+    .external-link-container {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #fafafa;
+
+        h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .deadline-info {
+            margin: 0 0 15px 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        // Date information styling
+        .date-info {
+            margin-bottom: 15px;
+
+            .date-display {
+                display: flex;
+                align-items: center;
+                margin: 5px 0;
+                font-size: 12px;
+                color: #555;
+
+                .date-icon {
+                    font-size: 16px;
+                    margin-right: 8px;
+                    color: #666;
+                }
+
+                .date-label {
+                    font-weight: 500;
+                    margin-right: 5px;
+                }
+
+                .date-value {
+                    color: #333;
+
+                    &.after-deadline {
+                        color: #f44336;
+                        font-weight: 500;
+                    }
+                }
+
+                .warning-text {
+                    color: #f44336;
+                    font-weight: 500;
+                    margin-left: 5px;
+                    font-style: italic;
+                }
+            }
+        }
+
+        .mode-toggle {
+            margin-bottom: 15px;
+            
+            mat-radio-button {
+                margin-right: 20px;
+            }
+        }
+
+        .url-mode {
+            mat-form-field {
+                width: 100%;
+            }
+        }
+
+        .file-mode {
+            .file-input {
+                display: none;
+            }
+
+            .file-upload-section {
+                margin-bottom: 15px;
+            }
+
+            .file-upload-controls {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                
+                .file-select-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .file-name {
+                    font-size: 14px;
+                    color: #666;
+                    font-style: italic;
+                }
+            }
+
+            .existing-file-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                background-color: #f0f0f0;
+                border-radius: 4px;
+                border: 1px solid #ddd;
+
+                .file-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    
+                    mat-icon {
+                        color: #666;
+                    }
+
+                    .file-size {
+                        font-size: 12px;
+                        color: #999;
+                    }
+                }
+
+                .file-actions {
+                    display: flex;
+                    gap: 5px;
+                }
+            }
+        }
+    }
 }
 

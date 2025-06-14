@@ -14,6 +14,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExternalLink } from '../../models/external-link.model';
 import { ProjectDetails } from '../../models/project.model';
+import { ExternalLinkService } from '../../services/external-link.service';
 
 @Component({
   selector: 'project-form',
@@ -43,13 +44,18 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
   unsubscribe$ = new Subject();
   comingFromDetailsPage: boolean = false;
 
+  // External link file upload state
+  externalLinkFiles: { [key: string]: File } = {};
+  externalLinkModes: { [key: string]: 'URL' | 'FILE' } = {};
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private store: Store<State>,
     private actions$: Actions,
     private _snackbar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private externalLinkService: ExternalLinkService
   ) { }
 
   ngOnInit(): void {
@@ -70,14 +76,29 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
           }));
           this.selectedMembers.push(student);
         })
-        this.projectDetails.externalLinks?.forEach(externalLink => {
+        
+        // Sort links alphabeticallybefore adding to form
+        const sortedExternalLinks = this.projectDetails.externalLinks?.slice().sort((a, b) => 
+          a.name.localeCompare(b.name)
+        );
+        
+        sortedExternalLinks?.forEach(externalLink => {
           this.externalLinks.controls.push(this.fb.group({
             id: externalLink.id,
             url: externalLink.url,
             name: externalLink.name,
             columnHeader: externalLink.columnHeader,
-            deadline: externalLink.deadline
+            deadline: externalLink.deadline,
+            contentType: externalLink.contentType,
+            linkType: externalLink.linkType,
+            originalFileName: externalLink.originalFileName,
+            fileSize: externalLink.fileSize,
+            creationDate: externalLink.creationDate,
+            modificationDate: externalLink.modificationDate
           }));
+          
+          // Set mode based on existing data
+          this.externalLinkModes[externalLink.id] = externalLink.linkType === 'INTERNAL' ? 'FILE' : 'URL';
         });
         this.projectForm.controls.projectAdmin.setValue(this.projectDetails.admin);
         this.projectForm.controls.supervisorIndexNumber.setValue(this.projectDetails.supervisor.indexNumber);
@@ -237,6 +258,73 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  // External link file upload methods
+  onExternalLinkModeChange(externalLinkId: string, mode: 'URL' | 'FILE'): void {
+    this.externalLinkModes[externalLinkId] = mode;
+    if (mode === 'URL') {
+      // Clear file if switching to URL mode
+      delete this.externalLinkFiles[externalLinkId];
+    }
+  }
+
+  onExternalLinkFileSelect(event: any, externalLinkId: string): void {
+    const file: File = event.target.files[0];
+  }
+
+  downloadExternalLinkFile(externalLinkId: string): void {
+    if (this.projectDetails?.id) {
+      const downloadUrl = this.externalLinkService.getExternalLinkFileDownloadUrl(
+        this.projectDetails.id, 
+        externalLinkId
+      );
+      
+      // Create a temporary a element and trigger download
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      
+      // Get filename from external link data
+      const externalLink = this.getExternalLinkById(externalLinkId);
+      if (externalLink?.originalFileName) {
+        link.download = externalLink.originalFileName;
+      }
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
+  deleteExternalLinkFile(externalLinkId: string): void {
+    if (this.projectDetails?.id) {
+      this.externalLinkService.deleteExternalLinkFile(this.projectDetails.id, externalLinkId)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(() => {
+          // Reset to URL mode
+          this.externalLinkModes[externalLinkId] = 'URL';
+          // Clear the form
+          const control = this.getExternalLinkControlById(externalLinkId);
+          if (control) {
+            control.get('url')?.setValue('');
+            control.get('linkType')?.setValue('EXTERNAL');
+            control.get('originalFileName')?.setValue(null);
+            control.get('fileSize')?.setValue(null);
+            control.get('contentType')?.setValue(null);
+          }
+          this._snackbar.open('File deleted successfully', 'close');
+        });
+    }
+  }
+
+  private getExternalLinkById(externalLinkId: string): ExternalLink | undefined {
+    return this.projectDetails?.externalLinks?.find(link => link.id === externalLinkId);
+  }
+
+  private getExternalLinkControlById(externalLinkId: string): AbstractControl | null {
+    return this.externalLinks.controls.find(control => 
+      control.get('id')?.value === externalLinkId) || null;
+  }
+
+  // Handle file uploads on submit
   onSubmit(): void {
     if (this.projectForm.valid) {    
       let projectDetails: ProjectDetails = {
@@ -255,6 +343,10 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
           name: control.controls.name.value,
           columnHeader: control.controls.columnHeader.value,
           deadline: control.controls.deadline.value,
+          contentType: this.externalLinkModes[control.controls.id.value] === 'FILE' ? 'file' : undefined,
+          linkType: this.externalLinkModes[control.controls.id.value] === 'FILE' ? 'INTERNAL' : 'EXTERNAL',
+          originalFileName: control.controls.originalFileName?.value,
+          fileSize: control.controls.fileSize?.value
         }}),
         technologies: this.projectForm.controls.technologies.value!,
         admin: this.projectForm.controls.projectAdmin.value!,
@@ -268,8 +360,10 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
       if(this.projectDetails){
         this.store.dispatch(updateProject({project: projectDetails}))
         this.actions$.pipe(ofType(updateProjectSuccess),takeUntil(this.unsubscribe$)).subscribe(() => {
+          // Upload files after project update
+          this.uploadPendingFiles();
           this._snackbar.open('Project successfully updated', 'close');
-          this.router.navigate([{outlets: {modal: null}}]);
+          // Navigation to project overview handled in uploadPendingFiles()
         });
         this.actions$.pipe(ofType(updateProjectFailure),takeUntil(this.unsubscribe$)).subscribe(() => {
           this._snackbar.open('Something went wrong while updating the project', 'close');
@@ -277,8 +371,10 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
       } else {
         this.store.dispatch(addProject({project: projectDetails, userRole: this.user.role}))
         this.actions$.pipe(ofType(addProjectSuccess),takeUntil(this.unsubscribe$)).subscribe((project) => {
+          // Upload files after project creation
+          this.uploadPendingFiles();
           this._snackbar.open('Project successfully created', 'close');
-          this.router.navigate([{outlets: {modal: null}}]);
+          // Navigation to project overview handled in uploadPendingFiles()
         });
         this.actions$.pipe(ofType(addProjectFailure),takeUntil(this.unsubscribe$)).subscribe((action) => {
           const errorMessage = (action.error as any)?.status === 412 
@@ -288,6 +384,90 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
         });
       }
     }
+  }
+
+  private uploadPendingFiles(): void {
+    
+    if (this.projectDetails?.id) {
+      const uploadPromises: Promise<any>[] = [];
+      
+      Object.entries(this.externalLinkFiles).forEach(([externalLinkId, file]) => {
+        
+        const formData = new FormData();
+        formData.append('file', file);
+                
+        const uploadPromise = this.externalLinkService.uploadExternalLinkFile(this.projectDetails!.id!, externalLinkId, formData)
+          .pipe(takeUntil(this.unsubscribe$))
+          .toPromise()
+          .then((response) => {
+            console.log(`File uploaded for external link ${externalLinkId}:`, response);
+            if (response.message) {
+              this._snackbar.open(response.message, 'close');
+            }
+          })
+          .catch((error) => {
+            console.error(`Error uploading file for external link ${externalLinkId}:`, error);
+            let errorMessage = 'File upload failed';
+            
+            if (error.error?.error) {
+              errorMessage = error.error.error;
+            } else if (error.message) {
+              errorMessage = error.message;
+            }
+            
+            this._snackbar.open(errorMessage, 'close', { duration: 5000 });
+          });
+          
+        uploadPromises.push(uploadPromise);
+      });
+      
+      // Wait for all uploads to complete before navigating
+      Promise.allSettled(uploadPromises).then(() => {
+        this.router.navigate([{outlets: {modal: null}}]);
+      });
+    } else {
+      // No files to upload, navigate immediately
+      this.router.navigate([{outlets: {modal: null}}]);
+    }
+  }
+
+  // Helper methods for date formatting
+  formatDateTime(dateString?: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  }
+
+  formatDate(dateString?: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  }
+
+  hasExternalLinkContent(externalLink: AbstractControl): boolean {
+    const url = externalLink.get('url')?.value;
+    const linkType = externalLink.get('linkType')?.value;
+    const originalFileName = externalLink.get('originalFileName')?.value;
+    
+    // Has content if there is an URL or file name
+    return !!(url && url.trim()) || (linkType === 'INTERNAL' && originalFileName);
+  }
+
+  hasModificationDate(externalLink: AbstractControl): boolean {
+    const modificationDate = externalLink.get('modificationDate')?.value;
+    return !!modificationDate;
+  }
+
+  isModifiedAfterDeadline(externalLink: AbstractControl): boolean {
+    const modificationDate = externalLink.get('modificationDate')?.value;
+    const deadline = externalLink.get('deadline')?.value;
+    
+    if (!modificationDate || !deadline) return false;
+    
+    const modDate = new Date(modificationDate);
+    const deadlineDate = new Date(deadline);
+    
+    return modDate > deadlineDate;
   }
 
   ngOnDestroy(): void {
