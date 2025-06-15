@@ -1,4 +1,5 @@
 export interface CriteriaProjectDTO {
+  id?: number;
   criterium: string;
   levelOfRealization: 'IN_PROGRESS' | 'PARTIALLY_COMPLETED' | 'COMPLETED';
   semester: 'FIRST' | 'SECOND';
@@ -21,4 +22,5 @@ export interface CriteriaProject {
   };
   createdAt: string;
   updatedAt: string;
+  comment?: string;
 }

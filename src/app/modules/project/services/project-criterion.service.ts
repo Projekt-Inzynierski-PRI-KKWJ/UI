@@ -35,4 +35,26 @@ export class ProjectCriteriaService {
       })
     );
   }
+
+  getCriteriaByProjectId(projectId: number): Observable<CriteriaProjectDTO[]> {
+    return this.http.get<CriteriaProjectDTO[]>(`/pri/api/criteria/project/${projectId}`, { withCredentials: true });
+  }
+
+
+  updateLevel(id: number, levelOfRealization: string): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}/level`, { levelOfRealization });
+  }
+
+  updateComment(id: number, comment: string): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}/comment`, { comment });
+  }
+
+  updateCommentAndLevel(id: number, data: { comment: string, levelOfRealization: string }): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}/comment-level`, data);
+  }
+
+  updateEnableForModification(id: number, enable: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}/enable`, { enable });
+  }
+
 }

@@ -4,6 +4,7 @@ import { User } from '../models/user.model';
 export interface UserState extends User {
     logged: boolean;
     lang: string;
+    token?: string;
 }
 
 export interface State extends AppState.State {

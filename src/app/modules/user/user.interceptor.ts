@@ -12,16 +12,24 @@ export class UserInterceptor implements HttpInterceptor {
         return this.store.select('user').pipe(
             first(),
             mergeMap(user => {
-                const modifiedReq = req.clone({
-                        setHeaders: {
-                            "index-number": user.indexNumber,
-                            "study-year": user.actualYear,
-                            "lang": user.lang,
-                        },
-                        withCredentials: true
-                });
-                return next.handle(modifiedReq);
+            // Załóżmy, że token jest w user.token
+            const headersConfig: { [name: string]: string } = {
+                'index-number': user.indexNumber,
+                'study-year': user.actualYear,
+                'lang': user.lang,
+            };
+
+            if (user.token) {
+                headersConfig['Authorization'] = `Bearer ${user.token}`;
+            }
+
+            const modifiedReq = req.clone({
+                setHeaders: headersConfig,
+                withCredentials: true
+            });
+            return next.handle(modifiedReq);
             })
-        )
+        );
     }
+
 }

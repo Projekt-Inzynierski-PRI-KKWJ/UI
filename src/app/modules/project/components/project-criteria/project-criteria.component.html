@@ -6,6 +6,20 @@
     </tr>
   </thead>
   <tbody>
-    
+    <tr *ngFor="let criterion of criteriaList">
+      <td>{{ criterion.criterium }}</td>
+      <td>
+        <select [value]="criterion.levelOfRealization"
+                (change)="onLevelChange($event, criterion.id!)">
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="PARTILLY_COMPLETED">Partially Completed</option>
+          <option value="COMPLETED">Completed</option>
+        </select>
+      </td>
+    </tr>
   </tbody>
 </table>
+
+<ng-template [ngIf]="criteriaList.length === 0">
+  <p>No criteria available.</p>
+</ng-template>
