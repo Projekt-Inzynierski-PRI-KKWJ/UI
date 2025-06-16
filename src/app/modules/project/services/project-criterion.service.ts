@@ -5,7 +5,7 @@ import { CriteriaProjectDTO } from '../models/project-criterion.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectCriteriaService {
-  private baseUrl = 'http://localhost:8080/pri/api/criteria-projects';
+  private baseUrl = '/pri/api/criteria-projects';
 
   constructor(private http: HttpClient) {}
 
@@ -14,7 +14,7 @@ export class ProjectCriteriaService {
    * Accepts an array of CriteriaProjectDTO.
    */
   addCriteria(criteriaList: CriteriaProjectDTO[]): Observable<any> {
-    return this.http.post(this.baseUrl, criteriaList).pipe(
+    return this.http.post(this.baseUrl, criteriaList,{ withCredentials: true }).pipe(
       retry(1),
       catchError((error: HttpErrorResponse) => {
         console.error('Error occurred while posting criteria:', error);
@@ -27,7 +27,7 @@ export class ProjectCriteriaService {
    * Optionally, fetch all criteria (per documentation).
    */
   getAllCriteria(): Observable<any> {
-    return this.http.get(this.baseUrl).pipe(
+    return this.http.get(this.baseUrl,{ withCredentials: true }).pipe(
       retry(1),
       catchError((error: HttpErrorResponse) => {
         console.error('Error fetching criteria list:', error);
@@ -37,24 +37,24 @@ export class ProjectCriteriaService {
   }
 
   getCriteriaByProjectId(projectId: number): Observable<CriteriaProjectDTO[]> {
-    return this.http.get<CriteriaProjectDTO[]>(`/pri/api/criteria/project/${projectId}`, { withCredentials: true });
+    return this.http.get<CriteriaProjectDTO[]>(`${this.baseUrl}/project/${projectId}`, { withCredentials: true });
   }
 
 
   updateLevel(id: number, levelOfRealization: string): Observable<void> {
-    return this.http.patch<void>(`${this.baseUrl}/${id}/level`, { levelOfRealization });
+    return this.http.patch<void>(`${this.baseUrl}/${id}/level`, { levelOfRealization },{ withCredentials: true });
   }
 
   updateComment(id: number, comment: string): Observable<void> {
-    return this.http.patch<void>(`${this.baseUrl}/${id}/comment`, { comment });
+    return this.http.patch<void>(`${this.baseUrl}/${id}/comment`, { comment },{ withCredentials: true });
   }
 
   updateCommentAndLevel(id: number, data: { comment: string, levelOfRealization: string }): Observable<void> {
-    return this.http.patch<void>(`${this.baseUrl}/${id}/comment-level`, data);
+    return this.http.patch<void>(`${this.baseUrl}/${id}/comment-level`, data,{ withCredentials: true });
   }
 
   updateEnableForModification(id: number, enable: boolean): Observable<void> {
-    return this.http.patch<void>(`${this.baseUrl}/${id}/enable`, { enable });
+    return this.http.patch<void>(`${this.baseUrl}/${id}/enable`, { enable },{ withCredentials: true });
   }
 
 }

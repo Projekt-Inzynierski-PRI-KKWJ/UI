@@ -58,6 +58,7 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   updateCriterionLevel(id: number, newLevel: string): Observable<any> {
     const url = `/pri/api/criteria-projects/${id}/level`;
     return this.http.patch(url, { levelOfRealization: newLevel });
+
   }
 
   updateCriterionComment(id: number, comment: string): void {
