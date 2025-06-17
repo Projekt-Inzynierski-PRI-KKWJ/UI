@@ -151,28 +151,31 @@
 
   </mat-tab>
 
-  <!-- Nowa zakładka: Criteria -->
+  <!-- Zakładka: Criteria -->
   <mat-tab label="Criteria">
-  <mat-tab-group>
-    <!-- Criteria - First Semester -->
-    <mat-tab label="First semester">
-      <div class="tab-content-container">
-        <project-criteria></project-criteria>
-      </div>
-    </mat-tab>
+    <mat-tab-group>
+      <!-- Criteria - First Semester -->
+      <mat-tab label="First semester">
+        <div class="tab-content-container">
+          <project-criteria [semester]="'FIRST'" [type]="'ALL'"></project-criteria>
+        </div>
+      </mat-tab>
 
-    <!-- Criteria - Second Semester -->
-    <mat-tab label="Second semester">
-      <div class="tab-content-container">
-        <project-criteria></project-criteria>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-</mat-tab>
+      <!-- Criteria - Second Semester -->
+      <mat-tab label="Second semester">
+        <div class="tab-content-container">
+          <project-criteria [semester]="'SECOND'" [type]="'ALL'"></project-criteria>
+        </div>
+      </mat-tab>
 
-</mat-tab-group>
-
-
+      <!-- Measurable Implementation Indicators -->
+      <mat-tab label="Measurable Implementation Indicators">
+        <div class="tab-content-container">
+          <project-criteria [type]="'MEASURABLE_IMPLEMENTATION_INDICATORS'"></project-criteria>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-tab>
 
 <div *ngIf="gradesShown && criteriaShown" class="grade-info mat-elevation-z8">
   <h2>Grade: {{grade}}</h2>

@@ -1,16 +1,19 @@
-<table class="grade-table">
+<table class="grade-table centered-table">
   <thead>
     <tr>
+      <th></th>
       <th class="criterion-title-column">Criterion</th>
       <th class="status-column">Status</th>
       <th class="type-column">Type</th>
+      <th class="comment-column">Comment</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let criterion of criteriaList">
-      <td>{{ criterion.criterium }}</td>
+    <tr *ngFor="let criterion of criteriaList; let i = index">
+      <td style="padding: 0;">{{ i + 1 }}</td>
+      <td style="text-align: start !important;">{{ criterion.criterium }}</td>
 
-      <!-- Level of Realization -->
       <td>
         <select [value]="criterion.levelOfRealization"
                 (change)="onLevelChange($event, criterion.id)">
@@ -20,19 +23,28 @@
         </select>
       </td>
 
-      <!-- Type -->
+      <td style="font-size: 16px !important;">
+        {{ getTypeLabel(criterion.type) }}
+      </td>
+
       <td>
-        <select [value]="criterion.type"
-                (change)="onTypeChange($event, criterion.id)">
-          <option value="REQUIRED">Required</option>
-          <option value="EXPECTED">Expected</option>
-          <option value="MEASURABLE_IMPLEMENTATION_INDICATORS">Indicators</option>
-        </select>
+        <textarea
+          [value]="criterion.comment || ''"
+          (blur)="onCommentChange($event, criterion.id)"
+          placeholder="Enter comment"
+          style="width: 100%; min-height: 40px; resize: vertical; padding: 4px;">
+        </textarea>
+      </td>
+
+      <td style="padding: 0;">
+        <button class="delete-button" (click)="openConfirmDialog(criterion.id!); $event.stopPropagation(); $event.preventDefault()">
+          <mat-icon style="margin: 0;">delete</mat-icon>
+        </button>
       </td>
     </tr>
   </tbody>
 </table>
 
 <ng-template [ngIf]="criteriaList.length === 0">
-  <p>No criteria available.</p>
+  <p style="text-align: center; margin-top: 100px;">No criteria available. Please add a new one.</p>
 </ng-template>

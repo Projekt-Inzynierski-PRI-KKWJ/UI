@@ -1,10 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ProjectCriteriaService } from '../../services/project-criterion.service';
 import { CriteriaProjectDTO } from '../../models/project-criterion.model';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'project-criteria',
@@ -12,6 +14,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./project-criteria.component.scss']
 })
 export class ProjectCriteriaComponent implements OnInit, OnDestroy {
+  @Input() semester?: 'FIRST' | 'SECOND';
+  @Input() type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS' | 'ALL' = 'ALL';
   projectId!: number;
   criteriaList: CriteriaProjectDTO[] = [];
   private unsubscribe$ = new Subject<void>();
@@ -19,7 +23,8 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private criteriaService: ProjectCriteriaService,
-    private http: HttpClient
+    private http: HttpClient,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -34,7 +39,11 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: (criteria: CriteriaProjectDTO[]) => {
-        this.criteriaList = criteria;
+        this.criteriaList = criteria.filter(c =>
+          (!this.semester || c.semester === this.semester) &&
+          (this.type === 'ALL' || c.type === this.type) &&
+          (!this.semester || c.type !== 'MEASURABLE_IMPLEMENTATION_INDICATORS')
+        );
       },
       error: (err) => {
         console.error('Error loading criteria:', err);
@@ -42,6 +51,36 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteCriterion(id?: number): void {
+    if (!id) {
+      console.warn('Tried to delete criterion with undefined ID.');
+      return;
+    }
+
+    this.http.delete(`/pri/api/criteria-projects/${id}`).subscribe({
+      next: () => {
+        console.log(`Criterion ${id} deleted.`);
+        this.loadCriteria();
+      },
+      error: err => {
+        console.error(`Error deleting criterion ${id}:`, err);
+      }
+    });
+  }
+
+  // Nowa metoda otwierająca dialog potwierdzenia usunięcia
+  openConfirmDialog(id: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: { message: 'Are you sure you want to delete this criterion?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.deleteCriterion(id);
+      }
+    });
+  }
 
   getStatusClass(status: string): string {
     switch (status) {
@@ -87,7 +126,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   updateCriterionLevel(id: number, newLevel: string): Observable<any> {
     const url = `/pri/api/criteria-projects/${id}/level`;
     return this.http.patch(url, { levelOfRealization: newLevel });
-
   }
 
   updateCriterionComment(id: number, comment: string): void {
@@ -136,6 +174,32 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
         console.error('Error updating level:', err);
       }
     });
+  }
+
+  onCommentChange(event: Event, id?: number): void {
+    const comment = (event.target as HTMLInputElement).value.trim();
+    if (!id) {
+      console.error('Missing criterion ID for comment update');
+      return;
+    }
+
+    this.criteriaService.updateComment(id, comment).subscribe({
+      next: () => console.log(`Updated comment for criterion ${id}`),
+      error: (err) => console.error('Error updating comment:', err)
+    });
+  }
+
+  getTypeLabel(type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS'): string {
+    switch (type) {
+      case 'REQUIRED':
+        return 'Required';
+      case 'EXPECTED':
+        return 'Expected';
+      case 'MEASURABLE_IMPLEMENTATION_INDICATORS':
+        return 'Indicators';
+      default:
+        return type;
+    }
   }
 
   ngOnDestroy(): void {
