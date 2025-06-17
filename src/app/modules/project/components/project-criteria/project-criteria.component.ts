@@ -176,6 +176,10 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
+  onToggleLock(id: number, newValue: boolean): void {
+    this.updateEnable(id, newValue);
+  }
+
   onCommentChange(event: Event, id?: number): void {
     const comment = (event.target as HTMLInputElement).value.trim();
     if (!id) {

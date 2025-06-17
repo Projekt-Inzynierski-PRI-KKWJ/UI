@@ -6,17 +6,20 @@
       <th class="status-column">Status</th>
       <th class="type-column">Type</th>
       <th class="comment-column">Comment</th>
+      <th class="lock-column">Lock</th> <!-- 🆕 Nowa kolumna -->
       <th></th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let criterion of criteriaList; let i = index">
       <td style="padding: 0;">{{ i + 1 }}</td>
-      <td style="text-align: start !important;">{{ criterion.criterium }}</td>
+
+      <td style="text-align: start !important; max-width: 400px;" class="break-text">{{ criterion.criterium }}</td>
 
       <td>
         <select [value]="criterion.levelOfRealization"
-                (change)="onLevelChange($event, criterion.id)">
+                (change)="onLevelChange($event, criterion.id)"
+                [disabled]="!criterion.enableForModification">
           <option value="IN_PROGRESS">In Progress</option>
           <option value="PARTIALLY_COMPLETED">Partially Completed</option>
           <option value="COMPLETED">Completed</option>
@@ -31,13 +34,26 @@
         <textarea
           [value]="criterion.comment || ''"
           (blur)="onCommentChange($event, criterion.id)"
+          [disabled]="!criterion.enableForModification"
           placeholder="Enter comment"
           style="width: 100%; min-height: 40px; resize: vertical; padding: 4px;">
         </textarea>
       </td>
 
+      <!-- 🆕 Kolumna Lock z checkboxem -->
+      <td style="text-align: center; display: flex; justify-content: center; align-items: center;">
+        <button mat-icon-button class="lock-button"
+                (click)="onToggleLock(criterion.id!, !criterion.enableForModification)"
+                [matTooltip]="criterion.enableForModification ? 'Click to lock' : 'Click to unlock'">
+          <mat-icon color="primary">
+            {{ criterion.enableForModification ? 'lock_open' : 'lock' }}
+          </mat-icon>
+        </button>
+      </td>
+
       <td style="padding: 0;">
-        <button class="delete-button" (click)="openConfirmDialog(criterion.id!); $event.stopPropagation(); $event.preventDefault()">
+        <button class="delete-button"
+                (click)="openConfirmDialog(criterion.id!); $event.stopPropagation(); $event.preventDefault()">
           <mat-icon style="margin: 0;">delete</mat-icon>
         </button>
       </td>

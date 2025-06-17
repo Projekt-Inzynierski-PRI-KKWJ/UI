@@ -23,11 +23,11 @@
     overflow: hidden;
 
         .criterion-title-column {
-            width: 400px;
+            max-width: 400px;
             box-sizing: border-box;
         }
 
-        .criterion-title-column, .status-column, .type-column, .comment-column {
+        .criterion-title-column, .status-column, .type-column, .comment-column, .lock-column {
             text-align: start;
             font-weight: 500;
             font-size: 20px;
@@ -260,4 +260,15 @@ textarea {
   justify-content: center;
   margin: 0 !important;
   color: rgb(209, 59, 59);
+}
+
+.lock-button {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.break-text {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
