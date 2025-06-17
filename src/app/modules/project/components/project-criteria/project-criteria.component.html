@@ -3,17 +3,30 @@
     <tr>
       <th class="criterion-title-column">Criterion</th>
       <th class="status-column">Status</th>
+      <th class="type-column">Type</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let criterion of criteriaList">
       <td>{{ criterion.criterium }}</td>
+
+      <!-- Level of Realization -->
       <td>
         <select [value]="criterion.levelOfRealization"
-                (change)="onLevelChange($event, criterion.id!)">
+                (change)="onLevelChange($event, criterion.id)">
           <option value="IN_PROGRESS">In Progress</option>
-          <option value="PARTILLY_COMPLETED">Partially Completed</option>
+          <option value="PARTIALLY_COMPLETED">Partially Completed</option>
           <option value="COMPLETED">Completed</option>
+        </select>
+      </td>
+
+      <!-- Type -->
+      <td>
+        <select [value]="criterion.type"
+                (change)="onTypeChange($event, criterion.id)">
+          <option value="REQUIRED">Required</option>
+          <option value="EXPECTED">Expected</option>
+          <option value="MEASURABLE_IMPLEMENTATION_INDICATORS">Indicators</option>
         </select>
       </td>
     </tr>

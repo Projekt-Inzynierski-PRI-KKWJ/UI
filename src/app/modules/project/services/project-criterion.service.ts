@@ -40,7 +40,6 @@ export class ProjectCriteriaService {
     return this.http.get<CriteriaProjectDTO[]>(`${this.baseUrl}/project/${projectId}`, { withCredentials: true });
   }
 
-
   updateLevel(id: number, levelOfRealization: string): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/${id}/level`, { levelOfRealization },{ withCredentials: true });
   }
@@ -56,5 +55,10 @@ export class ProjectCriteriaService {
   updateEnableForModification(id: number, enable: boolean): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/${id}/enable`, { enable },{ withCredentials: true });
   }
+
+  updateType(id: number, type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS'): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}/type`, { type }, { withCredentials: true });
+  }
+
 
 }

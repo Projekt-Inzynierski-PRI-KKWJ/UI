@@ -42,6 +42,7 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
+
   getStatusClass(status: string): string {
     switch (status) {
       case 'IN_PROGRESS':
@@ -53,6 +54,34 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
       default:
         return '';
     }
+  }
+
+  mapType(type: string): string {
+    switch (type) {
+      case 'REQUIRED': return 'Required';
+      case 'EXPECTED': return 'Expected';
+      case 'MEASURABLE_IMPLEMENTATION_INDICATORS': return 'Indicators';
+      default: return type;
+    }
+  }
+
+  onTypeChange(event: Event, id: number | undefined): void {
+    if (id === undefined) {
+      console.error('Missing criterion ID for type update');
+      return;
+    }
+
+    const target = event.target as HTMLSelectElement;
+    const newType = target.value as 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS';
+    this.criteriaService.updateType(id, newType).subscribe({
+      next: () => {
+        console.log(`Type updated for ID ${id}`);
+        this.loadCriteria();
+      },
+      error: err => {
+        console.error(`Error updating type:`, err);
+      }
+    });
   }
 
   updateCriterionLevel(id: number, newLevel: string): Observable<any> {
@@ -91,15 +120,23 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
-  onLevelChange(event: Event, id: number): void {
+  onLevelChange(event: Event, id: number | undefined): void {
+    if (id === undefined) {
+      console.error('Missing criterion ID for level update');
+      return;
+    }
+
     const target = event.target as HTMLSelectElement;
     const value = target.value;
-    this.criteriaService.updateLevel(id, value).subscribe(() => {
-      console.log(`Level updated for ID ${id}`);
+    this.criteriaService.updateLevel(id, value).subscribe({
+      next: () => {
+        console.log(`Level updated for ID ${id}`);
+      },
+      error: err => {
+        console.error('Error updating level:', err);
+      }
     });
   }
-
-  
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
