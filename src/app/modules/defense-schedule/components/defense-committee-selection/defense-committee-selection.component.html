@@ -15,7 +15,7 @@
 </div>
 
 <div class="selection-table-and-statistics">
-    <table class="committee-selection-table"> 
+    <table class="committee-selection-table">
         <tr>
             <th>Time</th>
             <th *ngFor="let supervisor of supervisors">{{ supervisor.initials }}</th>
@@ -23,11 +23,11 @@
         <tr *ngFor="let time of times">
             <td>{{ time }}</td>
             <td class="committee-selection"
-                [class.not-available]="!selectedSlots[supervisor.id][time].available" 
-                [class.chairperson]="isChairperson(selectedSlots[supervisor.id][time])" 
-                [class.project-assigned]="isProjectAssigned(time, selectedSlots[supervisor.id][time].committeeIdentifier)" 
-                [class.hovered]="hoveredSlots[supervisor.id] && hoveredSlots[supervisor.id][time] && user.role === 'COORDINATOR'" 
-                [class.last-selection]="lastSelectedSlots[supervisor.id] && lastSelectedSlots[supervisor.id][time]" 
+                [class.not-available]="!selectedSlots[supervisor.id][time].available"
+                [class.chairperson]="isChairperson(selectedSlots[supervisor.id][time])"
+                [class.project-assigned]="isProjectAssigned(time, selectedSlots[supervisor.id][time].committeeIdentifier)"
+                [class.hovered]="hoveredSlots[supervisor.id] && hoveredSlots[supervisor.id][time] && user.role === 'COORDINATOR'"
+                [class.last-selection]="lastSelectedSlots[supervisor.id] && lastSelectedSlots[supervisor.id][time]"
                 (mouseenter)="onMouseEnter(supervisor.id, time)"
                 (mousedown)="onMouseDown(supervisor.id, time)"
                 (mouseup)="onMouseUp(supervisor.id, time, $event)"
@@ -51,10 +51,10 @@
         <defense-committee-statistics [statistics]="statistics"></defense-committee-statistics>
         <br>
         <h3>Current phase: <b>{{currentPhase}}</b></h3>
-        <div *ngIf="user.role === 'COORDINATOR'"  class="buttons-container"> 
+        <div *ngIf="user.role === 'COORDINATOR'"  class="buttons-container">
             <button (click)="getDefenseSummary()" mat-button color="primary">Export summary</button>
-            <button (click)="openRegistration()" mat-button color="primary">Open registration</button>
-            <button (click)="closeRegistration()" mat-button color="primary">Close registration</button>
+            <button (click)="openRegistrationDialog()" mat-button color="primary">Open registration</button>
+            <button (click)="closeRegistrationDialog()" mat-button color="primary">Close registration</button>
         </div>
         <div *ngIf="user.role === 'COORDINATOR'" class="committee-config-container">
             <ng-container *ngFor="let assignment of chairpersonAssignment | keyvalue">
@@ -73,7 +73,7 @@
                 </div>
              </ng-container>
             <br>
-           
+
         </div>
     </div>
 </div>

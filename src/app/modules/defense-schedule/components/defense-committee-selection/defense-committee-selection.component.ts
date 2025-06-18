@@ -12,6 +12,8 @@ import { User } from 'src/app/modules/user/models/user.model';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/app.state';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { RegistrationDialogComponent } from './registration-dialog.component';
 
 interface SupervisorTimeReference {
   supervisor: string,
@@ -68,8 +70,8 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
   @HostListener('document:mousedown', ['$event'])
   onGlobalClick(event: MouseEvent): void {
      if (
-        this.slotMenu && 
-        !this.slotMenu.nativeElement.contains(event.target) && 
+        this.slotMenu &&
+        !this.slotMenu.nativeElement.contains(event.target) &&
         document.getElementsByClassName('cdk-overlay-container')[0].children.length === 0
       ) {
         // clicked outside => close dropdown list
@@ -82,6 +84,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
     private userService: UserService,
     private store: Store<State>,
     private _snackbar: MatSnackBar,
+    private dialog: MatDialog,
   )
   {
     this.userService.supervisors$.pipe(takeUntil(this.unsubscribe$)).subscribe(
@@ -112,11 +115,11 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
           let classroom = value;
           if(classroom === '') classroom = null;
           this.chairpersonAssignment[committee].classroom = classroom;
-          this.updateChairpersonAssignment(this.chairpersonAssignment[committee]) 
+          this.updateChairpersonAssignment(this.chairpersonAssignment[committee])
       })
     })
   }
-  
+
 
   ngOnChanges(): void {
     this.selectedSlots = this.defenseAssignment;
@@ -124,7 +127,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
       for(let supervisor of Object.keys(this.selectedSlots)){
         this.hoveredSlots[supervisor] = {};
         this.lastSelectedSlots[supervisor] = {};
-  
+
         for(let time of Object.keys(this.selectedSlots[supervisor])){
           if(this.times.indexOf(time) === -1){
             this.times.push(time);
@@ -150,7 +153,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
   updateChairpersonAssignment(chairpersonAssignment: ChairpersonAssignment){
     this.defenseScheduleService.updateChairpersonAssignment(chairpersonAssignment).pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        result => { 
+        result => {
           this.statistics = result.statistics;
           this.defenses = result.defenses;
         }
@@ -159,7 +162,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
 
   updateCommitteeSchedule(slots: {[key: string]: SupervisorDefenseAssignment}){
     this.defenseScheduleService.updateCommitteeSchedule(slots).pipe(takeUntil(this.unsubscribe$)).subscribe(
-      result => { 
+      result => {
         this.statistics = result.statistics;
         this.defenses = result.defenses;
       }
@@ -183,7 +186,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
       for(let supervisor of Object.keys(this.selectedSlots)){
         this.hoveredSlots[supervisor] = {};
         this.lastSelectedSlots[supervisor] = {};
-  
+
         for(let time of Object.keys(this.selectedSlots[supervisor])){
           if(this.selectedSlots[supervisor][time].committeeIdentifier === committeeIdentifier){
             this.selectedSlots[supervisor][time].committeeIdentifier = null;
@@ -210,9 +213,9 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
         }
         this.lastSelectedSlots[supervisorId][t].committeeIdentifier = null
         this.selectedSlots[supervisorId][t].committeeIdentifier = null
-        
+
     }
-  
+
     this.updateCommitteeSchedule(this.lastSelectedSlots[supervisorId])
 
     for(let supervisor of Object.keys(this.selectedSlots)){
@@ -268,13 +271,13 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
         this.hoveredSlots[supervisor][time] = true;
       }
       this.over = {supervisor, time};
-  
+
       const startIndex = this.times.indexOf(this.start.time);
       const overIndex = this.times.indexOf(this.over.time);
-  
+
       for(let t of Object.keys(this.hoveredSlots[supervisor])){
         const timeIndex = this.times.indexOf(t);
-  
+
         if(timeIndex > startIndex && timeIndex > overIndex){
           this.hoveredSlots[supervisor][t] = false;
         }
@@ -302,7 +305,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
   openSelectionMenu(){
     this.slotsSelected = true;
   }
-  
+
   onMouseUp(supervisor: string, time: string, event: MouseEvent){
     this.end = {supervisor, time};
     const startIndex = this.times.indexOf(this.start.time);
@@ -315,7 +318,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
 
     if(this.end.supervisor === this.start.supervisor){
       this.slotsSelected = true;
-      
+
       for(let t of Object.keys(this.selectedSlots[supervisor])){
         const timeIndex = this.times.indexOf(t);
         const committeeIdentifier = this.selectedSlots[supervisor][t].committeeIdentifier;
@@ -326,12 +329,12 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
           this.lastSelectedSlots[supervisor][t] = selectedSlotDeepCopy;
         }
       }
-    
+
       if(Object.keys(this.lastSelectedSlots[supervisor]).length !== countAlreadySelectedSlots){
         this.updateCommitteeSchedule(this.lastSelectedSlots[supervisor]);
       }
 
-      
+
       let countSameCommittee = 0;
       for(let t of Object.keys(this.lastSelectedSlots[supervisor])){
         if(this.lastSelectedSlots[supervisor][t].committeeIdentifier === this.selectedSlots[supervisor][this.start.time].committeeIdentifier){
@@ -344,7 +347,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
 
       this.lastSelectedSupervisor = this.start.supervisor;
     }
-    
+
     this.resetSlotsSelection();
   }
 
@@ -375,12 +378,12 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
           }
         })
       }
-    }   
+    }
   }
 
   isProjectAssigned(time: string, committeeIdentifier: string | null): boolean {
     const defense = this.defenses?.find(defense => defense.date === this.date && defense.time === time && defense.committeeIdentifier === committeeIdentifier);
-    return defense !== undefined && defense.projectId !== null   
+    return defense !== undefined && defense.projectId !== null
   }
 
   openRegistration(){
@@ -392,7 +395,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
     )
   }
 
- 
+
   closeRegistration(){
     this.defenseScheduleService.closeRegistration().pipe(takeUntil(this.unsubscribe$)).subscribe(
       phase =>  {
@@ -407,6 +410,29 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
     this.unsubscribe$.complete()
   }
 
+  openRegistrationDialog(): void {
+  const dialogRef = this.dialog.open(RegistrationDialogComponent, {
+    width: '800px',
+    data: { templateName: 'PROJECT_DEFENSE_REGISTRATION_OPEN'}
+  });
 
+  dialogRef.afterClosed().subscribe(result => {
+    if (result === 'send') {
+      this.openRegistration();
+    }
+  });
+}
 
+  closeRegistrationDialog(): void {
+  const dialogRef = this.dialog.open(RegistrationDialogComponent, {
+    width: '800px',
+    data: { templateName: 'PROJECT_DEFENSE_REGISTRATION_CLOSE'}
+  });
+
+    dialogRef.afterClosed().subscribe(result => {
+    if (result === 'send') {
+      this.closeRegistration();
+    }
+  });
+}
 }

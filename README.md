@@ -59,3 +59,58 @@ Session:
 UI components:
 
     The application uses Angular Material UI components; all modules import the required Material's modules separately.
+
+# Local run for debug:
+## 🖥️ BACKEND
+
+1. Create a file named `application.properties` and copy the contents from `application-local.properties`.
+2. Run `PriApplication` in **debug mode** or use **Run**.
+3. The application should start without any issues.
+
+> ⚠️ **WARNING:**  
+> Make sure the **database is running**, and that the database address in `application.properties` is correct.
+
+> ⚠️ **TIP (Optional Authentication Bypass):**  
+> If you want to run the backend **without authentication**, set the following property:
+> ```properties
+> auth.enabled=false
+> ```
+
+---
+
+## 🌐 FRONTEND
+
+To run the frontend locally **with a non-Docker backend** (for easier debugging):
+
+1. Use the `nginx-local.conf` configuration file.
+2. With Docker installed, run the following command:
+   ```bash
+   docker build --build-arg NGINX_CONF=nginx-local.conf -t my-app .
+   ```
+3. (To build with default config)
+   ```bash
+   docker build --build-arg NGINX_CONF=nginx.conf -t my-app .
+   ```
+4. Run the container:
+   ```bash
+   docker run -p 80:80 my-app
+   ```
+5. Open in browser:
+   ```
+   http://localhost:80/login
+   ```
+6. Log in using your credentials.
+
+---
+
+## 🛠️ Useful Docker Commands
+
+1. **Enter a running container:**
+   ```bash
+   docker exec -it <container_name> bash
+   ```
+
+2. **Run a CURL request inside a container:**
+   ```bash
+   docker exec -it <container_name> curl <your_endpoint>
+   ```

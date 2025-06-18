@@ -54,6 +54,7 @@ export class DataFeedComponent implements OnDestroy {
     this.uploadFile(event, 'csv', 'students');
   }
 
+
   uploadSupervisors(event: any) {
     this.uploadFile(event, 'csv', 'supervisors');
   }
