@@ -67,10 +67,38 @@
     <ng-container *ngFor="let externalLinkColumnHeader of externalLinkColumnHeaders; let i = index;" [matColumnDef]="externalLinkColumnHeader">
       <th class="link-header" mat-header-cell *matHeaderCellDef> {{externalLinkColumnHeader}} </th>
       <td mat-cell *matCellDef="let element">
-          <div *ngIf="element?.externalLinks && element?.externalLinks[i]" class="link" >
-              <a target="_blank" [href]="element.externalLinks[i]?.url" *ngIf="element.externalLinks[i]?.url" mat-icon-button>
+          <div *ngIf="getSortedExternalLinks(element) && getSortedExternalLinks(element)[i]" class="link" >
+              <!-- Only show if URL exists -->
+              <a target="_blank" 
+                 [href]="getSortedExternalLinks(element)[i]?.url" 
+                 *ngIf="getSortedExternalLinks(element)[i]?.url && (getSortedExternalLinks(element)[i]?.linkType === 'EXTERNAL' || !getSortedExternalLinks(element)[i]?.linkType)" 
+                 mat-icon-button>
                   <mat-icon>link</mat-icon>
               </a>
+              
+              <!-- Only show if file exists -->
+              <a (click)="downloadExternalLinkFile(element.id, getSortedExternalLinks(element)[i]?.id)" 
+                 *ngIf="getSortedExternalLinks(element)[i]?.linkType === 'INTERNAL' && getSortedExternalLinks(element)[i]?.originalFileName"
+                 mat-icon-button
+                 style="cursor: pointer;">
+                  <mat-icon>download</mat-icon>
+              </a>
+              
+              <!-- Show greyed out if no link -->
+              <mat-icon *ngIf="!getSortedExternalLinks(element)[i]?.url && (getSortedExternalLinks(element)[i]?.linkType === 'EXTERNAL' || !getSortedExternalLinks(element)[i]?.linkType)"
+                        mat-icon-button 
+                        style="color: #ccc; cursor: not-allowed;" 
+                        matTooltip="No URL provided">
+                  link_off
+              </mat-icon>
+              
+              <!-- Show greyed out if no file -->
+              <mat-icon *ngIf="getSortedExternalLinks(element)[i]?.linkType === 'INTERNAL' && !getSortedExternalLinks(element)[i]?.originalFileName"
+                        mat-icon-button 
+                        style="color: #ccc; cursor: not-allowed;" 
+                        matTooltip="No file uploaded">
+                  link_off
+              </mat-icon>
           </div>
       </td>
     </ng-container>

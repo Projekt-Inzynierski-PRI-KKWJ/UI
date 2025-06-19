@@ -18,6 +18,7 @@ import { EvaluationCards, PhaseChangeResponse } from '../../models/grade.model';
 import { GradeService } from '../../services/grade.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AreYouSureDialogComponent } from 'src/app/modules/shared/are-you-sure-dialog/are-you-sure-dialog.component';
+import { ExternalLinkService } from '../../services/external-link.service';
 
 enum ROLE {
   FRONTEND = 'front-end',
@@ -66,7 +67,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private router: Router,
     private _snackbar: MatSnackBar,
-    private gradeService: GradeService
+    private gradeService: GradeService,
+    private externalLinkService: ExternalLinkService
   ){}
    
   ngOnInit(): void {
@@ -276,6 +278,29 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     this.router.navigate([{outlets: {modal: null}}]);
   }
 
+  downloadExternalLinkFile(externalLinkId: string): void {
+    if (this.data?.id) {
+      const downloadUrl = this.externalLinkService.getExternalLinkFileDownloadUrl(
+        this.data.id, 
+        externalLinkId
+      );
+      
+      // Create a temporary a element
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      
+      // Get filename from external link data
+      const externalLink = this.data.externalLinks?.find(link => link.id === externalLinkId);
+      if (externalLink?.originalFileName) {
+        link.download = externalLink.originalFileName;
+      }
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+  
   get selectedSemester(): number {
     for(let semester in this.evaluationCards){
       for(let phase in this.evaluationCards[semester]){
@@ -308,6 +333,13 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
    return this.user.acceptedProjects.includes(this.data.id!) || 
           this.user.role === 'COORDINATOR' || 
           this.user.role === 'SUPERVISOR'
+  }
+
+  get sortedExternalLinks() {
+    if (!this.data?.externalLinks) {
+      return [];
+    }
+    return [...this.data.externalLinks].sort((a, b) => a.name.localeCompare(b.name));
   }
   
   get showUnacceptButton(){
