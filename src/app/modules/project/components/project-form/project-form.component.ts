@@ -269,6 +269,12 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
 
   onExternalLinkFileSelect(event: any, externalLinkId: string): void {
     const file: File = event.target.files[0];
+    if (file) {
+      this.externalLinkFiles[externalLinkId] = file;
+      console.log(`File selected for external link ${externalLinkId}:`, file.name);
+    } else {
+      console.error(`No file selected for external link ${externalLinkId}`);
+    }
   }
 
   downloadExternalLinkFile(externalLinkId: string): void {

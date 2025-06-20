@@ -57,8 +57,6 @@ export class ProjectListComponent implements OnDestroy, OnInit{
           this.externalLinkColumnHeaders = externalLinkColumnHeaders
           this.columns = filters.columns;
 
-          console.log(this.columns)
-
           const filteredProjects = mappedProjects.slice().filter(
             project => 
                 this.filterProjectBySearchValue(project, filters.searchValue) && 
