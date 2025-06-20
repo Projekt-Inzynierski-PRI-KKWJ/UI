@@ -365,9 +365,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       )
       ||
       (this.user.role === 'COORDINATOR')
-      ||
-      ((this.user.role === 'SUPERVISOR') &&
-      this.user.acceptedProjects.includes(this.data.id!))
     ){
       return true
     } else {
