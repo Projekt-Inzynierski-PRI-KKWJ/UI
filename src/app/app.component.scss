@@ -154,6 +154,7 @@
   padding-bottom: 6px;
   padding-top: 6px;
   border-radius: 8px;
+  border: 2px solid transparent;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
 
   img {
@@ -167,4 +168,9 @@
   img:hover {
     transform: translateY(-2px);
   }
+}
+
+.lang-switcher img.lang-selected {
+  border: 2px solid white;
+  opacity: 1;
 }

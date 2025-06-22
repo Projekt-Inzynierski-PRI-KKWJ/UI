@@ -7,9 +7,21 @@
       <h4 class="app-name translate" data-translate="app_name">{{ appName }}</h4>
     </div>
     <div class="lang-switcher">
-      <img src="../assets/flag_pl.png" (click)="changeLanguage('pl')" alt="Polski" title="Polski"/>
-      <img src="../assets/flag_us.png" (click)="changeLanguage('en')" alt="English" title="English"/>
-    </div>
+    <img
+      src="../assets/flag_pl.png"
+      alt="Polski"
+      title="Polski"
+      (click)="changeLanguage('pl')"
+      [ngClass]="{ 'lang-selected': language === 'pl' }"
+    />
+    <img
+      src="../assets/flag_us.png"
+      alt="English"
+      title="English"
+      (click)="changeLanguage('en')"
+      [ngClass]="{ 'lang-selected': language === 'en' }"
+    />
+  </div>
 
     <div class="user-panel" *ngIf="isLogged">
       <mat-form-field *ngIf="availableStudyYears.length > 1">
