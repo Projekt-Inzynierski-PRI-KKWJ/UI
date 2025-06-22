@@ -1,0 +1,23 @@
+{
+    "app_name": "PRI",
+    "project_groups": "Grupy projektowe",
+    "data_feed": "Źródło danych",
+    "defense_schedule": "Harmonogram obron",
+    "logout": "Wyloguj się",
+    "study_year": "Rok studiów",
+    "project_details": "Szczegóły projektu",
+    "project_list": "Lista projektów",
+    "add_criteria": "Dodaj kryteria",
+    "criteria_title": "Tytuł kryteriów",
+    "status": "Status",
+    "to_do": "Do zrobienia",
+    "partially_completed": "Częściowo zrealizowane",
+    "completed": "Zrealizowane",
+    "semester": "Semestr",
+    "type": "Typ",
+    "required": "Wymagane",
+    "expected": "Oczekiwane",
+    "indicator": "Wskaźnik realizacji",
+    "add_criteria_button": "Dodaj kryteria",
+    "submit": "Zatwierdź"
+}
