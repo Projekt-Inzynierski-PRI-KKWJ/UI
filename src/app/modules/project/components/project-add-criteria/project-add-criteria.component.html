@@ -1,41 +1,42 @@
 <div class="back" (click)="navigateBack()">
   <mat-icon>arrow_back</mat-icon>
-  {{ comingFromDetailsPage ? 'Project Details' : 'Project List' }}
+  <span class="translate" [attr.data-translate]="comingFromDetailsPage ? 'project_details' : 'project_list'">
+    {{ comingFromDetailsPage ? 'Project Details' : 'Project List' }}
+  </span>
 </div>
 
-<h2>Add criteria</h2>
+<h2 class="translate" data-translate="add_criteria">
+  <span class="translate-text">Add criteria</span>
+</h2>
 
 <form [formGroup]="projectCriteria" (ngSubmit)="onSubmit()">
 
   <div formArrayName="criteriaList">
     <div *ngFor="let criteriaGroup of criteriaGroups; let i = index" [formGroupName]="i" class="fieldContainer">
       <div class="criteriaContainer">
-        
-        <!-- Criterium Input -->
+
         <mat-form-field appearance="fill">
-          <mat-label>Criteria title</mat-label>
+          <mat-label class="translate" data-translate="criteria_title">Criteria title</mat-label>
           <input matInput formControlName="criterium" />
           <mat-error *ngIf="criteriaGroup.get('criterium')?.invalid">
             {{ getErrorMessage('criterium', criteriaGroup) }}
           </mat-error>
         </mat-form-field>
 
-        <!-- Level of Realization -->
         <mat-form-field appearance="fill">
-          <mat-label>Status</mat-label>
+          <mat-label class="translate" data-translate="status">Status</mat-label>
           <mat-select formControlName="levelOfRealization">
-            <mat-option value="IN_PROGRESS">To do</mat-option>
-            <mat-option value="PARTIALLY_COMPLETED">Partially Completed</mat-option>
-            <mat-option value="COMPLETED">Completed</mat-option>
+            <mat-option value="IN_PROGRESS" class="translate" data-translate="to_do">To do</mat-option>
+            <mat-option value="PARTIALLY_COMPLETED" class="translate" data-translate="partially_completed">Partially Completed</mat-option>
+            <mat-option value="COMPLETED" class="translate" data-translate="completed">Completed</mat-option>
           </mat-select>
           <mat-error *ngIf="criteriaGroup.get('levelOfRealization')?.invalid">
             {{ getErrorMessage('levelOfRealization', criteriaGroup) }}
           </mat-error>
         </mat-form-field>
 
-        <!-- Semester -->
         <mat-form-field appearance="fill">
-          <mat-label>Semester</mat-label>
+          <mat-label class="translate" data-translate="semester">Semester</mat-label>
           <mat-select formControlName="semester">
             <mat-option *ngFor="let s of semesters" [value]="s">{{ s }}</mat-option>
           </mat-select>
@@ -44,17 +45,15 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Type -->
         <mat-form-field appearance="fill">
-          <mat-label>Type</mat-label>
+          <mat-label class="translate" data-translate="type">Type</mat-label>
           <mat-select formControlName="type">
-            <mat-option value="REQUIRED">Required</mat-option>
-            <mat-option value="EXPECTED">Expected</mat-option>
-            <mat-option value="MEASURABLE_IMPLEMENTATION_INDICATORS">Implementation Indicator</mat-option>
+            <mat-option value="REQUIRED" class="translate" data-translate="required">Required</mat-option>
+            <mat-option value="EXPECTED" class="translate" data-translate="expected">Expected</mat-option>
+            <mat-option value="MEASURABLE_IMPLEMENTATION_INDICATORS" class="translate" data-translate="indicator">Implementation Indicator</mat-option>
           </mat-select>
         </mat-form-field>
 
-        <!-- Remove Button -->
         <button mat-icon-button color="warn" type="button" (click)="removeCriteria(i)" *ngIf="criteriaList.length > 1">
           <mat-icon>delete</mat-icon>
         </button>
@@ -62,16 +61,14 @@
     </div>
   </div>
 
-  <!-- Add Criteria Button -->
   <button type="button" mat-stroked-button color="primary" (click)="addCriteria()">
-    <mat-icon>add</mat-icon> Add Criteria
+    <mat-icon>add</mat-icon>
+    <span class="translate" data-translate="add_criteria_button">Add Criteria</span>
   </button>
 
-  <!-- Submit Button -->
   <div class="buttons-container">
     <button color="primary" type="submit" mat-raised-button [disabled]="!projectCriteria.valid" cdkFocusInitial>
-      Submit
+      <span class="translate" data-translate="submit">Submit</span>
     </button>
   </div>
-
 </form>
