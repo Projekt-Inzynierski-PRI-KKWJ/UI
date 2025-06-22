@@ -7,8 +7,8 @@
       <h4 class="app-name translate" data-translate="app_name">{{ appName }}</h4>
     </div>
     <div class="lang-switcher">
-      <img src="../assets/flag_pl.png" width="24" (click)="changeLanguage('pl')" alt="Polski" />
-      <img src="../assets/flag_us.png" width="24" (click)="changeLanguage('en')" alt="English" />
+      <img src="../assets/flag_pl.png" (click)="changeLanguage('pl')" alt="Polski" title="Polski"/>
+      <img src="../assets/flag_us.png" (click)="changeLanguage('en')" alt="English" title="English"/>
     </div>
 
     <div class="user-panel" *ngIf="isLogged">
