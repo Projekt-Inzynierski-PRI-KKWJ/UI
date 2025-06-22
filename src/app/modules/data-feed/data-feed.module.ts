@@ -15,6 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DataFeedRoutingModule } from './data-feed-routing.module';
 import { DataFeedComponent } from './data-feed.component';
 
@@ -40,6 +41,7 @@ import { DataFeedComponent } from './data-feed.component';
     MatSortModule,
     MatRadioModule,
     MatSnackBarModule,
+    MatProgressSpinnerModule,
     DataFeedRoutingModule
   ]
 })
