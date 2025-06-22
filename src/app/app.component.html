@@ -4,11 +4,16 @@
       <button *ngIf="isLogged" mat-icon-button (click)="snav.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
-      <h4 class="app-name">{{ appName }}</h4>
+      <h4 class="app-name translate" data-translate="app_name">{{ appName }}</h4>
     </div>
+    <div class="lang-switcher">
+      <img src="../assets/flag_pl.png" width="24" (click)="changeLanguage('pl')" alt="Polski" />
+      <img src="../assets/flag_us.png" width="24" (click)="changeLanguage('en')" alt="English" />
+    </div>
+
     <div class="user-panel" *ngIf="isLogged">
       <mat-form-field *ngIf="availableStudyYears.length > 1">
-        <mat-label>Study year</mat-label>
+        <mat-label class="translate" data-translate="study_year_label">Study year</mat-label>
         <mat-select (selectionChange)="studyYearChanged($event)" [(ngModel)]="studyYear">
           <mat-option *ngFor="let year of availableStudyYears" [value]="year.value">{{ year.text }}</mat-option>
         </mat-select>
@@ -22,30 +27,34 @@
       </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="logout()" mat-icon-button>
-          <span>Log out</span>
+          <span class="translate" data-translate="logout">Log out</span>
         </button>
       </mat-menu>
     </div>
-
-    
   </mat-toolbar>
 
   <mat-sidenav-container>
     <mat-sidenav #snav [mode]="mobileQuery?.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery?.matches" fixedTopGap="56">
       <mat-nav-list>
-        <a mat-list-item (click)="navigateTo('projects')">Project groups</a>
-        <a *ngIf="isCoordinator" mat-list-item (click)="navigateTo('data-feed')">Data feed</a>
-        <a mat-list-item (click)="navigateTo('defense-schedule')">Defense schedule</a>
+        <a mat-list-item (click)="navigateTo('projects')" class="translate" data-translate="project_groups">
+          <span class="translate-text">Project groups</span>
+        </a>
+        <a *ngIf="isCoordinator" mat-list-item (click)="navigateTo('data-feed')" class="translate" data-translate="data_feed">
+          <span class="translate-text">Data feed</span>
+        </a>
+        <a mat-list-item (click)="navigateTo('defense-schedule')" class="translate" data-translate="defense_schedule">
+          <span class="translate-text">Defense schedule</span>
+        </a>
       </mat-nav-list>
     </mat-sidenav>
 
     <mat-sidenav-content>
       <div [class.hidden]="isModalOpen" class="content-container">
-          <router-outlet></router-outlet>
+        <router-outlet></router-outlet>
       </div>
       <div *ngIf="isModalOpen" class="modal-content-container">
         <router-outlet name="modal"></router-outlet>
-    </div>
+      </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

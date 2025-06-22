@@ -142,3 +142,18 @@
         min-height: 100%;
     }    
 }
+
+.lang-switcher {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  img {
+    cursor: pointer;
+    transition: transform 0.2s;
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
