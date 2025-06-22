@@ -54,7 +54,7 @@
 <h2>Study Year Data Export</h2>
 <div class="study-year-export">
   <div class="section-header">
-    <p>Export complete study year data including projects, students, grades, links, and metadata as JSON files.</p>
+    <p>Export complete study year data including projects, students, grades, links, and metadata</p>
   </div>
   
   <div *ngIf="availableStudyYears.length === 0" class="no-data">
@@ -75,15 +75,17 @@
       </ng-container>        <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
           <td mat-cell *matCellDef="let studyYear" class="actions-cell">
-          <button 
-            mat-raised-button 
-            color="primary" 
-            (click)="exportStudyYearData(studyYear)"
-            class="export-btn"
-          >
-            <mat-icon>download</mat-icon>
-            <span>Export</span>
-          </button>
+          <div class="action-buttons">
+            <button 
+              mat-stroked-button 
+              color="primary" 
+              (click)="exportStudyYearDataAsPdf(studyYear)"
+              class="export-btn"
+            >
+              <mat-icon>picture_as_pdf</mat-icon>
+              <span>PDF</span>
+            </button>
+          </div>
         </td>
       </ng-container>
 
