@@ -21,59 +21,77 @@
     <div class="links-and-defense-data">
       <div class="links">
         <div class="link" *ngFor="let externalLink of sortedExternalLinks">
-          <!-- Available URL link -->
-          <div *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && externalLink.url">
-              <a target="_blank" 
-                  [href]="externalLink.url" 
-                  mat-icon-button>
-                  <mat-icon>link</mat-icon>
-              </a>
+          <div class="link-main">
+            <!-- Available URL link -->
+            <div *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && externalLink.url">
+                <a target="_blank" 
+                    [href]="externalLink.url" 
+                    mat-icon-button>
+                    <mat-icon>link</mat-icon>
+                </a>
+            </div>
+            
+            <!-- Available file link -->
+            <div *ngIf="externalLink.linkType === 'INTERNAL' && externalLink.originalFileName">
+                <a (click)="downloadExternalLinkFile(externalLink.id)" 
+                    mat-icon-button
+                    style="cursor: pointer;">
+                    <mat-icon>download</mat-icon>
+                </a>
+            </div>
+            
+            <!-- Unavailable URL link -->
+            <div *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && !externalLink.url">
+                <a mat-icon-button 
+                   class="unavailable" 
+                   style="pointer-events: none;"
+                   matTooltip="No URL provided">
+                    <mat-icon>link_off</mat-icon>
+                </a>
+            </div>
+            
+            <!-- Unavailable file link -->
+            <div *ngIf="externalLink.linkType === 'INTERNAL' && !externalLink.originalFileName">
+                <a mat-icon-button 
+                   class="unavailable" 
+                   style="pointer-events: none;"
+                   matTooltip="No file uploaded">
+                    <mat-icon>link_off</mat-icon>
+                </a>
+            </div>
+            
+            <!-- Available URL link name -->
+            <a *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && externalLink.url" 
+               target="_blank" 
+               [href]="externalLink.url">{{ externalLink.name }}</a>
+            
+            <!-- Available file link name -->
+            <a *ngIf="externalLink.linkType === 'INTERNAL' && externalLink.originalFileName" 
+               (click)="downloadExternalLinkFile(externalLink.id)"
+               style="cursor: pointer;">{{ externalLink.name }}</a>
+            
+            <!-- Unavailable link name -->
+            <a *ngIf="(!externalLink.url && (externalLink.linkType === 'EXTERNAL' || !externalLink.linkType)) || 
+                      (!externalLink.originalFileName && externalLink.linkType === 'INTERNAL')"
+               class="unavailable"
+               style="pointer-events: none;">{{ externalLink.name }}</a>
+
+            <!-- History Toggle Button -->
+            <button mat-icon-button 
+                    class="history-toggle"
+                    (click)="toggleHistory(externalLink.id)"
+                    matTooltip="Toggle change history">
+                <mat-icon>{{ isHistoryExpanded(externalLink.id) ? 'expand_less' : 'history' }}</mat-icon>
+            </button>
           </div>
-          
-          <!-- Available file link -->
-          <div *ngIf="externalLink.linkType === 'INTERNAL' && externalLink.originalFileName">
-              <a (click)="downloadExternalLinkFile(externalLink.id)" 
-                  mat-icon-button
-                  style="cursor: pointer;">
-                  <mat-icon>download</mat-icon>
-              </a>
+
+          <!-- History Component -->
+          <div *ngIf="isHistoryExpanded(externalLink.id)" class="history-section">
+            <external-link-history 
+              [externalLinkId]="externalLink.id"
+              [externalLinkName]="externalLink.name">
+            </external-link-history>
           </div>
-          
-          <!-- Unavailable URL link -->
-          <div *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && !externalLink.url">
-              <a mat-icon-button 
-                 class="unavailable" 
-                 style="pointer-events: none;"
-                 matTooltip="No URL provided">
-                  <mat-icon>link_off</mat-icon>
-              </a>
-          </div>
-          
-          <!-- Unavailable file link -->
-          <div *ngIf="externalLink.linkType === 'INTERNAL' && !externalLink.originalFileName">
-              <a mat-icon-button 
-                 class="unavailable" 
-                 style="pointer-events: none;"
-                 matTooltip="No file uploaded">
-                  <mat-icon>link_off</mat-icon>
-              </a>
-          </div>
-          
-          <!-- Available URL link name -->
-          <a *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && externalLink.url" 
-             target="_blank" 
-             [href]="externalLink.url">{{ externalLink.name }}</a>
-          
-          <!-- Available file link name -->
-          <a *ngIf="externalLink.linkType === 'INTERNAL' && externalLink.originalFileName" 
-             (click)="downloadExternalLinkFile(externalLink.id)"
-             style="cursor: pointer;">{{ externalLink.name }}</a>
-          
-          <!-- Unavailable link name -->
-          <a *ngIf="(!externalLink.url && (externalLink.linkType === 'EXTERNAL' || !externalLink.linkType)) || 
-                    (!externalLink.originalFileName && externalLink.linkType === 'INTERNAL')"
-             class="unavailable"
-             style="pointer-events: none;">{{ externalLink.name }}</a>
         </div>  
       </div>
       <div class="defense-data">

@@ -37,6 +37,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatMenuModule} from '@angular/material/menu';
 import { SharedModule } from '../shared/shared.module';
 import { RadioCriterionSelectComponent } from './components/project-grade/components/radio-criterion-select/radio-criterion-select.component';
+import { ExternalLinkHistoryComponent } from './components/external-link-history/external-link-history.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { RadioCriterionSelectComponent } from './components/project-grade/compon
     SupervisorAvailabilityFormComponent,
     ProjectRemoveDialogComponent,
     RadioCriterionSelectComponent,
+    ExternalLinkHistoryComponent,
   ],
   imports: [
     CommonModule,

@@ -125,6 +125,26 @@
         margin-bottom: 20px;
         background-color: #fafafa;
 
+        .external-link-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            
+            .external-link-title {
+                flex: 1;
+            }
+            
+            .history-toggle {
+                opacity: 0.7;
+                transition: opacity 0.2s;
+                
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+
         h3 {
             margin: 0 0 5px 0;
             color: #333;
@@ -136,6 +156,12 @@
             margin: 0 0 15px 0;
             font-size: 12px;
             color: #666;
+        }
+
+        .history-section {
+            margin-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 15px;
         }
 
         // Date information styling
