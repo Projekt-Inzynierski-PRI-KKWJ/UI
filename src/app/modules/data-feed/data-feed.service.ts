@@ -81,4 +81,24 @@ export class DataFeedService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+    getAvailableStudyYearsForExport(): Observable<string[]> {
+        return this.http
+            .get<string[]>(`./pri/export/study-year`)
+            .pipe(
+                retry(3),
+                catchError(
+                    (err: HttpErrorResponse) => throwError(() => err))
+            )
+    }
+
+    exportStudyYearData(studyYear: string): Observable<any> {
+        return this.http
+            .get<HttpResponse<Blob>>(`./pri/export/study-year/${studyYear}`, this.setHttpHeadersForFile())
+            .pipe(
+                retry(3),
+                catchError(
+                    (err: HttpErrorResponse) => throwError(() => err))
+            )
+    }
 }
