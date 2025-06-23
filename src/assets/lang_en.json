@@ -1,0 +1,23 @@
+{
+    "app_name": "PRI",
+    "project_groups": "Project groups",
+    "data_feed": "Data feed",
+    "defense_schedule": "Defense schedule",
+    "logout": "Log out",
+    "study_year": "Study year",
+    "project_details": "Project Details",
+    "project_list": "Project List",
+    "add_criteria": "Add criteria",
+    "criteria_title": "Criteria title",
+    "status": "Status",
+    "to_do": "To do",
+    "partially_completed": "Partially Completed",
+    "completed": "Completed",
+    "semester": "Semester",
+    "type": "Type",
+    "required": "Required",
+    "expected": "Expected",
+    "indicator": "Implementation Indicator",
+    "add_criteria_button": "Add Criteria",
+    "submit": "Submit"
+}

@@ -70,6 +70,11 @@ export class DataFeedComponent implements OnDestroy {
   }
 
   uploadFiles() {
+    if (!this.studentsFile && !this.supervisorsFile && !this.criteriaFile) {
+      this._snackBar.open('No files selected for upload.', 'close', { duration: 4000 });
+      return;
+    }
+
     if (this.studentsFile) {
       this.dataFeedService.uploadStudents(this.studentsFile).pipe(takeUntil(this.unsubscribe$)).subscribe({
         next: () => {
@@ -105,33 +110,36 @@ export class DataFeedComponent implements OnDestroy {
   }
 
   exportStudents() {
-    this.dataFeedService.exportStudents().pipe(takeUntil(this.unsubscribe$)).subscribe(
-      (file: HttpResponse<Blob>) => {
+    this.dataFeedService.exportStudents().pipe(takeUntil(this.unsubscribe$)).subscribe({
+      next: (file: HttpResponse<Blob>) => {
         if (file?.body) {
           saveAs(file.body!, 'students.csv');
         }
-      }
-    );
+      },
+      error: (error) => this.handleExportError(error, 'students.csv')
+    });
   }
 
   exportCriteria() {
-    this.dataFeedService.exportCriteria().pipe(takeUntil(this.unsubscribe$)).subscribe(
-      (file: HttpResponse<Blob>) => {
+    this.dataFeedService.exportCriteria().pipe(takeUntil(this.unsubscribe$)).subscribe({
+      next: (file: HttpResponse<Blob>) => {
         if (file?.body) {
           saveAs(file.body!, 'criteria.json');
         }
-      }
-    );
+      },
+      error: (error) => this.handleExportError(error, 'criteria.json')
+    });
   }
 
   exportGrades() {
-    this.dataFeedService.exportGrades().pipe(takeUntil(this.unsubscribe$)).subscribe(
-      (file: HttpResponse<Blob>) => {
+    this.dataFeedService.exportGrades().pipe(takeUntil(this.unsubscribe$)).subscribe({
+      next: (file: HttpResponse<Blob>) => {
         if (file?.body) {
           saveAs(file.body!, 'grades.csv');
         }
-      }
-    );
+      },
+      error: (error) => this.handleExportError(error, 'grades.csv')
+    });
   }
 
   private handleUploadError(error: any) {
@@ -155,6 +163,16 @@ export class DataFeedComponent implements OnDestroy {
         this._snackBar.open('Failed to load available study years', 'close', { duration: 3000 });
       }
     });
+  }
+
+  private handleExportError(error: any, fileName: string) {
+    if (error.status === 404) {
+      this._snackBar.open(`Export failed: file ${fileName} not found.`, 'close', { duration: 5000 });
+    } else if (error.status === 500) {
+      this._snackBar.open(`Export failed due to server error.`, 'close', { duration: 5000 });
+    } else {
+      this._snackBar.open('Unexpected error during export.', 'close', { duration: 5000 });
+    }
   }
 
   ngOnDestroy(): void {
