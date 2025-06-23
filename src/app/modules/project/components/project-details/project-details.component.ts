@@ -54,6 +54,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   selectedPhaseIndex = 0;
   selectedCriteria = '';
   
+  // Track which external link histories are expanded
+  expandedHistoryIds = new Set<string>();
+  
   semesterMap: {[key: number]: string} = {
     0: 'FIRST',
     1: 'SECOND'
@@ -341,6 +344,19 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       link.click();
       document.body.removeChild(link);
     }
+  }
+
+  // History toggle methods
+  toggleHistory(externalLinkId: string): void {
+    if (this.expandedHistoryIds.has(externalLinkId)) {
+      this.expandedHistoryIds.delete(externalLinkId);
+    } else {
+      this.expandedHistoryIds.add(externalLinkId);
+    }
+  }
+
+  isHistoryExpanded(externalLinkId: string): boolean {
+    return this.expandedHistoryIds.has(externalLinkId);
   }
   
   get selectedSemester(): number {
