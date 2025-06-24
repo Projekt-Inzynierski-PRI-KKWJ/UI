@@ -22,7 +22,14 @@ export class RegistrationDialogComponent implements OnInit {
     const templateName = this.data?.templateName;
     this.http.get(`/pri/notification/receiver-data/${templateName}`).subscribe({
       next: (response: any) => {
-        this.recipients = response;
+        const students = response.students || [];
+        const content = response.content || '';
+
+        this.recipients = students.map((student: any) => ({
+          ...student,
+          content: content
+        }));
+
         this.loading = false;
       },
       error: (err) => {
