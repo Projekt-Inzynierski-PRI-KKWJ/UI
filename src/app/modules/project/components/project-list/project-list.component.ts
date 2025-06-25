@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Subject, combineLatest, takeUntil } from 'rxjs';
+import { Subject, combineLatest, takeUntil, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { getFilters, getProjects } from '../../state/project.selectors';
 import { State } from 'src/app/app.state';
@@ -16,23 +16,24 @@ import { ExternalLinkService } from '../../services/external-link.service';
   templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.scss']
 })
-export class ProjectListComponent implements OnDestroy, OnInit {
+export class ProjectListComponent implements OnInit, OnDestroy {
   @Input() acceptedProjects!: string[];
   @Input() assignedProjects!: string[];
   @Input() page!: string;
   @Input() externalLinkColumnHeaders!: string[];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  columns: string[] = ['name'];
+  columns = ['name']; // default
   projects!: MatTableDataSource<Project>;
-  unsubscribe$ = new Subject<void>();
+  unsubscribe$ = new Subject();
   loading = true;
 
   constructor(
     private store: Store<State>,
     private router: Router,
-    private externalLinkService: ExternalLinkService,
+    private externalLinkService: ExternalLinkService
   ) {}
 
   ngOnInit(): void {
@@ -41,14 +42,14 @@ export class ProjectListComponent implements OnDestroy, OnInit {
     combineLatest([
       this.externalLinkService.columnHeaders$,
       this.store.select(getProjects),
-      this.store.select(getFilters),
+      this.store.select(getFilters)
     ])
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(
+        tap(() => this.loading = true),
+        takeUntil(this.unsubscribe$)
+      )
       .subscribe(([externalLinkColumnHeaders, projects, filters]) => {
-        if (!projects) {
-          this.loading = false;
-          return;
-        }
+        if (!projects) return;
 
         const mappedProjects = projects.map(project => ({
           ...project,
@@ -58,8 +59,11 @@ export class ProjectListComponent implements OnDestroy, OnInit {
 
         this.externalLinkColumnHeaders = externalLinkColumnHeaders || [];
 
-        // Tutaj łączymy kolumny z filtrów z dynamicznymi kolumnami linków
-        this.columns = [...filters.columns, ...this.externalLinkColumnHeaders];
+        // ⚠️ Zapobieganie duplikatom kolumn dynamicznych
+        this.columns = [
+          ...filters.columns,
+          ...this.externalLinkColumnHeaders.filter(header => !filters.columns.includes(header))
+        ];
 
         const filteredProjects = mappedProjects.filter(project =>
           this.filterProjectBySearchValue(project, filters.searchValue) &&
@@ -70,7 +74,11 @@ export class ProjectListComponent implements OnDestroy, OnInit {
 
         this.projects = new MatTableDataSource<Project>(filteredProjects);
         this.projects.paginator = this.paginator;
-        this.projects.sort = this.sort;
+
+        // 🛠️ Ręczne przypisanie sortera, jeśli istnieje
+        setTimeout(() => {
+          this.projects.sort = this.sort;
+        });
 
         this.loading = false;
       });
@@ -86,7 +94,9 @@ export class ProjectListComponent implements OnDestroy, OnInit {
   }
 
   filterProjectBySupervisorIndexNumber(project: Project, supervisorIndexNumber?: string): boolean {
-    return supervisorIndexNumber !== undefined ? project.supervisor.indexNumber === supervisorIndexNumber : true;
+    return supervisorIndexNumber !== undefined
+      ? project.supervisor.indexNumber === supervisorIndexNumber
+      : true;
   }
 
   filterProjectByCriteriaMetStatus(project: Project, criteriaMetStatus?: boolean): boolean {
@@ -98,7 +108,7 @@ export class ProjectListComponent implements OnDestroy, OnInit {
   }
 
   isProjectAssigned(id: string): boolean {
-    return !this.acceptedProjects.includes(id) && this.assignedProjects.includes(id);
+    return !this.isProjectAccepted(id) && this.assignedProjects.includes(id);
   }
 
   navigateToDetails(projectId: string): void {
@@ -107,7 +117,6 @@ export class ProjectListComponent implements OnDestroy, OnInit {
 
   downloadExternalLinkFile(projectId: string, externalLinkId: string): void {
     const downloadUrl = this.externalLinkService.getExternalLinkFileDownloadUrl(projectId, externalLinkId);
-
     const link = document.createElement('a');
     link.href = downloadUrl;
 
@@ -123,14 +132,12 @@ export class ProjectListComponent implements OnDestroy, OnInit {
   }
 
   getSortedExternalLinks(project: Project): any[] {
-    if (!project?.externalLinks) {
-      return [];
-    }
+    if (!project?.externalLinks) return [];
     return [...project.externalLinks].sort((a, b) => a.name.localeCompare(b.name));
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe$.next();
+    this.unsubscribe$.next(null);
     this.unsubscribe$.complete();
 
     this.store.dispatch(changeFilters({
@@ -138,8 +145,8 @@ export class ProjectListComponent implements OnDestroy, OnInit {
         searchValue: '',
         supervisorIndexNumber: undefined,
         acceptanceStatus: undefined,
-        columns: ['name', 'supervisorName', 'accepted'],  // Domyślne kolumny przy czyszczeniu
-        criteriaMetStatus: undefined,
+        columns: ['name', 'supervisorName', 'accepted'],
+        criteriaMetStatus: undefined
       }
     }));
   }
