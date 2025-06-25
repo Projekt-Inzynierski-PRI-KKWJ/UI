@@ -40,7 +40,6 @@ import { RadioCriterionSelectComponent } from './components/project-grade/compon
 import { ExternalLinkHistoryComponent } from './components/external-link-history/external-link-history.component';
 import { ProjectAddCriteriaComponent } from './components/project-add-criteria/project-add-criteria.component';
 import { ProjectCriteriaComponent } from './components/project-criteria/project-criteria.component';
-import { MatPseudoCheckboxModule } from '@angular/material/core'
 
 @NgModule({
   declarations: [
@@ -85,8 +84,7 @@ import { MatPseudoCheckboxModule } from '@angular/material/core'
     MatMenuModule,
     StoreModule.forFeature('project', projectReducer),
     EffectsModule.forFeature([ProjectEffects]),
-    SharedModule,
-    MatPseudoCheckboxModule
+    SharedModule
   ]
 })
 export class ProjectModule { }
