@@ -13,7 +13,7 @@
   </mat-select>
 </mat-form-field>
 
-<mat-form-field test="acceptance-status-project-groups"  appearance="fill">
+<mat-form-field test="acceptance-status-project-groups" appearance="fill">
   <mat-label>Acceptance status</mat-label>
   <mat-select [(ngModel)]="acceptanceStatus" (selectionChange)="onFiltersChange()">
     <mat-option *ngIf="acceptanceStatus !== undefined" [value]="undefined">---</mat-option>
@@ -22,7 +22,7 @@
   </mat-select>
 </mat-form-field>
 
-<mat-form-field  appearance="fill" test="criteria-met-project-groups">
+<mat-form-field appearance="fill" test="criteria-met-project-groups">
   <mat-label>Criteria met</mat-label>
   <mat-select [(ngModel)]="criteriaMetStatus" (selectionChange)="onFiltersChange()">
     <mat-option *ngIf="criteriaMetStatus !== undefined" [value]="undefined">---</mat-option>
@@ -32,14 +32,20 @@
 </mat-form-field>
 
 <mat-form-field test="predefined-columns" shouldLabelFloat="false">
-  <mat-select [(ngModel)]="displayedColumns" multiple (selectionChange)="onFiltersChange()">
+  <mat-select [(ngModel)]="displayedColumns" multiple (selectionChange)="onDisplayedColumnsChange($event)">
     <mat-select-trigger>
-      Selected columns: {{displayedColumns.length}}
+      Selected columns: {{ displayedColumns.length }}
     </mat-select-trigger>
-    <mat-option *ngFor="let column of allColumnsView!.columns" [value]="column">{{column}}</mat-option>
+
+    <mat-option (click)="toggleSelectAll()">
+      {{ isAllSelected() ? 'Unselect All' : 'Select All' }}
+    </mat-option>
+
+    <mat-option *ngFor="let column of allColumnsView?.columns" [value]="column">
+      {{ column }}
+    </mat-option>
   </mat-select>
 </mat-form-field>
-
 
 <mat-form-field test="selected-columns-project-groups">
   <mat-label>Selected view</mat-label>
@@ -48,4 +54,6 @@
   </mat-select>
 </mat-form-field>
 
-<button *ngIf="isAnyFilterActive()" (click)="resetFilters()" mat-button test="reset-button-project-groups">reset</button>
+<button *ngIf="isAnyFilterActive()" (click)="resetFilters()" mat-button test="reset-button-project-groups">
+  reset
+</button>
