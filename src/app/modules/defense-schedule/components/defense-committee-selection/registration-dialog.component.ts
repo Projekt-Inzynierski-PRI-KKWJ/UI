@@ -11,6 +11,7 @@ export class RegistrationDialogComponent implements OnInit {
   loading = true;
   error: any = null;
   recipients: any[] = [];
+  content: string = '';
 
   constructor(
     private http: HttpClient,
@@ -22,7 +23,8 @@ export class RegistrationDialogComponent implements OnInit {
     const templateName = this.data?.templateName;
     this.http.get(`/pri/notification/receiver-data/${templateName}`).subscribe({
       next: (response: any) => {
-        this.recipients = response;
+        this.recipients = response.students || [];
+        this.content = response.content || '';
         this.loading = false;
       },
       error: (err) => {

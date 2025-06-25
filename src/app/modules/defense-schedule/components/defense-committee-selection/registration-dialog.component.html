@@ -1,21 +1,29 @@
-<h1 mat-dialog-title>Odbiorcy powiadomienia</h1>
+<h1 mat-dialog-title>Recipients</h1>
+
 <div mat-dialog-content *ngIf="loading">
   <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 </div>
 
 <div mat-dialog-content *ngIf="!loading && !error">
-  <div *ngFor="let recipient of recipients">
-    <mat-divider></mat-divider>
-    <p><strong>{{recipient.name}}</strong> — {{recipient.email}}</p>
-    <div class="email-preview" [innerHTML]="recipient.content"></div>
+
+  <h3>Students:</h3>
+  <div
+    style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+    <div *ngFor="let recipient of recipients">
+      <mat-divider></mat-divider>
+      <p style="margin: 8px 0;"><strong>{{recipient.name}}</strong> — {{recipient.email}}</p>
+    </div>
   </div>
+
+  <h3>Email content:</h3>
+  <div class="email-preview" [innerHTML]="content"></div>
 </div>
 
 <div mat-dialog-content *ngIf="error">
-  <p style="color:red">Błąd ładowania odbiorców: {{ error?.message || error }}</p>
+  <p style="color:red">Error: {{ error?.message || error }}</p>
 </div>
 
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">Anuluj</button>
-  <button mat-raised-button color="primary" (click)="send()">Wyślij</button>
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="send()">Send</button>
 </div>
