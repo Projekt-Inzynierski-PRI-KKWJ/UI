@@ -19,5 +19,8 @@
     "expected": "Expected",
     "indicator": "Implementation Indicator",
     "add_criteria_button": "Add Criteria",
-    "submit": "Submit"
+    "submit": "Submit",
+    "pri_system": "PRI System",
+    "login_info": "Use your <strong>LABS</strong> domain account credentials to log into the system.",
+    "password": "Password"
 }
