@@ -47,6 +47,9 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
   // External link file upload state
   externalLinkFiles: { [key: string]: File } = {};
   externalLinkModes: { [key: string]: 'URL' | 'FILE' } = {};
+  
+  // History toggle state
+  expandedHistoryIds = new Set<string>();
 
   constructor(
     private fb: FormBuilder,
@@ -269,6 +272,12 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
 
   onExternalLinkFileSelect(event: any, externalLinkId: string): void {
     const file: File = event.target.files[0];
+    if (file) {
+      this.externalLinkFiles[externalLinkId] = file;
+      console.log(`File selected for external link ${externalLinkId}:`, file.name);
+    } else {
+      console.error(`No file selected for external link ${externalLinkId}`);
+    }
   }
 
   downloadExternalLinkFile(externalLinkId: string): void {
@@ -468,6 +477,19 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
     const deadlineDate = new Date(deadline);
     
     return modDate > deadlineDate;
+  }
+
+  // History toggle methods
+  toggleHistory(externalLinkId: string): void {
+    if (this.expandedHistoryIds.has(externalLinkId)) {
+      this.expandedHistoryIds.delete(externalLinkId);
+    } else {
+      this.expandedHistoryIds.add(externalLinkId);
+    }
+  }
+
+  isHistoryExpanded(externalLinkId: string): boolean {
+    return this.expandedHistoryIds.has(externalLinkId);
   }
 
   ngOnDestroy(): void {

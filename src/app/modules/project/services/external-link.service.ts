@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from "@angul
 import { Injectable } from "@angular/core";
 import { Observable, retry, throwError, catchError } from "rxjs";
 import { ExternalLink } from "../models/external-link.model";
+import { ExternalLinkHistory } from "../models/external-link-history.model";
 
 @Injectable({
     providedIn: 'root'
@@ -57,6 +58,28 @@ export class ExternalLinkService {
     deleteExternalLinkFile(projectId: string, externalLinkId: string): Observable<any> {
         return this.http
             .delete<any>(`./pri/project/${projectId}/external-link/${externalLinkId}/file`)
+            .pipe(
+                retry(3),
+                catchError(
+                    (err: HttpErrorResponse) => throwError(() => err))
+            )
+    }
+
+    // Get history for a specific external link
+    getExternalLinkHistory(externalLinkId: string): Observable<ExternalLinkHistory[]> {
+        return this.http
+            .get<ExternalLinkHistory[]>(`./pri/project/external-link/history/${externalLinkId}`)
+            .pipe(
+                retry(3),
+                catchError(
+                    (err: HttpErrorResponse) => throwError(() => err))
+            )
+    }
+
+    // Get all external link history for a study year
+    getAllExternalLinkHistoryByStudyYear(): Observable<ExternalLinkHistory[]> {
+        return this.http
+            .get<ExternalLinkHistory[]>(`./pri/project/external-link/history/study-year`)
             .pipe(
                 retry(3),
                 catchError(

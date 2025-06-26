@@ -36,8 +36,21 @@
         
             <!-- External Links -->
             <div *ngFor="let externalLink of externalLinks.controls" class="external-link-container">
-                <h3>{{getExternalLinkFormControl(externalLink).name}}</h3>
-                <p class="deadline-info">Share before: {{getExternalLinkFormControl(externalLink).deadline}}</p>
+                <div class="external-link-header">
+                    <div class="external-link-title">
+                        <h3>{{getExternalLinkFormControl(externalLink).name}}</h3>
+                        <p class="deadline-info">Share before: {{getExternalLinkFormControl(externalLink).deadline}}</p>
+                    </div>
+                    <!-- History Toggle Button -->
+                    <button *ngIf="projectDetails"
+                            type="button"
+                            mat-icon-button 
+                            class="history-toggle"
+                            (click)="toggleHistory(externalLink.get('id')?.value)"
+                            matTooltip="Toggle change history">
+                        <mat-icon>{{ isHistoryExpanded(externalLink.get('id')?.value) ? 'expand_less' : 'history' }}</mat-icon>
+                    </button>
+                </div>
                 
                 <div *ngIf="hasExternalLinkContent(externalLink) && hasModificationDate(externalLink)" class="date-info">
                     <!-- Modification Date -->
@@ -124,6 +137,14 @@
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <!-- History Component -->
+                <div *ngIf="isHistoryExpanded(externalLink.get('id')?.value)" class="history-section">
+                    <external-link-history 
+                        [externalLinkId]="externalLink.get('id')?.value"
+                        [externalLinkName]="getExternalLinkFormControl(externalLink).name">
+                    </external-link-history>
                 </div>
             </div>
         </div>
