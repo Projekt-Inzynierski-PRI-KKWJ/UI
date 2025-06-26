@@ -23,6 +23,7 @@ enum ROLE {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
+
 export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   appName = 'PRI';
   mobileQuery?: MediaQueryList;
@@ -86,57 +87,49 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   }
 
   changeLanguage(lang: string): void {
-  this.language = lang;
-  localStorage.setItem('lang', lang);
+    this.language = lang;
+    localStorage.setItem('lang', lang);
 
-  this.http.get<{ [key: string]: string }>(`assets/lang_${lang}.json`).subscribe(data => {
-    this.translations = data;
-    this.applyTranslations();
-  });
-}
-
-
-  applyTranslations(): void {
-  const applyTo = (container: ParentNode) => {
-    const elements = container.querySelectorAll<HTMLElement>('.translate');
-    elements.forEach(el => {
-      const key = el.getAttribute('data-translate');
-      if (key) {
-        const translated = this.translations[key];
-        if (translated) {
-          const textEl = el.querySelector('.translate-text');
-          if (textEl) {
-            textEl.textContent = translated;
-          } else {
-            let replaced = false;
-            for (let i = 0; i < el.childNodes.length; i++) {
-              const node = el.childNodes[i];
-              if (node.nodeType === Node.TEXT_NODE) {
-                node.nodeValue = translated;
-                replaced = true;
-                break;
-              }
-            }
-            if (!replaced) {
-              el.innerText = translated;
-            }
-          }
-        } else {
-          console.warn(`🔸 Missing translation for: "${key}"`, el);
-        }
+    this.http.get<{ [key: string]: string }>(`assets/lang_${lang}.json`).subscribe({
+      next: data => {
+        this.translations = data;
+        this.applyTranslations();
+      },
+      error: err => {
+        console.error('🔴 Nie udało się załadować pliku tłumaczeń:', err);
       }
     });
-  };
-
-  applyTo(document);
-
-  const overlay = document.querySelector('.cdk-overlay-container');
-  if (overlay) {
-    applyTo(overlay);
   }
-}
 
+  applyTranslations(): void {
+    const applyTo = (container: ParentNode) => {
+      const elements = container.querySelectorAll<HTMLElement>('.translate');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (key) {
+          const translated = this.translations[key];
+          if (translated) {
+            const textEl = el.querySelector('.translate-text');
+            if (textEl) {
+              textEl.innerHTML = translated;
+            } else {
+              el.innerHTML = translated;
+            }
+          } else {
+            console.warn(`🔸 Brakuje tłumaczenia dla: "${key}"`, el);
+          }
+        }
+      });
+    };
+    setTimeout(() => {
+      applyTo(document);
+    }, 50);
 
+    const overlay = document.querySelector('.cdk-overlay-container');
+    if (overlay) {
+      applyTo(overlay);
+    }
+  }
 
   loadTranslations(lang: string): void {
     this.http.get<{ [key: string]: string }>(`assets/lang_${lang}.json`).subscribe(data => {
