@@ -1,14 +1,31 @@
+<p style="font-weight: 300; font-size: 60px; text-align: center; margin-bottom: 4rem; margin-top: 1rem;" class="translate" data-translate="pri_system">System PRI</p>
+
 <form *ngIf="showForm" [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-form-field appearance="fill">
         <mat-label>Login</mat-label>
         <input matInput formControlName="login" test="login-input">
-        <mat-error *ngIf="form.controls.login.invalid">{{getErrorMessage()}}</mat-error>
+        <mat-error *ngIf="form.controls.login.invalid">{{ getErrorMessage() }}</mat-error>
     </mat-form-field>
+
     <mat-form-field appearance="fill">
-        <mat-label>Password</mat-label>
+        <mat-label class="translate" data-translate="password">Password</mat-label>
         <input [type]="hide ? 'password' : 'text'" matInput formControlName="password" test="password-input">
-        <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-        <mat-error *ngIf="form.controls.password.invalid">{{getErrorMessage()}}</mat-error>
+        <mat-icon matSuffix (click)="hide = !hide">{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+        <mat-error *ngIf="form.controls.password.invalid">{{ getErrorMessage() }}</mat-error>
     </mat-form-field>
-    <button type="submit" test="login-page-submit-button" color="primary" mat-raised-button [disabled]="!form.valid" cdkFocusInitial>Submit</button>
+
+    <button type="submit"
+            test="login-page-submit-button"
+            color="primary"
+            mat-raised-button
+            [disabled]="!form.valid"
+            cdkFocusInitial
+            class="translate"
+            data-translate="submit">
+        Submit
+    </button>
+
+    <p style="margin-top: 2rem; font-size: 0.9rem; color: gray; text-align: center;" class="translate" data-translate="login_info">
+        Use your <strong>LABS</strong> domain account credentials to log into the system.
+    </p>
 </form>
