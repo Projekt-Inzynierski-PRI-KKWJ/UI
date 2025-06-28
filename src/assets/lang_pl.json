@@ -19,5 +19,8 @@
     "expected": "Oczekiwane",
     "indicator": "Wskaźnik realizacji",
     "add_criteria_button": "Dodaj kryteria",
-    "submit": "Zatwierdź"
+    "submit": "Zatwierdź",
+    "pri_system": "System PRI",
+    "login_info": "Do zalogowania w systemie należy użyć danych do konta w domenie <strong>LABS</strong>.",
+    "password": "Hasło"
 }
