@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-form-field>
-        <mat-label>Enter a date range</mat-label>
+        <mat-label class="translate" data-translate="enter_a_date_range">Enter a date range</mat-label>
         <mat-date-range-input  [rangePicker]="picker">
         <input matStartDate formControlName="startDate" placeholder="Start date">
         <input matEndDate formControlName="endDate" placeholder="End date">
@@ -11,21 +11,21 @@
     </mat-form-field>
     <br>
     <mat-form-field appearance="fill">
-        <mat-label>Time period in minutes</mat-label>
+        <mat-label class="translate" data-translate="time_period_in_minutes">Time period in minutes</mat-label>
         <input type="number" matInput formControlName="slotDuration">
     </mat-form-field>
     <br>
     <mat-form-field appearance="fill">
-        <mat-label>Start (hh:mm)</mat-label>
+        <mat-label><span class="translate" data-translate="start">Start</span> (hh:mm)</mat-label>
         <input matInput formControlName="startTime">
     </mat-form-field>
     <br>
     <mat-form-field appearance="fill">
-        <mat-label>End (hh:mm)</mat-label>
+        <mat-label><span class="translate" data-translate="end">End</span> (hh:mm)</mat-label>
         <input matInput formControlName="endTime">
     </mat-form-field>
     <br>
     <div class="buttons-container">
-        <button color="primary"  type="submit" mat-raised-button  [disabled]="!form.valid" cdkFocusInitial>Submit</button>
+        <button color="primary"  type="submit" mat-raised-button  [disabled]="!form.valid" cdkFocusInitial class="translate" data-translate="submit">Submit</button>
     </div>
 </form>

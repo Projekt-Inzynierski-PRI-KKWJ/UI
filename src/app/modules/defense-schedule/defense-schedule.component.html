@@ -1,6 +1,6 @@
 <div [ngStyle]="{'max-width': statistics.length * 2 * 100 + 'px'}" class="defense-container">
     <div class="title-and-buttons">
-        <h1>Project defense schedule</h1>
+        <h1 class="translate" data-translate="project_defense_schedule">Project defense schedule</h1>
         <div>
             <button *ngIf="showAdditionalDayButton" (click)="openAdditionalDayDialog()" mat-raised-button color="primary">Add day</button>
             <button *ngIf="showArchiveDefenseScheduleButton" (click)="openAreYouSureDialog('archive')" mat-raised-button color="primary">Archive defense schedule</button>

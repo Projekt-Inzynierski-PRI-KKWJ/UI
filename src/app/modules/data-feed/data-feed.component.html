@@ -1,4 +1,4 @@
-<h2>Import</h2>
+<h2 class="translate" data-translate="import">Import</h2>
 <div class="file-inputs">
   <input type="file" class="file-input" (change)="uploadStudents($event)" #studentsFileUpload>
   <div class="file-upload">
@@ -41,14 +41,14 @@
     </button>
     {{criteriaFileName || "Criteria"}}
   </div>  
-  <button (click)=uploadFiles() mat-raised-button color="primary" test="submit-button-data-feed">Submit</button>
+  <button (click)=uploadFiles() mat-raised-button color="primary" test="submit-button-data-feed" class="translate" data-translate="submit">Submit</button>
 </div>
 
-<h2>Export</h2>
+<h2 class="translate" data-translate="export">Export</h2>
 <div class="file-inputs">
-  <button (click)=exportStudents() mat-raised-button color="primary">Students</button>
-  <button (click)=exportCriteria() mat-raised-button color="primary">Criteria</button>
-  <button (click)=exportGrades() mat-raised-button color="primary">Grades</button>
+  <button (click)=exportStudents() mat-raised-button color="primary" class="translate" data-translate="students">Students</button>
+  <button (click)=exportCriteria() mat-raised-button color="primary" class="translate" data-translate="criteria">Criteria</button>
+  <button (click)=exportGrades() mat-raised-button color="primary" class="translate" data-translate="grades">Grades</button>
 </div>
 
    
