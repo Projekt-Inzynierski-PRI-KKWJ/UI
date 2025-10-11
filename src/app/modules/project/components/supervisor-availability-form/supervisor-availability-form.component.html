@@ -1,8 +1,8 @@
 <div class="back" (click)="navigateBack()">
     <mat-icon>arrow_back</mat-icon>
-     Project list
+     <span class="translate" data-translate="project_list">Project list</span>
  </div>
- <h2 mat-dialog-title>Edit supervisor availability</h2>
+ <h2 mat-dialog-title class="translate" data-translate="edit_supervisor_availability">Edit supervisor availability</h2>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="availability-row" *ngFor="let availability of availability.controls">
         <mat-form-field appearance="fill">
@@ -12,6 +12,6 @@
         </mat-form-field>
     </div>
     <div class="button-container">
-        <button type="submit" [disabled]="!form.valid" mat-raised-button color="primary" cdkFocusInitial>Submit</button>
+        <button type="submit" [disabled]="!form.valid" mat-raised-button color="primary" cdkFocusInitial class="translate" data-translate="submit">Submit</button>
     </div>
 </form>

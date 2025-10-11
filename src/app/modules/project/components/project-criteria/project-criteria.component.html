@@ -2,11 +2,11 @@
   <thead>
     <tr>
       <th></th>
-      <th class="criterion-title-column">Criterion</th>
-      <th class="status-column">Status</th>
-      <th class="type-column">Type</th>
-      <th class="comment-column">Comment</th>
-      <th class="lock-column">Lock</th> <!-- 🆕 Nowa kolumna -->
+      <th class="criterion-title-column translate" data-translate="criterion">Criterion</th>
+      <th class="status-column translate" data-translate="status">Status</th>
+      <th class="type-column translate" data-translate="type">Type</th>
+      <th class="comment-column translate" data-translate="comment">Comment</th>
+      <th class="lock-column translate" data-translate="lock">Lock</th>
       <th></th>
     </tr>
   </thead>
@@ -20,9 +20,9 @@
         <select [value]="criterion.levelOfRealization"
                 (change)="onLevelChange($event, criterion.id)"
                 [disabled]="!criterion.enableForModification">
-          <option value="IN_PROGRESS">In Progress</option>
-          <option value="PARTIALLY_COMPLETED">Partially Completed</option>
-          <option value="COMPLETED">Completed</option>
+          <option value="IN_PROGRESS" class="translate" data-translate="in_progress">In Progress</option>
+          <option value="PARTIALLY_COMPLETED" class="translate" data-translate="partially_completed">Partially Completed</option>
+          <option value="COMPLETED" class="translate" data-translate="completed">Completed</option>
         </select>
       </td>
 
@@ -40,7 +40,6 @@
         </textarea>
       </td>
 
-      <!-- 🆕 Kolumna Lock z checkboxem -->
       <td style="text-align: center; display: flex; justify-content: center; align-items: center;">
         <button mat-icon-button class="lock-button"
                 (click)="onToggleLock(criterion.id!, !criterion.enableForModification)"
@@ -62,5 +61,5 @@
 </table>
 
 <ng-template [ngIf]="criteriaList.length === 0">
-  <p style="text-align: center; margin-top: 100px;">No criteria available. Please add a new one.</p>
+  <p style="text-align: center; margin-top: 100px;" class="translate" data-translate="no_criteria_available">No criteria available. Please add a new one.</p>
 </ng-template>
