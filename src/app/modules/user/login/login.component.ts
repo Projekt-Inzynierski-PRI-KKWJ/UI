@@ -31,14 +31,27 @@ export class LoginComponent implements OnInit, OnDestroy{
     private router: Router,
     private _snackbar: MatSnackBar,
     private actions$: Actions,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService 
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void 
+  {
+      this.userService.checkInitializationStatus().subscribe(count => 
+        {
+    if (count === 0) 
+      {
+      this.router.navigateByUrl('/initialize-coordinator');
+    } 
+    else 
+    {
+      
     this.store.select(isLogged).pipe(takeUntil(this.unsubscribe$)).subscribe((isLogged: boolean) => {
-      if (isLogged) {
+      if (isLogged) 
+      {
           this.router.navigateByUrl(this.route.snapshot.queryParamMap.get('redirectTo')! ?? '/projects')
-      } else {
+      } else 
+      {
         this.store.dispatch(accessTokenRefresh())
       }
     });
@@ -55,7 +68,8 @@ export class LoginComponent implements OnInit, OnDestroy{
     this.actions$.pipe(ofType(accessTokenRefreshFailure), takeUntil(this.unsubscribe$))
       .subscribe(() => this.showForm = true );
   }
-
+  });
+}
   onSubmit(): void {
     if (this.form.valid) {
       this.store.dispatch(authenticate({ login: this.form.controls.login.value!, password: this.form.controls.password.value! }))

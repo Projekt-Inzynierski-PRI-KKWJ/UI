@@ -2,8 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UserGuard } from './modules/user/user.guard';
 import { CoordinatorGuard } from './modules/user/coordinator.guard';
+import { InitializeCoordinatorComponent } from './modules/user/initialize-coordinator/initialize-coordinator.component';
 
 const routes: Routes = [
+  { 
+    path: 'initialize-coordinator', 
+    component: InitializeCoordinatorComponent 
+  },
   {
     path: '',
     redirectTo: 'login',

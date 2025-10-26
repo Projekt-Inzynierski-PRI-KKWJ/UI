@@ -11,6 +11,26 @@ import { Student } from "./models/student.model";
 export class UserService {
     constructor(private http: HttpClient) { }
 
+checkInitializationStatus(): Observable<number> {
+  return this.http
+    .get<number>(`./pri/user/initialization/count`)
+    .pipe(
+      retry(3),
+      catchError((err: HttpErrorResponse) => throwError(() => err))
+    );
+}
+
+initializeCoordinator(payload: {
+  indexNumber: string;
+  name: string;
+  last_name: string;
+  email: string;
+}): Observable<any> {
+  return this.http.post(`./pri/user/initialization/coordinator`, payload).pipe(
+    retry(3),
+    catchError((err: HttpErrorResponse) => throwError(() => err))
+  );
+}
     loadUser(): Observable<User> {
         return this.http
             .get<User>(`./pri/user`)
