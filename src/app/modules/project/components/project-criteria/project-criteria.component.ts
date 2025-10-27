@@ -151,6 +151,19 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'IN_PROGRESS':
+        return 'In Progress';
+      case 'PARTIALLY_COMPLETED':
+        return 'Partially Completed';
+      case 'COMPLETED':
+        return 'Completed';
+      default:
+        return status;
+    }
+  }
+
   updateCriterionLevel(id: number, newLevel: string): Observable < any > {
     const url = `/pri/api/criteria-projects/${id}/level`;
     return this.http.patch(url, {

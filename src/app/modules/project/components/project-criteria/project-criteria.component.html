@@ -17,17 +17,25 @@
       <td style="text-align: start !important; max-width: 400px;" class="break-text">{{ criterion.criterium }}</td>
 
       <td>
-        <select [(ngModel)]="criterion.levelOfRealization"
-                (change)="onLevelChange($event, criterion.id)"
-                [disabled]="!criterion.enableForModification"
-                class="status-select"
-                [class.status-in-progress]="criterion.levelOfRealization === 'IN_PROGRESS'"
-                [class.status-partially-completed]="criterion.levelOfRealization === 'PARTIALLY_COMPLETED'"
-                [class.status-completed]="criterion.levelOfRealization === 'COMPLETED'">
-          <option value="IN_PROGRESS" class="translate" data-translate="in_progress">In Progress</option>
-          <option value="PARTIALLY_COMPLETED" class="translate" data-translate="partially_completed">Partially Completed</option>
-          <option value="COMPLETED" class="translate" data-translate="completed">Completed</option>
-        </select>
+        <!-- Status jako tekst gdy zablokowany -->
+        <ng-container *ngIf="!criterion.enableForModification; else statusSelect">
+          <span [class]="getStatusClass(criterion.levelOfRealization)" class="status-text">
+            {{ getStatusLabel(criterion.levelOfRealization) }}
+          </span>
+        </ng-container>
+        
+        <ng-template #statusSelect>
+          <select [(ngModel)]="criterion.levelOfRealization"
+                  (change)="onLevelChange($event, criterion.id)"
+                  class="status-select"
+                  [class.status-in-progress]="criterion.levelOfRealization === 'IN_PROGRESS'"
+                  [class.status-partially-completed]="criterion.levelOfRealization === 'PARTIALLY_COMPLETED'"
+                  [class.status-completed]="criterion.levelOfRealization === 'COMPLETED'">
+            <option value="IN_PROGRESS" class="translate" data-translate="in_progress">In Progress</option>
+            <option value="PARTIALLY_COMPLETED" class="translate" data-translate="partially_completed">Partially Completed</option>
+            <option value="COMPLETED" class="translate" data-translate="completed">Completed</option>
+          </select>
+        </ng-template>
       </td>
 
       <td style="font-size: 16px !important;">
@@ -35,13 +43,21 @@
       </td>
 
       <td>
-        <textarea
-          [value]="criterion.comment || ''"
-          (blur)="onCommentChange($event, criterion.id)"
-          [disabled]="!criterion.enableForModification"
-          placeholder="Enter comment"
-          style="width: 100%; min-height: 40px; resize: vertical; padding: 4px;">
-        </textarea>
+        <!-- Komentarz jako tekst gdy zablokowany -->
+        <ng-container *ngIf="!criterion.enableForModification; else commentTextarea">
+          <div class="comment-text" [class.empty-comment]="!criterion.comment">
+            {{ criterion.comment || 'No comment' }}
+          </div>
+        </ng-container>
+        
+        <ng-template #commentTextarea>
+          <textarea
+            [value]="criterion.comment || ''"
+            (blur)="onCommentChange($event, criterion.id)"
+            placeholder="Enter comment"
+            style="width: 100%; min-height: 40px; resize: vertical; padding: 4px;">
+          </textarea>
+        </ng-template>
       </td>
 
       <td style="text-align: center; display: flex; justify-content: center; align-items: center;">

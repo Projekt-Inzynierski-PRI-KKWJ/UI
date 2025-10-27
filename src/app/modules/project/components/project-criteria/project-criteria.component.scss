@@ -300,3 +300,14 @@ select[class*="status-"] {
   font-weight: 500;
   transition: all 0.2s ease;
 }
+
+.empty-comment {
+  color: #999;
+  font-style: italic;
+}
+
+.status-text {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
