@@ -17,9 +17,13 @@
       <td style="text-align: start !important; max-width: 400px;" class="break-text">{{ criterion.criterium }}</td>
 
       <td>
-        <select [value]="criterion.levelOfRealization"
+        <select [(ngModel)]="criterion.levelOfRealization"
                 (change)="onLevelChange($event, criterion.id)"
-                [disabled]="!criterion.enableForModification">
+                [disabled]="!criterion.enableForModification"
+                class="status-select"
+                [class.status-in-progress]="criterion.levelOfRealization === 'IN_PROGRESS'"
+                [class.status-partially-completed]="criterion.levelOfRealization === 'PARTIALLY_COMPLETED'"
+                [class.status-completed]="criterion.levelOfRealization === 'COMPLETED'">
           <option value="IN_PROGRESS" class="translate" data-translate="in_progress">In Progress</option>
           <option value="PARTIALLY_COMPLETED" class="translate" data-translate="partially_completed">Partially Completed</option>
           <option value="COMPLETED" class="translate" data-translate="completed">Completed</option>

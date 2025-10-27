@@ -1,12 +1,34 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
-import { ProjectCriteriaService } from '../../services/project-criterion.service';
-import { CriteriaProjectDTO } from '../../models/project-criterion.model';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
+import {
+  ActivatedRoute
+} from '@angular/router';
+import {
+  Subject,
+  takeUntil
+} from 'rxjs';
+import {
+  ProjectCriteriaService
+} from '../../services/project-criterion.service';
+import {
+  CriteriaProjectDTO
+} from '../../models/project-criterion.model';
+import {
+  Observable
+} from 'rxjs';
+import {
+  HttpClient
+} from '@angular/common/http';
+import {
+  MatDialog
+} from '@angular/material/dialog';
+import {
+  ConfirmDialogComponent
+} from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'project-criteria',
@@ -14,11 +36,11 @@ import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-d
   styleUrls: ['./project-criteria.component.scss']
 })
 export class ProjectCriteriaComponent implements OnInit, OnDestroy {
-  @Input() semester?: 'FIRST' | 'SECOND';
+  @Input() semester ? : 'FIRST' | 'SECOND';
   @Input() type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS' | 'ALL' = 'ALL';
   projectId!: number;
   criteriaList: CriteriaProjectDTO[] = [];
-  private unsubscribe$ = new Subject<void>();
+  private unsubscribe$ = new Subject < void > ();
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -51,7 +73,7 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteCriterion(id?: number): void {
+  deleteCriterion(id ? : number): void {
     if (!id) {
       console.warn('Tried to delete criterion with undefined ID.');
       return;
@@ -72,7 +94,9 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   openConfirmDialog(id: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: { message: 'Are you sure you want to delete this criterion?' }
+      data: {
+        message: 'Are you sure you want to delete this criterion?'
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -85,11 +109,11 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   getStatusClass(status: string): string {
     switch (status) {
       case 'IN_PROGRESS':
-        return 'in-progress';
+        return 'status-in-progress';
+      case 'PARTIALLY_COMPLETED':
+        return 'status-partially-completed';
       case 'COMPLETED':
-        return 'completed';
-      case 'NOT_STARTED':
-        return 'not-started';
+        return 'status-completed';
       default:
         return '';
     }
@@ -97,10 +121,14 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
 
   mapType(type: string): string {
     switch (type) {
-      case 'REQUIRED': return 'Required';
-      case 'EXPECTED': return 'Expected';
-      case 'MEASURABLE_IMPLEMENTATION_INDICATORS': return 'Indicators';
-      default: return type;
+      case 'REQUIRED':
+        return 'Required';
+      case 'EXPECTED':
+        return 'Expected';
+      case 'MEASURABLE_IMPLEMENTATION_INDICATORS':
+        return 'Indicators';
+      default:
+        return type;
     }
   }
 
@@ -123,9 +151,11 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateCriterionLevel(id: number, newLevel: string): Observable<any> {
+  updateCriterionLevel(id: number, newLevel: string): Observable < any > {
     const url = `/pri/api/criteria-projects/${id}/level`;
-    return this.http.patch(url, { levelOfRealization: newLevel });
+    return this.http.patch(url, {
+      levelOfRealization: newLevel
+    });
   }
 
   updateCriterionComment(id: number, comment: string): void {
@@ -139,7 +169,10 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   }
 
   updateCommentAndLevel(id: number, comment: string, level: string): void {
-    this.criteriaService.updateCommentAndLevel(id, { comment, levelOfRealization: level }).subscribe({
+    this.criteriaService.updateCommentAndLevel(id, {
+      comment,
+      levelOfRealization: level
+    }).subscribe({
       next: () => {
         console.log(`Updated comment and level for criterion ${id}`);
         this.loadCriteria();
@@ -158,29 +191,29 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
-  onLevelChange(event: Event, id: number | undefined): void {
-    if (id === undefined) {
-      console.error('Missing criterion ID for level update');
-      return;
-    }
-
-    const target = event.target as HTMLSelectElement;
-    const value = target.value;
-    this.criteriaService.updateLevel(id, value).subscribe({
-      next: () => {
-        console.log(`Level updated for ID ${id}`);
-      },
-      error: err => {
-        console.error('Error updating level:', err);
+    onLevelChange(event: Event, id: number | undefined): void {
+      if (id === undefined) {
+        console.error('Missing criterion ID for level update');
+        return;
       }
-    });
-  }
+
+      const target = event.target as HTMLSelectElement;
+      const value = target.value;
+      this.criteriaService.updateLevel(id, value).subscribe({
+        next: () => {
+          console.log(`Level updated for ID ${id}`);
+        },
+        error: err => {
+          console.error('Error updating level:', err);
+        }
+      });
+    }
 
   onToggleLock(id: number, newValue: boolean): void {
     this.updateEnable(id, newValue);
   }
 
-  onCommentChange(event: Event, id?: number): void {
+  onCommentChange(event: Event, id ? : number): void {
     const comment = (event.target as HTMLInputElement).value.trim();
     if (!id) {
       console.error('Missing criterion ID for comment update');
