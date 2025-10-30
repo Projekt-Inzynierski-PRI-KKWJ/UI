@@ -18,9 +18,9 @@ jobs:
       - uses: actions/checkout@v3
       - name: 'Build and publish the Docker image without SSL config'
         run: |
-          docker build . --tag ghcr.io/system-pri/pri-ui-no-ssl:latest --build-arg NGINX_CONF=nginx-no-ssl.conf
-          docker push ghcr.io/system-pri/pri-ui-no-ssl:latest
+          docker build . --tag ghcr.io/projekt-inzynierski-pri-kkwj/ui-no-ssl:latest --build-arg NGINX_CONF=nginx-no-ssl.conf
+          docker push ghcr.io/projekt-inzynierski-pri-kkwj/ui-no-ssl:latest
       - name: 'Build and publish the Docker image with SSL config'
         run: |
-          docker build . --tag ghcr.io/system-pri/pri-ui-ssl:latest --build-arg NGINX_CONF=nginx-ssl.conf
-          docker push ghcr.io/system-pri/pri-ui-ssl:latest
+          docker build . --tag ghcr.io/projekt-inzynierski-pri-kkwj/ui-ssl:latest --build-arg NGINX_CONF=nginx-ssl.conf
+          docker push ghcr.io/projekt-inzynierski-pri-kkwj/ui-ssl:latest
