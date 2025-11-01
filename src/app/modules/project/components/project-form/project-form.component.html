@@ -198,7 +198,10 @@
                 </mat-form-field>
             </div>
             <div class="buttons-container">
-                <button color="primary" type="submit" mat-raised-button [disabled]="!projectForm.valid" cdkFocusInitial>Submit</button>
+                <button color="primary" type="submit" mat-raised-button [disabled]="!projectForm.valid || isSubmitting" cdkFocusInitial>
+                    <span *ngIf="isSubmitting">Submitting...</span>
+                    <span *ngIf="!isSubmitting">Submit</span>
+                </button>
             </div>
         </div>
     </div>

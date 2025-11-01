@@ -51,6 +51,9 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
   // History toggle state
   expandedHistoryIds = new Set<string>();
 
+  // Loading state to prevent duplicate submissions
+  isSubmitting: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -335,7 +338,10 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
 
   // Handle file uploads on submit
   onSubmit(): void {
-    if (this.projectForm.valid) {    
+    if (this.projectForm.valid && !this.isSubmitting) {
+      // Disable button to prevent duplicate submissions
+      this.isSubmitting = true;
+      
       let projectDetails: ProjectDetails = {
         id: this.projectDetails?.id,
         name: this.projectForm.controls.name.value!,
@@ -369,23 +375,31 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
       if(this.projectDetails){
         this.store.dispatch(updateProject({project: projectDetails}))
         this.actions$.pipe(ofType(updateProjectSuccess),takeUntil(this.unsubscribe$)).subscribe(() => {
+          // Re-enable button
+          this.isSubmitting = false;
           // Upload files after project update
           this.uploadPendingFiles();
           this._snackbar.open('Project successfully updated', 'close');
           // Navigation to project overview handled in uploadPendingFiles()
         });
         this.actions$.pipe(ofType(updateProjectFailure),takeUntil(this.unsubscribe$)).subscribe(() => {
+          // Re-enable button
+          this.isSubmitting = false;
           this._snackbar.open('Something went wrong while updating the project', 'close');
         });
       } else {
         this.store.dispatch(addProject({project: projectDetails, userRole: this.user.role}))
         this.actions$.pipe(ofType(addProjectSuccess),takeUntil(this.unsubscribe$)).subscribe((project) => {
+          // Re-enable button
+          this.isSubmitting = false;
           // Upload files after project creation
           this.uploadPendingFiles();
           this._snackbar.open('Project successfully created', 'close');
           // Navigation to project overview handled in uploadPendingFiles()
         });
         this.actions$.pipe(ofType(addProjectFailure),takeUntil(this.unsubscribe$)).subscribe((action) => {
+          // Re-enable button
+          this.isSubmitting = false;
           const errorMessage = (action.error as any)?.status === 412 
             ? 'Please make sure that all necessary files have been uploaded before creating the project'
             : 'Something went wrong while creating the project';
