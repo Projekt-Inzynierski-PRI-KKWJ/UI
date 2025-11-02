@@ -35,10 +35,10 @@ form = this.fb.group({
     this.userService.checkInitializationStatus().subscribe({
       next: (count) => {
         if (count > 0) {
-          // If already initialized, go back to login
+          // If user table > 0 go to login
           this.router.navigateByUrl('/login');
         }
-        // If count === 0, stay on this page and allow initialization
+        // If count == 0 go to initialization
       },
       error: () => {
         this.snackBar.open('Failed to check coordinator count', 'Close',{duration: 2000});

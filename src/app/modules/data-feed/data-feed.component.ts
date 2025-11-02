@@ -5,6 +5,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { saveAs } from 'file-saver';
 import { HttpResponse } from '@angular/common/http';
 import { jsPDF } from 'jspdf';
+import { ResetConfirmDialogComponent } from './reset-confirm-dialog/reset-confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-data-feed',
@@ -23,10 +25,31 @@ export class DataFeedComponent implements OnDestroy {
   availableStudyYears: string[] = [];
   displayedColumns: string[] = ['studyYear', 'actions'];
 
-  constructor(private _snackBar: MatSnackBar, private dataFeedService: DataFeedService) {
+  constructor
+  (
+    private _snackBar: MatSnackBar, 
+    private dataFeedService: DataFeedService,
+    private dialog: MatDialog
+  ) 
+  {
     this.loadAvailableStudyYears();
   }
 
+openResetDialog(): void {
+    const dialogRef = this.dialog.open(ResetConfirmDialogComponent, {
+      width: '450px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dataFeedService.resetDataBase().subscribe({
+          next: (msg: string) => console.log('Backend says:', msg),
+          error: (err) => console.error('Reset failed:', err)
+        });
+      }
+    });
+  }
+  
   uploadFile(event: any, expectedExtension: string, target: 'students' | 'supervisors' | 'criteria') {
     const file: File = event.target.files[0];
     if (!file) return;
