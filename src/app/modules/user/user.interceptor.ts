@@ -12,7 +12,11 @@ export class UserInterceptor implements HttpInterceptor {
         return this.store.select('user').pipe(
             first(),
             mergeMap(user => {
-            // Załóżmy, że token jest w user.token
+                //To prevent index reading on initialization
+        if (req.url.includes('/initialization')) 
+            {
+          return next.handle(req);
+        }
             const headersConfig: { [name: string]: string } = {
                 'index-number': user.indexNumber,
                 'study-year': user.actualYear,

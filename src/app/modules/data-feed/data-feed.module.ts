@@ -18,11 +18,13 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DataFeedRoutingModule } from './data-feed-routing.module';
 import { DataFeedComponent } from './data-feed.component';
+import { ResetConfirmDialogComponent } from './reset-confirm-dialog/reset-confirm-dialog.component';
 
 
 @NgModule({
   declarations: [
-   DataFeedComponent
+   DataFeedComponent,
+   ResetConfirmDialogComponent  
   ],
   imports: [
     CommonModule,
@@ -42,7 +44,7 @@ import { DataFeedComponent } from './data-feed.component';
     MatRadioModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    DataFeedRoutingModule
+    DataFeedRoutingModule,
   ]
 })
 export class DataFeedModule { }

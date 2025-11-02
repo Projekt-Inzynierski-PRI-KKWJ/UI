@@ -142,3 +142,15 @@
     gap: 6px;
   }
 }
+.reset-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+
+  .reset-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+  }
+}
