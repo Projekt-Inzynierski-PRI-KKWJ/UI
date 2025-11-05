@@ -4,9 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
+import { Store } from '@ngrx/store';
 
 import { ProjectCriteriaService } from '../../services/project-criterion.service';
 import { CriteriaProjectDTO } from '../../models/project-criterion.model';
+import { State } from 'src/app/app.state';
 
 @Component({
   selector: 'project-add-criteria',
@@ -16,7 +18,8 @@ import { CriteriaProjectDTO } from '../../models/project-criterion.model';
 export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
   projectCriteria!: FormGroup;
   projectId!: number;
-  userId!: number;
+  userId!: string; // zmienione na string
+  indexNumber!: string;
   comingFromDetailsPage = false;
   private unsubscribe$ = new Subject<void>();
 
@@ -27,7 +30,8 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private criteriaService: ProjectCriteriaService,
     private snackBar: MatSnackBar,
-    private location: Location
+    private location: Location,
+    private store: Store<State>
   ) {
     this.projectCriteria = this.fb.group({
       criteriaList: this.fb.array([this.createCriteriaGroup()])
@@ -42,9 +46,14 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
     this.activatedRoute.queryParams.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       this.comingFromDetailsPage = params['comingFromDetailsPage'] === 'true';
     });
-
-    // Replace with real logged-in user ID if available
-    this.userId = 1;
+    
+    // Pobieranie danych użytkownika ze store
+    this.store.select('user').pipe(takeUntil(this.unsubscribe$)).subscribe(user => {
+      if (user && user.indexNumber) {
+        this.indexNumber = user.indexNumber;
+        this.userId = user.indexNumber;
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -92,13 +101,13 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.projectCriteria.valid) {
+    if (this.projectCriteria.valid && this.userId) {
       const payload: CriteriaProjectDTO[] = this.criteriaGroups.map(group => ({
         criterium: group.get('criterium')?.value,
         levelOfRealization: group.get('levelOfRealization')?.value,
         semester: group.get('semester')?.value,
         projectId: this.projectId,
-        userId: this.userId,
+        userId: +this.userId, // konwersja na number jeśli backend wymaga number
         enableForModification: group.get('enableForModification')?.value,
         type: group.get('type')?.value as 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS'
       }));
@@ -115,6 +124,8 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
           this.snackBar.open('Error submitting criteria', 'Close', { duration: 3000 });
         }
       });
+    } else if (!this.userId) {
+      this.snackBar.open('User data not available', 'Close', { duration: 3000 });
     }
   }
 
