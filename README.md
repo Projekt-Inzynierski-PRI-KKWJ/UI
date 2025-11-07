@@ -109,7 +109,7 @@ To run the frontend locally **with a non-Docker backend** (for easier debugging)
    ```bash
    docker exec -it <container_name> bash
    ```
-
+ 
 2. **Run a CURL request inside a container:**
    ```bash
    docker exec -it <container_name> curl <your_endpoint>
