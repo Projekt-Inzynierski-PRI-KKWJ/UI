@@ -10,8 +10,14 @@ COPY . .
 RUN npm run build
 
 FROM nginx:latest
-ARG NGINX_CONF
+
 RUN rm -rf /usr/share/nginx/html/*
+
+#fix for nginx, docker uses now nginx.conf, at least I hope so -.-
+RUN rm /etc/nginx/conf.d/default.conf
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 COPY --from=builder /app/dist/pri /usr/share/nginx/html
 
 EXPOSE 80
