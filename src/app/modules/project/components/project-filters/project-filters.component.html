@@ -1,10 +1,10 @@
 <mat-form-field test="search-project-groups">
-  <mat-label>Search</mat-label>
+  <mat-label class="translate" data-translate="search">Search</mat-label>
   <input [(ngModel)]="searchValue" matInput (keyup)="onFiltersChange()">
 </mat-form-field>
 
 <mat-form-field test="supervisor-project-groups" appearance="fill">
-  <mat-label>Supervisor</mat-label>
+  <mat-label class="translate" data-translate="supervisor">Supervisor</mat-label>
   <mat-select [(ngModel)]="supervisorIndexNumber" (selectionChange)="onFiltersChange()">
     <mat-option *ngIf="supervisorIndexNumber !== undefined" [value]="undefined">---</mat-option>
     <mat-option *ngFor="let supervisor of (supervisors$ | async)" [value]="supervisor.indexNumber">
@@ -14,27 +14,27 @@
 </mat-form-field>
 
 <mat-form-field test="acceptance-status-project-groups"  appearance="fill">
-  <mat-label>Acceptance status</mat-label>
+  <mat-label class="translate" data-translate="acceptance_status">Acceptance status</mat-label>
   <mat-select [(ngModel)]="acceptanceStatus" (selectionChange)="onFiltersChange()">
     <mat-option *ngIf="acceptanceStatus !== undefined" [value]="undefined">---</mat-option>
-    <mat-option [value]="true">Accepted</mat-option>
-    <mat-option [value]="false">Not accepted</mat-option>
+    <mat-option [value]="true" class="translate" data-translate="accepted">Accepted</mat-option>
+    <mat-option [value]="false" class="translate" data-translate="not_accepted">Not accepted</mat-option>
   </mat-select>
 </mat-form-field>
 
 <mat-form-field  appearance="fill" test="criteria-met-project-groups">
-  <mat-label>Criteria met</mat-label>
+  <mat-label class="translate" data-translate="criteria_met">Criteria met</mat-label>
   <mat-select [(ngModel)]="criteriaMetStatus" (selectionChange)="onFiltersChange()">
     <mat-option *ngIf="criteriaMetStatus !== undefined" [value]="undefined">---</mat-option>
-    <mat-option [value]="true">Criteria met</mat-option>
-    <mat-option [value]="false">Criteria not met</mat-option>
+    <mat-option [value]="true" class="translate" data-translate="criteria_met">Criteria met</mat-option>
+    <mat-option [value]="false" class="translate" data-translate="criteria_not_met">Criteria not met</mat-option>
   </mat-select>
 </mat-form-field>
 
 <mat-form-field test="predefined-columns" shouldLabelFloat="false">
   <mat-select [(ngModel)]="displayedColumns" multiple (selectionChange)="onFiltersChange()">
     <mat-select-trigger>
-      Selected columns: {{displayedColumns.length}}
+      <span class="translate" data-translate="selected_columns">Selected columns:</span> {{displayedColumns.length}}
     </mat-select-trigger>
     <mat-option *ngFor="let column of allColumnsView!.columns" [value]="column">{{column}}</mat-option>
   </mat-select>
@@ -42,10 +42,10 @@
 
 
 <mat-form-field test="selected-columns-project-groups">
-  <mat-label>Selected view</mat-label>
+  <mat-label class="translate" data-translate="selected_view">Selected view</mat-label>
   <mat-select [(ngModel)]="selectedView" (selectionChange)="onViewChange($event)">
     <mat-option *ngFor="let view of predefinedViews;" [value]="view">{{view.name}}</mat-option>
   </mat-select>
 </mat-form-field>
 
-<button *ngIf="isAnyFilterActive()" (click)="resetFilters()" mat-button test="reset-button-project-groups">reset</button>
+<button *ngIf="isAnyFilterActive()" (click)="resetFilters()" mat-button test="reset-button-project-groups">Reset</button>

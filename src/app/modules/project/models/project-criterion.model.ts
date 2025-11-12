@@ -4,7 +4,7 @@ export interface CriteriaProjectDTO {
   levelOfRealization: 'IN_PROGRESS' | 'PARTIALLY_COMPLETED' | 'COMPLETED';
   semester: 'FIRST' | 'SECOND';
   projectId: number;
-  userId: number;
+  index: string;
   enableForModification: boolean;
   type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS';
   comment?: string;

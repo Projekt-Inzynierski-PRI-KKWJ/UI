@@ -1,8 +1,8 @@
 <div>
     <div class="title-and-add-project-button">
-        <h1>Project groups</h1>
+        <h1 class="translate" data-translate="project_groups">Project groups</h1>
         <div>
-            <button mat-button [matMenuTriggerFor]="supervisorAvailability">Supervisor availability</button>
+            <button mat-button [matMenuTriggerFor]="supervisorAvailability" class="translate" data-translate="supervisor_availability">Supervisor availability</button>
             <button *ngIf="showEditOrAddProjectButton"  (click)="openProjectForm()" mat-raised-button color="primary">
                 {{ projectButtonText }}
             </button>
@@ -15,7 +15,7 @@
             <mat-menu xPosition="before" #supervisorAvailability="matMenu">
                 <div class="supervisor-availability-menu" >
                     <supervisor-availability-list/>
-                    <button [class.hidden]="!isCoordinator" (click)="openSupervisorAvailabilityForm()" mat-raised-button color="primary">
+                    <button [class.hidden]="!isCoordinator" (click)="openSupervisorAvailabilityForm()" mat-raised-button color="primary" class="translate" data-translate="edit_availability">
                         Edit availability
                     </button>
                 </div>

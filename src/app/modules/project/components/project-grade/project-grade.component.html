@@ -11,7 +11,7 @@
                     <span class="centered-cell">4p</span>
                 </div>
                 <div class="criterion-header-and-expand-button">
-                    <p>Selected criterion / Details</p>
+                    <p class="translate" data-translate="selected_criterion_details">Selected criterion / Details</p>
                     <button color="primary" mat-button (click)="expanded = !expanded">
                         {{ expanded ? 'Hide all' : 'Expand all'}}
                     </button>
@@ -30,7 +30,7 @@
                     <td class="criteria-group-name">
                         <h3>
                             {{ criteriaGroup.name }}
-                            <p>Modification date: {{ criteriaGroup.modificationDate }}</p>
+                            <p><span class="translate" data-translate="modification_date">Modification date</span>: {{ criteriaGroup.modificationDate }}</p>
                         </h3>
                        
                     </td>

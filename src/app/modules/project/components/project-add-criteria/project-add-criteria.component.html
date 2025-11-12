@@ -5,8 +5,11 @@
   </span>
 </div>
 
-<h2 class="translate" data-translate="add_criteria">
-  <span class="translate-text">Add criteria</span>
+<h2 
+  mat-dialog-title 
+  class="translate"
+  [attr.data-translate]="comingFromDetailsPage ? 'edit_project_form' : 'new_project_form'">
+  {{ comingFromDetailsPage ? 'Edit project form' : 'New project form' }}
 </h2>
 
 <form [formGroup]="projectCriteria" (ngSubmit)="onSubmit()">
