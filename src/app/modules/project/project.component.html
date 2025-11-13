@@ -3,13 +3,20 @@
         <h1 class="translate" data-translate="project_groups">Project groups</h1>
         <div>
             <button mat-button [matMenuTriggerFor]="supervisorAvailability" class="translate" data-translate="supervisor_availability">Supervisor availability</button>
-            <button *ngIf="showEditOrAddProjectButton"  (click)="openProjectForm()" mat-raised-button color="primary">
+            <button *ngIf="showEditOrAddProjectButton"  
+                    (click)="!areCriteriaLoaded ? null : openProjectForm()" 
+                    mat-raised-button 
+                    color="primary"
+                    [class.saturated-zero]="!areCriteriaLoaded"
+                    [disabled]="!areCriteriaLoaded"
+                    [attr.disabled]="!areCriteriaLoaded ? true : null"
+                    matTooltip="{{ !areCriteriaLoaded ? 'Please upload criteria first to add projects' : '' }}">
                 {{ projectButtonText }}
             </button>
-            <button *ngIf="showPublishAllButton"  (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary">
+            <button *ngIf="showPublishAllButton" (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary">
                 Publish all
             </button>
-            <button *ngIf="showActivateSecondSemesterButton"  (click)="openAreYouSureDialog('activateSecondSemester')" mat-raised-button color="primary">
+            <button *ngIf="showActivateSecondSemesterButton" (click)="openAreYouSureDialog('activateSecondSemester')" mat-raised-button color="primary">
                 Activate second semester
             </button>
             <mat-menu xPosition="before" #supervisorAvailability="matMenu">
@@ -30,4 +37,3 @@
         />
     </div>
 </div>
-

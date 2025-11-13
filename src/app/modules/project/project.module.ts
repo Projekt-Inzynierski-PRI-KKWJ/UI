@@ -29,17 +29,20 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProjectRemoveDialogComponent } from './components/project-remove-dialog/project-remove-dialog.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectGradeComponent } from './components/project-grade/project-grade.component';
-import {MatDividerModule} from '@angular/material/divider';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatMenuModule} from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatMenuModule } from '@angular/material/menu';
 import { SharedModule } from '../shared/shared.module';
 import { RadioCriterionSelectComponent } from './components/project-grade/components/radio-criterion-select/radio-criterion-select.component';
 import { ExternalLinkHistoryComponent } from './components/external-link-history/external-link-history.component';
 import { ProjectAddCriteriaComponent } from './components/project-add-criteria/project-add-criteria.component';
 import { ProjectCriteriaComponent } from './components/project-criteria/project-criteria.component';
+import { ProjectMarketplaceComponent } from './components/project-marketplace/project-marketplace.component';
+import { MatListModule } from '@angular/material/list';
+
 
 @NgModule({
   declarations: [
@@ -56,6 +59,7 @@ import { ProjectCriteriaComponent } from './components/project-criteria/project-
     ExternalLinkHistoryComponent,
     ProjectAddCriteriaComponent,
     ProjectCriteriaComponent,
+    ProjectMarketplaceComponent,
   ],
   imports: [
     CommonModule,
@@ -82,6 +86,7 @@ import { ProjectCriteriaComponent } from './components/project-criteria/project-
     MatTooltipModule,
     MatExpansionModule,
     MatMenuModule,
+    MatListModule,
     StoreModule.forFeature('project', projectReducer),
     EffectsModule.forFeature([ProjectEffects]),
     SharedModule

@@ -1,11 +1,10 @@
 import { HttpClient, HttpErrorResponse, HttpEvent, HttpHeaders, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, retry, throwError, catchError } from "rxjs";
+import { Observable, retry, throwError, catchError, map, of } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
-
 export class DataFeedService {
     constructor(private http: HttpClient) { }
 
@@ -51,7 +50,6 @@ export class DataFeedService {
             )
     }
 
-    
     exportStudents(): Observable<any> {
         return this.http
             .get<HttpResponse<Blob>>(`./pri/data/export/student`, this.setHttpHeadersForFile())
@@ -80,5 +78,23 @@ export class DataFeedService {
                 catchError(
                     (err: HttpErrorResponse) => throwError(() => err))
             )
+    }
+
+    checkCriteriaExists(): Observable<boolean> {
+        return this.http.get<Blob>(`./pri/data/export/criteria`, {
+            responseType: 'blob' as 'json',
+            observe: 'response'
+        }).pipe(
+            map((response: HttpResponse<Blob>) => {
+            // Sprawdź czy plik ma zawartość (większy niż 119 bajtów)
+            const hasContent = response.body !== null && response.body.size > 119;
+            console.log('Criteria file size:', response.body?.size, 'Has content:', hasContent);
+            return hasContent;
+            }),
+            catchError((error) => {
+            console.log('Criteria check error:', error);
+            return of(false);
+            })
+        );
     }
 }

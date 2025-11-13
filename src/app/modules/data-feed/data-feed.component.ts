@@ -19,7 +19,23 @@ export class DataFeedComponent implements OnDestroy {
   criteriaFile!: FormData;
   unsubscribe$ = new Subject();
 
+  // Modal properties
+  showHelpModal = false;
+  activeTab: 'students' | 'supervisors' | 'criteria' = 'students';
+  studentsFormat: 'csv' | 'json' = 'csv';
+  supervisorsFormat: 'csv' | 'json' = 'csv';
+  criteriaFormat: 'csv' | 'json' = 'json';
+
   constructor(private _snackBar: MatSnackBar, private dataFeedService: DataFeedService) {}
+
+  // Modal methods
+  openHelpModal(): void {
+    this.showHelpModal = true;
+  }
+
+  closeHelpModal(): void {
+    this.showHelpModal = false;
+  }
 
   uploadFile(event: any, expectedExtension: string, target: 'students' | 'supervisors' | 'criteria') {
     const file: File = event.target.files[0];
