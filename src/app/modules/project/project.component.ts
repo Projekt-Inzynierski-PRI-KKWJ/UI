@@ -9,10 +9,10 @@ import { Student } from '../user/models/student.model';
 import { User } from '../user/models/user.model';
 import { Router } from '@angular/router';
 import { UserService } from '../user/user.service';
-import { ExternalLinkService } from './services/external-link.service';
 import { ProjectDetails } from './models/project.model';
 import { AreYouSureDialogComponent } from '../shared/are-you-sure-dialog/are-you-sure-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DataFeedService } from '../data-feed/data-feed.service';
 
 @Component({
   selector: 'project',
@@ -30,6 +30,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   isCoordinator?: boolean;
   acceptedProjects: string[] = [];
   assignedProjects: string[] = [];
+  areCriteriaLoaded: boolean = false;
   unsubscribe$ = new Subject();
 
   constructor(
@@ -39,12 +40,14 @@ export class ProjectComponent implements OnInit, OnDestroy {
       private store: Store<State>,
       private _snackbar: MatSnackBar,
       private router: Router,
+      private dataFeedService: DataFeedService
   ) {}
 
   ngOnInit(): void {
     this.checkUserRoleAndAssociatedProject();
     this.userService.students$.pipe(takeUntil(this.unsubscribe$)).subscribe(students => this.students = students)
     this.userService.supervisors$.pipe(takeUntil(this.unsubscribe$)).subscribe(supervisors => this.supervisors = supervisors)
+    this.checkIfCriteriaLoaded();
   }
 
   checkUserRoleAndAssociatedProject(): void{
@@ -71,6 +74,21 @@ export class ProjectComponent implements OnInit, OnDestroy {
         return EMPTY
       })
     ).subscribe()
+  }
+
+  checkIfCriteriaLoaded(): void {
+    this.dataFeedService.checkCriteriaExists().pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe({
+      next: (criteriaExists) => {
+        console.log('Criteria loaded status:', criteriaExists); // DEBUG
+        this.areCriteriaLoaded = criteriaExists;
+      },
+      error: (error) => {
+        console.error('Error checking criteria:', error); // DEBUG
+        this.areCriteriaLoaded = false;
+      }
+    });
   }
 
   openProjectForm(): void {

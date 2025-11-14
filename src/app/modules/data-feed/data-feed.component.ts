@@ -21,6 +21,13 @@ export class DataFeedComponent implements OnDestroy {
   criteriaFileName = '';
   criteriaFile!: FormData;
   unsubscribe$ = new Subject();
+
+  // Modal properties
+  showHelpModal = false;
+  activeTab: 'students' | 'supervisors' | 'criteria' = 'students';
+  studentsFormat: 'csv' | 'json' = 'csv';
+  supervisorsFormat: 'csv' | 'json' = 'csv';
+  criteriaFormat: 'csv' | 'json' = 'json';
   
   availableStudyYears: string[] = [];
   displayedColumns: string[] = ['studyYear', 'actions'];
@@ -48,6 +55,15 @@ openResetDialog(): void {
         });
       }
     });
+  }
+
+  // Modal methods
+  openHelpModal(): void {
+    this.showHelpModal = true;
+  }
+
+  closeHelpModal(): void {
+    this.showHelpModal = false;
   }
   
   uploadFile(event: any, expectedExtension: string, target: 'students' | 'supervisors' | 'criteria') {

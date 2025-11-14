@@ -1,3 +1,292 @@
+<!-- Przycisk do otwierania modala -->
+<div class="help-button-container">
+  <button 
+    mat-raised-button 
+    color="accent" 
+    (click)="openHelpModal()"
+    class="translate" 
+    data-translate="help"
+  >
+    <mat-icon>help_outline</mat-icon>
+    Pomoc CSV/JSON
+  </button>
+</div>
+
+<!-- Modal z instrukcjami -->
+<div class="modal-backdrop" *ngIf="showHelpModal" (click)="closeHelpModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Instrukcje dotyczące formatów plików</h2>
+      <button class="close-button" (click)="closeHelpModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="tabs">
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'students'"
+          (click)="activeTab = 'students'"
+        >
+          Studenci
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'supervisors'"
+          (click)="activeTab = 'supervisors'"
+        >
+          Opiekunowie
+        </button>
+        <button 
+          class="tab-button" 
+          [class.active]="activeTab === 'criteria'"
+          (click)="activeTab = 'criteria'"
+        >
+          Kryteria
+        </button>
+      </div>
+      
+      <div class="tab-content">
+        <!-- Instrukcje dla pliku studentów -->
+        <div *ngIf="activeTab === 'students'" class="tab-panel">
+          <h3>Format pliku studentów</h3>
+          
+          <div class="format-example">
+            <h4>Struktura CSV:</h4>
+            <pre><code>nazwisko;imie;nr_albumu,email
+Kowalski;Jan;123456;jan.kowalski@example.com
+Nazwisko;Imię;654321;imie.nazwisko@example.pl</code></pre>
+            <p class="note">Uwaga: Nagłówki kolumn muszą być dokładnie takie jak w przykładzie.</p>
+          </div>
+        </div>
+        
+        <!-- Instrukcje dla pliku opiekunów -->
+        <div *ngIf="activeTab === 'supervisors'" class="tab-panel">
+          <h3>Format pliku opiekunów (Rozszerzenie .csv)</h3>
+          
+          <div class="format-example">
+            <h4>Struktura CSV:</h4>
+            <pre><code>"imie";"nazwisko";"email";"nr_albumu";"nr_grupy"
+"Jan";"Kowalski";"jan.kowalski@example.com";"123456";"10"
+"Imię";"Nazwisko";"imie.nazwisko@example.pl";"654321";"12"</code></pre>
+            <p class="note">Uwaga: Nagłówki kolumn muszą być dokładnie takie jak w przykładzie.</p>
+          </div>
+          
+        </div>
+        
+        <div *ngIf="activeTab === 'criteria'" class="tab-panel">
+  <h3>Format pliku kryteriów (Rozszerzenie .json)</h3>
+  
+  <div class="format-example">
+      <div class="format-description">
+    <h4>Opis struktury:</h4>
+    <ul>
+      <li><strong>studyYear</strong>: Rok akademicki i tryb studiów (np. "FULL_TIME#2023")</li>
+      <li><strong>minPointsThresholdFirstSemester</strong>: Minimalny próg punktowy dla pierwszego semestru (0.0-1.0)</li>
+      <li><strong>minPointsThresholdSecondSemester</strong>: Minimalny próg punktowy dla drugiego semestru (0.0-1.0)</li>
+      <li><strong>criteriaSections</strong>: Lista sekcji kryteriów (np. Dokumentacja, Produkty projektu)</li>
+      <li><strong>criteriaGroups</strong>: Grupy kryteriów w ramach sekcji</li>
+      <li><strong>criteria</strong>: Szczegółowe kryteria oceny z punktacją i opisami</li>
+      <li><strong>isDisqualifying</strong>: Czy niespełnienie kryterium dyskwalifikuje projekt</li>
+      <li><strong>category</strong>: Kategoria spełnienia kryterium (CRITERION_NOT_MET, UNSUCCESSFUL_ATTEMPT_TO_MEET_THE_CRITERION, CRITERION_MET_WITH_RESERVATIONS, CRITERION_MET)</li>
+    </ul>
+  </div>
+    <h4>Struktura JSON:</h4>
+    <pre><code>{{"{"}}
+  "studyYear": "FULL_TIME#2023",
+  "minPointsThresholdFirstSemester": 0.83,
+  "minPointsThresholdSecondSemester": 0.75,
+  "criteriaSections": [
+    {{"{"}}
+      "idFirstSemester": 1,
+      "idSecondSemester": 2,
+      "name": "Dokumentacja",
+      "isDefenseSection": false,
+      "criteriaSectionGradeWeightFirstSemester": 0.2,
+      "criteriaSectionGradeWeightSecondSemester": 0.1,
+      "criteriaGroups": [
+        {{"{"}}
+          "idFirstSemester": null,
+          "idSecondSemester": 5,
+          "name": "Dokumentacja dla klienta/grupy docelowej/użytkownika",
+          "gradeWeightFirstSemester": 0.0,
+          "gradeWeightSecondSemester": 0.03,
+          "criteria": [
+            {{"{"}}
+              "id": 13,
+              "category": "CRITERION_NOT_MET",
+              "points": 0,
+              "description": "brak dokumentacji",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 14,
+              "category": "UNSUCCESSFUL_ATTEMPT_TO_MEET_THE_CRITERION",
+              "points": 1,
+              "description": "trywialna dokumentacja nie wnosząca dodatkowej wiedzy o systemie",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 15,
+              "category": "CRITERION_MET_WITH_RESERVATIONS",
+              "points": 3,
+              "description": "brak dokumentacji, jeśli takie było wymaganie projektowe/dokumentacja tego typu jest zbędna (wymaga uzasadnienia); poprawna dokumentacja nieprzedstawiona klientowi/grupie docelowej (np. plik PDF na stronie projektu)",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 16,
+              "category": "CRITERION_MET",
+              "points": 4,
+              "description": "poprawnie zredagowana i użyteczna dokumentacja przekazana klientowi/grupie docelowej systemu; dokumentacja w postaci samouczka (np. w grach komputerowych) lub strony w sklepie Play dla aplikacji mobilnych",
+              "isDisqualifying": false
+            {{"}"}}
+          ]
+        {{"}"}},
+        {{"{"}}
+          "idFirstSemester": null,
+          "idSecondSemester": 6,
+          "name": "Dokumentacja deweloperska",
+          "gradeWeightFirstSemester": 0.0,
+          "gradeWeightSecondSemester": 0.03,
+          "criteria": [
+            {{"{"}}
+              "id": 17,
+              "category": "CRITERION_NOT_MET",
+              "points": 0,
+              "description": "brak dokumentacji",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 18,
+              "category": "UNSUCCESSFUL_ATTEMPT_TO_MEET_THE_CRITERION",
+              "points": 1,
+              "description": "trywialna dokumentacja nie wnosząca dodatkowej wiedzy o systemie; dokumentacja dotyczy tylko jednej warstwy systemu (np. frontend)",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 19,
+              "category": "CRITERION_MET_WITH_RESERVATIONS",
+              "points": 3,
+              "description": "dokumentacja użyteczna; obejmuje wszystkie warstwy jednak niekompletna (nie wyjaśnia wszystkich zasobów niezbędnych do rozpoczęcia pracy z projektem, jednak osoba z doświadczeniem w danej technologii jest wstanie to zrobić)",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 20,
+              "category": "CRITERION_MET",
+              "points": 4,
+              "description": "kompletna dokumentacja deweloperska określająca wszystkie zasoby niezbędne do rozpoczęcia pracy nad projektem. Dokumentacja powinna być wystarczająca do przekazania projektu następnemu zespołowi w celu jego kontynuacji",
+              "isDisqualifying": false
+            {{"}"}}
+          ]
+        {{"}"}},
+        {{"{"}}
+          "idFirstSemester": 2,
+          "idSecondSemester": null,
+          "name": "Dokument wymagań projektowych I*",
+          "gradeWeightFirstSemester": 0.08,
+          "gradeWeightSecondSemester": 0.0,
+          "criteria": [
+            {{"{"}}
+              "id": 5,
+              "category": "CRITERION_NOT_MET",
+              "points": 0,
+              "description": "brak dokumentu, dokument niezgodny z szablonem; brak wymagań funkcjonalnych; brak kryteriów akceptacji projektu na oba semestry",
+              "isDisqualifying": true
+            {{"}"}},
+            {{"{"}}
+              "id": 6,
+              "category": "UNSUCCESSFUL_ATTEMPT_TO_MEET_THE_CRITERION",
+              "points": 1,
+              "description": "brak weryfikowalnych kryteriów akceptacji projektu na jeden z semestrów; dokument nie zawiera wszystkich wymaganych informacji; przedstawione informacje są błędne/nieprawdziwe; dokument nie odzwierciedla aktualnego stanu projektu; zadeklarowany zakres projektu jest zbyt mały; kryteria akceptacji są nie weryfikowalne; wskażniki wdrożeniowe są niemierzalne",
+              "isDisqualifying": true
+            {{"}"}},
+            {{"{"}}
+              "id": 7,
+              "category": "CRITERION_MET_WITH_RESERVATIONS",
+              "points": 3,
+              "description": "dokument zaakceptowany przez prowadzącego; jeden aspekt dokumentu nie jest wystarczająco opisany; jedno kryterium akceptacji nie jest weryfikowalne; dokument w większości odzwierciedla aktualny stan projektu; zakres prac przewidziany na poszczególne semestry jest adekwatny",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 8,
+              "category": "CRITERION_MET",
+              "points": 4,
+              "description": "dokument poprawny; odzwierciedla aktualny stan projektu i pozwala na obiektywną ocene jego realizacji",
+              "isDisqualifying": false
+            {{"}"}}
+          ]
+        {{"}"}}
+      ]
+    {{"}"}},
+    {{"{"}}
+      "idFirstSemester": 5,
+      "idSecondSemester": 6,
+      "name": "Produkty projektu",
+      "isDefenseSection": false,
+      "criteriaSectionGradeWeightFirstSemester": 0.33,
+      "criteriaSectionGradeWeightSecondSemester": 0.35,
+      "criteriaGroups": [
+        {{"{"}}
+          "idFirstSemester": 26,
+          "idSecondSemester": null,
+          "name": "Czy przygotowano prototyp projektu zgodnie ze sztuką? *",
+          "gradeWeightFirstSemester": 0.04,
+          "gradeWeightSecondSemester": 0.0,
+          "criteria": [
+            {{"{"}}
+              "id": 93,
+              "category": "CRITERION_NOT_MET",
+              "points": 0,
+              "description": "brak prototypu; prototyp nieprzydatny, niezgodny ze specyfiką projektu, nieodpowiadający zaprezentowanemu projektowi",
+              "isDisqualifying": true
+            {{"}"}},
+            {{"{"}}
+              "id": 94,
+              "category": "UNSUCCESSFUL_ATTEMPT_TO_MEET_THE_CRITERION",
+              "points": 1,
+              "description": "prototyp stworzony na własne potrzeby; częściowo wykorzystany przy tworzeniu docelowego interfejsu systemu",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 95,
+              "category": "CRITERION_MET_WITH_RESERVATIONS",
+              "points": 3,
+              "description": "prototyp adekwatny do projektu, skonsultowany z klientem/grupą docelową i wykorzystany przy tworzeniu docelowego interfejsu systemu",
+              "isDisqualifying": false
+            {{"}"}},
+            {{"{"}}
+              "id": 96,
+              "category": "CRITERION_MET",
+              "points": 4,
+              "description": "prototyp iteracyjnie budowny i konsultowany z klientem/grupą docelową (przynajmniej 3 wersje); prototyp pełni istotną rolę w projektowaniu nowych funkcjonalności systemu",
+              "isDisqualifying": false
+            {{"}"}}
+          ]
+        {{"}"}}
+      ]
+    {{"}"}}
+  ]
+{{"}"}}</code></pre>
+  </div>
+
+
+</div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="closeHelpModal()"
+      >
+        Zamknij
+      </button>
+    </div>
+  </div>
+</div>
+
 <h2 class="translate" data-translate="import">Import</h2>
 <div class="file-inputs">
   <input type="file" class="file-input" (change)="uploadStudents($event)" #studentsFileUpload>
@@ -41,14 +330,14 @@
     </button>
     {{criteriaFileName || "Criteria"}}
   </div>  
-  <button (click)=uploadFiles() mat-raised-button color="primary" test="submit-button-data-feed" class="translate" data-translate="submit">Submit</button>
+  <button (click)="uploadFiles()" mat-raised-button color="primary" test="submit-button-data-feed" class="translate" data-translate="submit">Submit</button>
 </div>
 
 <h2 class="translate" data-translate="export">Export</h2>
 <div class="file-inputs">
-  <button (click)=exportStudents() mat-raised-button color="primary" class="translate" data-translate="students">Students</button>
-  <button (click)=exportCriteria() mat-raised-button color="primary" class="translate" data-translate="criteria">Criteria</button>
-  <button (click)=exportGrades() mat-raised-button color="primary" class="translate" data-translate="grades">Grades</button>
+  <button (click)="exportStudents()" mat-raised-button color="primary" class="translate" data-translate="students">Students</button>
+  <button (click)="exportCriteria()" mat-raised-button color="primary" class="translate" data-translate="criteria">Criteria</button>
+  <button (click)="exportGrades()" mat-raised-button color="primary" class="translate" data-translate="grades">Grades</button>
 </div>
 
 <h2>Study Year Data Export</h2>
