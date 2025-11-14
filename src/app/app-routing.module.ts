@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UserGuard } from './modules/user/user.guard';
 import { CoordinatorGuard } from './modules/user/coordinator.guard';
+import { ProjectMarketplaceComponent } from './modules/project/components/project-marketplace/project-marketplace.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,11 @@ const routes: Routes = [
     loadChildren: () => import('./modules/defense-schedule/defense-schedule.module').then(m => m.DefenseScheduleModule),
     canActivate: [UserGuard],
     outlet: 'modal',
+  },
+  {
+    path: 'marketplace',
+    component: ProjectMarketplaceComponent,
+    canActivate: [UserGuard]
   },
   {
     path: 'data-feed',

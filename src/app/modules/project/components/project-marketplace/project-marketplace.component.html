@@ -1,0 +1,53 @@
+<div class="marketplace-container">
+  <div class="marketplace-card">
+    <div class="search-bar">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Znajdź projekt</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (input)="searchProjects()" placeholder="Wpisz nazwę projektu..." />
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="results-section">
+      <div class="results-header">
+        Wyniki dla „{{ searchTerm || 'Projekt' }}”
+      </div>
+
+      <div class="minimal-projects">
+        <div *ngFor="let project of filteredProjects" 
+            class="minimal-project"
+            [routerLink]="['/projects/marketplace-project', project.id || 'brak-id']">
+          <mat-icon class="minimal-icon">folder_open</mat-icon>
+          <span class="minimal-name">{{ project.name }}</span>
+          <span class="minimal-id">{{ project.id }}</span>
+          <mat-icon class="minimal-arrow">navigate_next</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions-panel">
+      <div class="action-item">
+        <button mat-fab color="primary" (click)="openAddProjectDialog()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <span>Zgłoś nowy projekt</span>
+      </div>
+
+      <div class="action-item">
+        <button mat-fab color="primary" (click)="openMyApplications()">
+          <mat-icon>description</mat-icon>
+        </button>
+        <span>Moje wnioski</span>
+      </div>
+
+      <div class="action-item">
+        <button mat-fab color="primary" (click)="openMyProject()">
+          <mat-icon>assignment</mat-icon>
+        </button>
+        <span>Mój projekt</span>
+      </div>
+    </div>
+  </div>
+</div>

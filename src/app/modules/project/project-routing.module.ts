@@ -11,6 +11,7 @@ import { evaulationCardsResolver } from './resolvers/evaluation-cards.resolver';
 import { studentResolver } from '../user/resolvers/student.resolver';
 import { supervisorResolver } from '../user/resolvers/supervisor.resolver';
 import { ProjectAddCriteriaComponent } from './components/project-add-criteria/project-add-criteria.component';
+import { ProjectMarketplaceComponent } from './components/project-marketplace/project-marketplace.component';
 
 const routes: Routes = [
   { 
@@ -47,6 +48,10 @@ const routes: Routes = [
   { 
     path: 'add-criteria/:id',
     component: ProjectAddCriteriaComponent
+  },
+  { 
+    path: 'marketplace',
+    component: ProjectMarketplaceComponent
   },
   { path: '', component: ProjectComponent },
 ];

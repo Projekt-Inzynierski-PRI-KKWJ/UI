@@ -58,3 +58,22 @@ mat-spinner {
         }
     }
 }
+
+.title-and-add-project-button {
+  button.saturated-zero {
+    filter: saturate(0) !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    
+    // Dodatkowe style dla Angular Material
+    pointer-events: none !important;
+  }
+  
+  // Alternatywnie - style dla disabled button
+  button[disabled] {
+    filter: saturate(0) !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+  }
+}

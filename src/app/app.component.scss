@@ -181,3 +181,38 @@
   margin-top: 8px;
   margin-right: 8px;
 }
+
+::ng-deep mat-selection-list {
+  background-color: rgba(101, 117, 216, 0.08); // delikatny niebieski odcień
+  border-radius: 8px;
+  padding: 10px 0;
+  transition: background-color 0.2s ease-in-out;
+
+  mat-list-option {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    &:hover {
+      background-color: rgba(101, 117, 216, 0.15);
+    }
+
+    .mdc-list-item__primary-text {
+      color: #333;
+      font-weight: 500;
+    }
+
+    // Checkbox zaznaczony na Twój niebieski
+    .mdc-checkbox__background {
+      border-color: #4050b5 !important;
+    }
+
+    .mdc-checkbox__native-control:checked + .mdc-checkbox__background {
+      background-color: #4050b5 !important;
+      border-color: #4050b5 !important;
+    }
+  }
+
+  // Usunięcie ostatniego bordera
+  mat-list-option:last-child {
+    border-bottom: none;
+  }
+}
