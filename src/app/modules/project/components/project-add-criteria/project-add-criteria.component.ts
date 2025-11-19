@@ -18,7 +18,6 @@ import { State } from 'src/app/app.state';
 export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
   projectCriteria!: FormGroup;
   projectId!: number;
-  userId!: string; // zmienione na string
   indexNumber!: string;
   comingFromDetailsPage = false;
   private unsubscribe$ = new Subject<void>();
@@ -51,7 +50,6 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
     this.store.select('user').pipe(takeUntil(this.unsubscribe$)).subscribe(user => {
       if (user && user.indexNumber) {
         this.indexNumber = user.indexNumber;
-        this.userId = user.indexNumber;
       }
     });
   }
@@ -101,13 +99,13 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.projectCriteria.valid && this.userId) {
+    if (this.projectCriteria.valid  && this.indexNumber) {
       const payload: CriteriaProjectDTO[] = this.criteriaGroups.map(group => ({
         criterium: group.get('criterium')?.value,
         levelOfRealization: group.get('levelOfRealization')?.value,
         semester: group.get('semester')?.value,
         projectId: this.projectId,
-        userId: +this.userId, // konwersja na number jeśli backend wymaga number
+        index: this.indexNumber, //backend potrzebuje stringa
         enableForModification: group.get('enableForModification')?.value,
         type: group.get('type')?.value as 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS'
       }));
@@ -121,10 +119,10 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Submission error:', err);
-          this.snackBar.open('Error submitting criteria', 'Close', { duration: 3000 });
+          this.snackBar.open('Something went wrong when submitting criteria!!!', 'Close', { duration: 3000 });
         }
       });
-    } else if (!this.userId) {
+    } else if (!this.indexNumber) {
       this.snackBar.open('User data not available', 'Close', { duration: 3000 });
     }
   }

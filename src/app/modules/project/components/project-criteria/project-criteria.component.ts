@@ -29,6 +29,9 @@ import {
 import {
   ConfirmDialogComponent
 } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { Store } from '@ngrx/store';
+import { State } from '../../../../app.state';
+import { UserState } from '../../../../modules/user/state/user.state';
 
 @Component({
   selector: 'project-criteria',
@@ -36,62 +39,92 @@ import {
   styleUrls: ['./project-criteria.component.scss']
 })
 export class ProjectCriteriaComponent implements OnInit, OnDestroy {
-  @Input() semester ? : 'FIRST' | 'SECOND';
+  @Input() semester?: 'FIRST' | 'SECOND';
   @Input() type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS' | 'ALL' = 'ALL';
   projectId!: number;
+  user!: UserState;
   criteriaList: CriteriaProjectDTO[] = [];
-  private unsubscribe$ = new Subject < void > ();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private criteriaService: ProjectCriteriaService,
     private http: HttpClient,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
+    console.log('🔵 ProjectCriteriaComponent initialized');
+    
+    // Subskrypcja do stanu użytkownika
+    this.store.select('user').pipe(takeUntil(this.unsubscribe$)).subscribe(user => {
+      console.log('🔵 User state updated:', user);
+      console.log('🔵 User role:', user?.role);
+      console.log('🔵 Is user logged:', user?.logged);
+      this.user = user;
+      
+      // Dodatkowe logi po przypisaniu usera
+      console.log('🔵 this.user after assignment:', this.user);
+      console.log('🔵 this.canDeleteCriteria value:', this.canDeleteCriteria);
+    });
+
     this.activatedRoute.params.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       this.projectId = +params['id'];
+      console.log('🔵 Project ID from route:', this.projectId);
       this.loadCriteria();
     });
   }
 
+  // Getter sprawdzający czy użytkownik może usuwać kryteria
+  get canDeleteCriteria(): boolean {
+    const canDelete = this.user?.role === 'SUPERVISOR' || this.user?.role === 'COORDINATOR';
+    console.log('🔵 canDeleteCriteria getter called:');
+    console.log('   - this.user?.role:', this.user?.role);
+    console.log('   - result:', canDelete);
+    return canDelete;
+  }
+
   loadCriteria(): void {
+    console.log('🔵 Loading criteria for project:', this.projectId);
     this.criteriaService.getCriteriaByProjectId(this.projectId).pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: (criteria: CriteriaProjectDTO[]) => {
+        console.log('🟢 Criteria loaded:', criteria.length, 'items');
         this.criteriaList = criteria.filter(c =>
           (!this.semester || c.semester === this.semester) &&
           (this.type === 'ALL' || c.type === this.type) &&
           (!this.semester || c.type !== 'MEASURABLE_IMPLEMENTATION_INDICATORS')
         );
+        console.log('🟢 Filtered criteria:', this.criteriaList.length, 'items');
       },
       error: (err) => {
-        console.error('Error loading criteria:', err);
+        console.error('🔴 Error loading criteria:', err);
       }
     });
   }
 
-  deleteCriterion(id ? : number): void {
+  deleteCriterion(id?: number): void {
+    console.log('🔵 Attempting to delete criterion:', id);
     if (!id) {
-      console.warn('Tried to delete criterion with undefined ID.');
+      console.warn('🔴 Tried to delete criterion with undefined ID.');
       return;
     }
 
     this.http.delete(`/pri/api/criteria-projects/${id}`).subscribe({
       next: () => {
-        console.log(`Criterion ${id} deleted.`);
+        console.log('🟢 Criterion deleted:', id);
         this.loadCriteria();
       },
       error: err => {
-        console.error(`Error deleting criterion ${id}:`, err);
+        console.error('🔴 Error deleting criterion:', err);
       }
     });
   }
 
-  // Nowa metoda otwierająca dialog potwierdzenia usunięcia
   openConfirmDialog(id: number): void {
+    console.log('🔵 Opening confirm dialog for criterion:', id);
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
@@ -100,6 +133,7 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log('🔵 Confirm dialog result:', result);
       if (result === true) {
         this.deleteCriterion(id);
       }
@@ -164,7 +198,7 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateCriterionLevel(id: number, newLevel: string): Observable < any > {
+  updateCriterionLevel(id: number, newLevel: string): Observable<any> {
     const url = `/pri/api/criteria-projects/${id}/level`;
     return this.http.patch(url, {
       levelOfRealization: newLevel
@@ -204,29 +238,29 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
-    onLevelChange(event: Event, id: number | undefined): void {
-      if (id === undefined) {
-        console.error('Missing criterion ID for level update');
-        return;
-      }
-
-      const target = event.target as HTMLSelectElement;
-      const value = target.value;
-      this.criteriaService.updateLevel(id, value).subscribe({
-        next: () => {
-          console.log(`Level updated for ID ${id}`);
-        },
-        error: err => {
-          console.error('Error updating level:', err);
-        }
-      });
+  onLevelChange(event: Event, id: number | undefined): void {
+    if (id === undefined) {
+      console.error('Missing criterion ID for level update');
+      return;
     }
+
+    const target = event.target as HTMLSelectElement;
+    const value = target.value;
+    this.criteriaService.updateLevel(id, value).subscribe({
+      next: () => {
+        console.log(`Level updated for ID ${id}`);
+      },
+      error: err => {
+        console.error('Error updating level:', err);
+      }
+    });
+  }
 
   onToggleLock(id: number, newValue: boolean): void {
     this.updateEnable(id, newValue);
   }
 
-  onCommentChange(event: Event, id ? : number): void {
+  onCommentChange(event: Event, id?: number): void {
     const comment = (event.target as HTMLInputElement).value.trim();
     if (!id) {
       console.error('Missing criterion ID for comment update');
@@ -253,6 +287,7 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    console.log('🔵 ProjectCriteriaComponent destroyed');
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
