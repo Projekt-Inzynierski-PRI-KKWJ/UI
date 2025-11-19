@@ -70,7 +70,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
       if (event instanceof NavigationEnd) {
         this.isModalOpen = event.url.includes('modal') && !event.url.includes('redirectTo');
 
-        // 👇 Sprawdzenie i ustawienie języka przy każdej zmianie strony
+        // Sprawdzenie i ustawienie języka przy każdej zmianie strony
         const savedLang = localStorage.getItem('lang') || 'en';
         this.changeLanguage(savedLang);
       }
