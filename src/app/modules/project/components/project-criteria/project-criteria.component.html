@@ -7,7 +7,8 @@
       <th class="type-column translate" data-translate="type">Type</th>
       <th class="comment-column translate" data-translate="comment">Comment</th>
       <th class="lock-column translate" data-translate="lock">Lock</th>
-      <th></th>
+      <!-- Zmieniono warunek na canDeleteCriteria -->
+      <th *ngIf="canDeleteCriteria"></th>
     </tr>
   </thead>
   <tbody>
@@ -70,7 +71,8 @@
         </button>
       </td>
 
-      <td style="padding: 0;">
+      <!-- Zmieniono warunek na canDeleteCriteria -->
+      <td *ngIf="canDeleteCriteria" style="padding: 0;">
         <button class="delete-button"
                 (click)="openConfirmDialog(criterion.id!); $event.stopPropagation(); $event.preventDefault()">
           <mat-icon style="margin: 0;">delete</mat-icon>
