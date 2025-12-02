@@ -1,0 +1,273 @@
+:host {
+  display: block;
+  padding: 2rem;
+  width: 100%;
+}
+
+.student-search-container {
+  width: 100%;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 2rem;
+    color: #333;
+  }
+}
+
+.filters-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .search-field {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  mat-form-field {
+    min-width: 150px;
+  }
+
+  button {
+    height: 56px;
+  }
+}
+
+.results-summary {
+  margin-bottom: 1rem;
+  color: #666;
+  font-size: 14px;
+}
+
+.students-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.student-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  mat-card-header {
+    margin-bottom: 1rem;
+  }
+
+  .student-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 14px;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #666;
+      }
+
+      span {
+        color: #333;
+      }
+
+      .project-link {
+        color: #3f51b5;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #283593;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    mat-chip {
+      margin-top: 0.5rem;
+      width: fit-content;
+
+      &.approved {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      &.not-approved {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    }
+  }
+}
+
+.student-details {
+  position: relative;
+
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .back-button {
+      margin: 0;
+    }
+
+    .export-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .details-card {
+    mat-card-header {
+      margin-bottom: 2rem;
+    }
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .details-section {
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      color: #3f51b5;
+      font-size: 18px;
+      font-weight: 600;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e0e0e0;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .label {
+        font-weight: 500;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .value {
+        color: #333;
+        font-size: 14px;
+        text-align: right;
+
+        .project-link {
+          color: #3f51b5;
+          text-decoration: none;
+          font-weight: 500;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: #283593;
+            text-decoration: underline;
+          }
+        }
+
+        &.grade {
+          font-weight: 600;
+          font-size: 16px;
+          color: #3f51b5;
+
+          &.final {
+            font-size: 18px;
+            color: #2e7d32;
+          }
+        }
+      }
+
+      mat-chip {
+        &.approved {
+          background-color: #d4edda;
+          color: #155724;
+        }
+
+        &.not-approved {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+      }
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #999;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    margin-bottom: 0.5rem;
+    color: #666;
+  }
+
+  p {
+    color: #999;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .filters-section {
+    flex-direction: column;
+
+    .search-field,
+    mat-form-field,
+    button {
+      width: 100%;
+    }
+  }
+
+  .students-list {
+    grid-template-columns: 1fr;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -37,7 +37,8 @@
           }}
         </mat-option>
         </mat-select>
-        <span *ngIf="user.role !== 'COORDINATOR'">{{ defense.projectName }}</span>
+        <span *ngIf="user.role !== 'COORDINATOR' && defense.projectName">{{ defense.projectName }}</span>
+        <span *ngIf="user.role !== 'COORDINATOR' && !defense.projectName && defense.committeeIdentifier" class="empty-slot-text">SLOT EMPTY</span>
     </td>
     </ng-container>
     <ng-container matColumnDef="class">
@@ -56,6 +57,7 @@
     <tr 
       [class.selected]="defense.projectId !== null"
       [class.included]="doesDefenseIncludeMyProject(defense.projectId)"
+      [class.empty-slot]="defense.committeeIdentifier !== null && defense.projectId === null"
       mat-row *matRowDef="let row; columns: 
       columns; let defense">
     </tr>
