@@ -57,6 +57,9 @@
         <a mat-list-item (click)="navigateTo('defense-schedule')" class="translate" data-translate="defense_schedule">
           <span class="translate-text">Defense schedule</span>
         </a>
+        <a *ngIf="user.role === 'COORDINATOR' || user.role === 'SUPERVISOR'" mat-list-item (click)="navigateTo('student-info')" class="translate" data-translate="student_info">
+          <span class="translate-text">Student Information</span>
+        </a>
       </mat-nav-list>
     </mat-sidenav>
 

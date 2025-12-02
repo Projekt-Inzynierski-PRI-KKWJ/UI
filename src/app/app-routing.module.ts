@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { UserGuard } from './modules/user/user.guard';
 import { CoordinatorGuard } from './modules/user/coordinator.guard';
 import { InitializeCoordinatorComponent } from './modules/user/initialize-coordinator/initialize-coordinator.component';
+import { SupervisorCoordinatorGuard } from './modules/user/supervisor-coordinator.guard';
 
 const routes: Routes = [
   { 
@@ -44,6 +45,11 @@ const routes: Routes = [
     path: 'data-feed',
     loadChildren: () => import('./modules/data-feed/data-feed.module').then(m => m.DataFeedModule),
     canActivate: [CoordinatorGuard]
+  },
+  {
+    path: 'student-info',
+    loadChildren: () => import('./modules/student-info/student-info.module').then(m => m.StudentInfoModule),
+    canActivate: [SupervisorCoordinatorGuard]
   }
 ];
 
