@@ -1,0 +1,191 @@
+<div class="student-search-container">
+  <h1>Student Information</h1>
+
+  <!-- Search and Filters -->
+  <div class="filters-section">
+    <mat-form-field class="search-field" appearance="outline">
+      <mat-label>Search students</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Name, index number, or email...">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Study year</mat-label>
+      <mat-select [formControl]="studyYearFilter">
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let year of studyYears" [value]="year">{{ year }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Has project</mat-label>
+      <mat-select [formControl]="hasProjectFilter">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option [value]="true">Yes</mat-option>
+        <mat-option [value]="false">No</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button (click)="clearFilters()">Clear Filters</button>
+  </div>
+
+  <!-- Results Summary -->
+  <div class="results-summary">
+    <p>Found {{ filteredStudents?.length || 0 }} student(s)</p>
+  </div>
+
+  <!-- Students List -->
+  <div class="students-list" *ngIf="!selectedStudent">
+    <mat-card *ngFor="let student of filteredStudents" class="student-card" (click)="selectStudent(student)">
+      <mat-card-header>
+        <mat-card-title>{{ getFullName(student) }}</mat-card-title>
+        <mat-card-subtitle>{{ student.indexNumber }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="student-card-info">
+          <div class="info-row">
+            <mat-icon>email</mat-icon>
+            <span>{{ student.email }}</span>
+          </div>
+          <div class="info-row" *ngIf="student.confirmedProjectName || (student.assignedProjectIds && student.assignedProjectIds.length > 0)">
+            <mat-icon>assignment</mat-icon>
+            <a *ngIf="student.confirmedProjectId" 
+               [routerLink]="['/projects/details', student.confirmedProjectId]"
+               (click)="$event.stopPropagation()"
+               class="project-link">
+              {{ student.confirmedProjectName }}
+            </a>
+            <span *ngIf="!student.confirmedProjectId && student.assignedProjectIds && student.assignedProjectIds.length > 0">
+              Assigned to {{ student.assignedProjectIds.length }} project(s)
+            </span>
+          </div>
+          <div class="info-row" *ngIf="student.projectSupervisor">
+            <mat-icon>person</mat-icon>
+            <span>{{ student.projectSupervisor }}</span>
+          </div>
+          <div class="info-row" *ngIf="student.actualYear">
+            <mat-icon>school</mat-icon>
+            <span>{{ student.actualYear }}</span>
+          </div>
+          <div class="info-row">
+            <mat-icon>{{ student.accepted ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>{{ student.accepted ? 'Accepted' : 'Not Accepted' }}</span>
+          </div>
+          <div class="info-row" *ngIf="student.defenseDate">
+            <mat-icon>event</mat-icon>
+            <span>{{ student.defenseDate }} at {{ student.defenseTime }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Student Details View -->
+  <div class="student-details" *ngIf="selectedStudent">
+    <div class="detail-header">
+      <button mat-icon-button (click)="clearSelection()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <button mat-raised-button color="accent" (click)="exportStudentAsPDF()" class="export-button">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Export as PDF
+      </button>
+    </div>
+
+    <mat-card class="details-card">
+      <mat-card-header>
+        <mat-card-title>{{ getFullName(selectedStudent) }}</mat-card-title>
+        <mat-card-subtitle>{{ selectedStudent.indexNumber }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="details-grid">
+          <!-- Personal Information -->
+          <div class="details-section">
+            <h3><mat-icon>person</mat-icon> Personal Information</h3>
+            <div class="detail-item">
+              <span class="label">Full Name:</span>
+              <span class="value">{{ selectedStudent.name }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Index Number:</span>
+              <span class="value">{{ selectedStudent.indexNumber }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Email:</span>
+              <span class="value">{{ selectedStudent.email }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Role:</span>
+              <span class="value">{{ selectedStudent.role }}</span>
+            </div>
+            <div class="detail-item" *ngIf="selectedStudent.studyYears && selectedStudent.studyYears.length > 0">
+              <span class="label">Study Years:</span>
+              <span class="value">{{ selectedStudent.studyYears.join(', ') }}</span>
+            </div>
+          </div>
+
+          <!-- Project Information -->
+          <div class="details-section">
+            <h3><mat-icon>assignment</mat-icon> Project Information</h3>
+            <div class="detail-item" *ngIf="selectedStudent.confirmedProjectId">
+              <span class="label">Confirmed Project:</span>
+              <span class="value">
+                <a [routerLink]="['/projects/details', selectedStudent.confirmedProjectId]" class="project-link">
+                  {{ selectedStudent.confirmedProjectName }} (ID: {{ selectedStudent.confirmedProjectId }})
+                </a>
+              </span>
+            </div>
+            <div class="detail-item" *ngIf="selectedStudent.assignedProjectIds && selectedStudent.assignedProjectIds.length > 0">
+              <span class="label">Assigned Projects ({{ selectedStudent.assignedProjectIds.length }}):</span>
+              <span class="value">
+                <span *ngFor="let projectId of selectedStudent.assignedProjectIds; let i = index; let last = last">
+                  <a [routerLink]="['/projects/details', projectId]" class="project-link">
+                    {{ selectedStudent.assignedProjectNames && selectedStudent.assignedProjectNames[i] ? selectedStudent.assignedProjectNames[i] : 'Project ' + projectId }}
+                  </a><span *ngIf="!last">, </span>
+                </span>
+              </span>
+            </div>
+
+            <div class="detail-item" *ngIf="selectedStudent.projectSupervisor">
+              <span class="label">Supervisor:</span>
+              <span class="value">{{ selectedStudent.projectSupervisor }}</span>
+            </div>
+            <div class="detail-item" *ngIf="selectedStudent.defenseDate">
+              <span class="label">Defense Date:</span>
+              <span class="value">{{ selectedStudent.defenseDate }}</span>
+            </div>
+            <div class="detail-item" *ngIf="selectedStudent.defenseTime">
+              <span class="label">Defense Time:</span>
+              <span class="value">{{ selectedStudent.defenseTime }}</span>
+            </div>
+          </div>
+
+          <!-- Grades -->
+          <div class="details-section">
+            <h3><mat-icon>grade</mat-icon> Grades</h3>
+            <div class="detail-item">
+              <span class="label">First Semester Grade:</span>
+              <span class="value grade">{{ selectedStudent.firstSemesterGrade || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Second Semester Grade:</span>
+              <span class="value grade">{{ selectedStudent.secondSemesterGrade || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Final Grade:</span>
+              <span class="value grade final">{{ selectedStudent.finalGrade || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredStudents?.length === 0 && !selectedStudent">
+    <mat-icon>search_off</mat-icon>
+    <h2>No students found</h2>
+    <p>Try adjusting your search filters</p>
+  </div>
+</div>

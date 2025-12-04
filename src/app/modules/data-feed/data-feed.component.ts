@@ -300,23 +300,46 @@ openResetDialog(): void {
               : project.supervisor.email || project.supervisor.name || 'Unknown Supervisor';
             addText(`Supervisor: ${supervisorName}`, 9);
           }
-          if (project.capacity !== undefined) {
-            addText(`Capacity: ${project.capacity}`, 9);
+          
+          // Project status and acceptance
+          if (project.accepted !== undefined) {
+            addText(`Acceptance Status: ${project.accepted ? 'Accepted' : 'Pending'}`, 9);
           }
-          if (project.maxCapacity !== undefined) {
-            addText(`Max Capacity: ${project.maxCapacity}`, 9);
+          if (project.confirmed !== undefined) {
+            addText(`Confirmed: ${project.confirmed ? 'Yes' : 'No'}`, 9);
           }
-          if (project.status) {
-            addText(`Status: ${project.status}`, 9);
+          
+          // Grade information - IMPORTANT DATA
+          if (project.firstSemesterGrade || project.secondSemesterGrade || project.finalGrade !== undefined) {
+            yPosition += 5;
+            addText('PROJECT GRADES:', 10, 'bold');
+            if (project.firstSemesterGrade) {
+              addText(`First Semester: ${project.firstSemesterGrade}`, 9);
+            }
+            if (project.secondSemesterGrade) {
+              addText(`Second Semester: ${project.secondSemesterGrade}`, 9);
+            }
+            if (project.finalGrade !== undefined && project.finalGrade !== null) {
+              addText(`Final Grade: ${project.finalGrade.toFixed(2)}`, 9, 'bold');
+            }
+            if (project.criteriaMet !== undefined && project.criteriaMet !== null) {
+              addText(`Criteria Met: ${project.criteriaMet ? 'YES' : 'NO - DISQUALIFIED'}`, 9, project.criteriaMet ? 'normal' : 'bold');
+            }
+            yPosition += 3;
           }
-          if (project.type) {
-            addText(`Type: ${project.type}`, 9);
+          
+          // Defense information
+          if (project.defenseDay || project.defenseTime) {
+            addText(`Defense: ${project.defenseDay || ''} ${project.defenseTime || ''}`, 9);
           }
-          if (project.studyYear) {
-            addText(`Study Year: ${project.studyYear}`, 9);
+          if (project.classroom) {
+            addText(`Classroom: ${project.classroom}`, 9);
           }
-          if (project.createdAt) {
-            addText(`Created: ${new Date(project.createdAt).toLocaleDateString()}`, 9);
+          if (project.committee) {
+            addText(`Committee: ${project.committee}`, 9);
+          }
+          if (project.evaluationPhase) {
+            addText(`Evaluation Phase: ${project.evaluationPhase}`, 9);
           }
           
           yPosition += 5;
@@ -327,7 +350,7 @@ openResetDialog(): void {
             yPosition += 3;
             
             // Simple table for students
-            const studentHeaders = ['Name', 'Email', 'Index Number', 'Status'];
+            const studentHeaders = ['Name', 'Email', 'Index', 'Role', 'Accepted', 'Admin'];
             const cellWidth = (maxLineWidth - 20) / studentHeaders.length;
             
             // Headers
@@ -352,9 +375,11 @@ openResetDialog(): void {
                 : student.name || 'Unknown';
               const studentEmail = student.email || '';
               const indexNumber = student.indexNumber || student.studentNumber || '';
-              const status = student.status || student.enrollmentStatus || '';
+              const role = student.role || '';
+              const accepted = student.accepted ? 'Yes' : 'No';
+              const isAdmin = student.projectAdmin || student.isProjectAdmin ? 'Yes' : '';
               
-              const studentData = [studentName, studentEmail, indexNumber, status];
+              const studentData = [studentName, studentEmail, indexNumber, role, accepted, isAdmin];
               
               studentData.forEach((cell, i) => {
                 const x = margin + 10 + (i * cellWidth);
@@ -517,6 +542,75 @@ openResetDialog(): void {
       // Projects with their students and links
       if (data.projects) {
         addProjectTable(data.projects);
+      }
+
+      // All Students Overview with their project assignments
+      if (data.students && data.students.length > 0) {
+        if (yPosition > pdf.internal.pageSize.height - 100) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+
+        addText('ALL STUDENTS OVERVIEW', 14, 'bold');
+        yPosition += 10;
+
+        // Table headers
+        const headers = ['Index', 'Name', 'Email', 'Project', 'Role', 'Status'];
+        const cellWidth = (maxLineWidth - 20) / headers.length;
+        
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(8);
+        headers.forEach((header, i) => {
+          const x = margin + 10 + (i * cellWidth);
+          pdf.text(header, x, yPosition);
+        });
+        yPosition += 12;
+
+        // Student rows
+        pdf.setFont('helvetica', 'normal');
+        data.students.forEach((student: any) => {
+          if (yPosition > pdf.internal.pageSize.height - 30) {
+            pdf.addPage();
+            yPosition = 20;
+            
+            // Redraw headers
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(8);
+            headers.forEach((header, i) => {
+              const x = margin + 10 + (i * cellWidth);
+              pdf.text(header, x, yPosition);
+            });
+            yPosition += 12;
+            pdf.setFont('helvetica', 'normal');
+          }
+
+          const indexNum = student.indexNumber || '';
+          const name = `${student.firstName || ''} ${student.lastName || ''}`.trim();
+          const email = student.email || '';
+          
+          // Find project name if student has confirmedProjectId
+          let projectName = 'None';
+          if (student.confirmedProjectId && data.projects) {
+            const proj = data.projects.find((p: any) => String(p.id) === String(student.confirmedProjectId));
+            if (proj) {
+              projectName = proj.name || proj.title || `Project ${proj.id}`;
+            }
+          }
+          
+          const role = student.role || '';
+          const status = student.accepted ? 'Accepted' : 'Pending';
+          
+          const rowData = [indexNum, name, email, projectName, role, status];
+          
+          rowData.forEach((cell, i) => {
+            const x = margin + 10 + (i * cellWidth);
+            const cellText = pdf.splitTextToSize(cell, cellWidth - 4);
+            pdf.text(cellText[0] || '', x, yPosition);
+          });
+          yPosition += 10;
+        });
+
+        yPosition += 15;
       }
 
       // Supervisors overview
