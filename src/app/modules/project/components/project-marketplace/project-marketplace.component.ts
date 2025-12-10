@@ -18,12 +18,13 @@ export class ProjectMarketplaceComponent implements OnInit {
   filteredProjects: Project[] = [];
   debugResponse: any = null;
   debugError: any = null;
-  debugUrl: string = './pri/project';
+  debugUrl: string = './pri/api/project-market/market?page=0&size=100';
   isLoading: boolean = false;
   userHeaders: any = {};
   showNewProjectDialog: boolean = false;
   newProjectForm: FormGroup;
   isSubmitting: boolean = false;
+  loadingProjects: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -40,12 +41,7 @@ export class ProjectMarketplaceComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projects = [
-      { id: 'P001', name: 'System rezerwacji sal', supervisor: { name: 'Dr Kowalski' } as any, accepted: true },
-      { id: 'P002', name: 'Analiza danych pogodowych', supervisor: { name: 'Mgr Nowak' } as any, accepted: false }
-    ];
-
-    this.filteredProjects = [...this.projects];
+    this.loadProjects();
 
     // Get user info for headers
     this.store.select('user').pipe(first()).subscribe(user => {
@@ -57,26 +53,75 @@ export class ProjectMarketplaceComponent implements OnInit {
     });
   }
 
+  // Dodaj tę metodę do ładowania projektów
+  loadProjects() {
+    this.loadingProjects = true;
+    this.http.get('./pri/api/project-market/market?page=0&size=100')
+      .subscribe({
+        next: (response: any) => {
+          console.log('Projects loaded:', response);
+          
+          if (response && response.content) {
+            // Jeśli backend używa paginacji (Spring Page)
+            this.projects = response.content.map((project: any) => ({
+              id: project.id || project.projectId,
+              name: project.name || project.title,
+              supervisor: project.supervisor || { name: 'Brak przypisanego opiekuna' },
+              accepted: project.accepted || project.status === 'ACCEPTED' || false,
+              description: project.description,
+              technologies: project.technologies || [],
+              maxMembers: project.maxMembers || project.maxStudents || 1
+            }));
+          } else if (Array.isArray(response)) {
+            // Jeśli backend zwraca bezpośrednio tablicę
+            this.projects = response.map((project: any) => ({
+              id: project.id || project.projectId,
+              name: project.name || project.title,
+              supervisor: project.supervisor || { name: 'Brak przypisanego opiekuna' },
+              accepted: project.accepted || project.status === 'ACCEPTED' || false,
+              description: project.description,
+              technologies: project.technologies || [],
+              maxMembers: project.maxMembers || project.maxStudents || 1
+            }));
+          }
+          
+          this.filteredProjects = [...this.projects];
+          this.loadingProjects = false;
+        },
+        error: (error) => {
+          console.error('Error loading projects:', error);
+          // Fallback do przykładowych danych
+          this.projects = [
+            { id: 'P001', name: 'System rezerwacji sal', supervisor: { name: 'Dr Kowalski' } as any, accepted: true },
+            { id: 'P002', name: 'Analiza danych pogodowych', supervisor: { name: 'Mgr Nowak' } as any, accepted: false }
+          ];
+          this.filteredProjects = [...this.projects];
+          this.loadingProjects = false;
+        }
+      });
+  }
+
+  // Dodaj tę metodę do odświeżania listy po dodaniu projektu
+  refreshProjects() {
+    this.loadProjects();
+  }
+
   testBackendCall() {
     this.debugResponse = null;
     this.debugError = null;
     this.isLoading = true;
 
-    // Note: Headers are automatically added by Angular's HTTP interceptor
-    // This call will work the same as other frontend API calls
     this.http.get(this.debugUrl)
       .subscribe({
         next: (response) => {
           this.debugResponse = response;
           this.isLoading = false;
           console.log('Backend response:', response);
-          console.log('Request was made with headers (auto-added by interceptor):', this.userHeaders);
         },
         error: (error) => {
           this.debugError = error;
           this.isLoading = false;
           console.error('Backend error:', error);
-          console.error('Headers that should have been sent:', this.userHeaders);
         }
       });
   }
@@ -84,7 +129,9 @@ export class ProjectMarketplaceComponent implements OnInit {
   searchProjects() {
     const term = this.searchTerm.toLowerCase();
     this.filteredProjects = this.projects.filter(p =>
-      p.name.toLowerCase().includes(term)
+      p.name.toLowerCase().includes(term) ||
+      (p.description && p.description.toLowerCase().includes(term)) ||
+      (p.technologies && p.technologies.some((tech: string) => tech.toLowerCase().includes(term)))
     );
   }
 
@@ -110,7 +157,6 @@ export class ProjectMarketplaceComponent implements OnInit {
       contactData: '',
       maxMembers: 3
     });
-    // Reset technologies array
     while (this.technologies.length > 1) {
       this.technologies.removeAt(1);
     }
@@ -147,7 +193,12 @@ export class ProjectMarketplaceComponent implements OnInit {
         next: (response) => {
           console.log('Project created successfully:', response);
           this.closeNewProjectDialog();
-          // Optionally refresh the project list here
+          
+          // Odśwież listę projektów po dodaniu nowego
+          this.refreshProjects();
+          
+          // Możesz też dodać powiadomienie dla użytkownika
+          alert('Projekt został pomyślnie dodany!');
         },
         error: (error) => {
           console.error('Failed to create project:', error);

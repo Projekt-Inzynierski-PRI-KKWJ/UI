@@ -19,6 +19,8 @@ export interface Project {
     classroom?: string | null;
     committee?: string[] | null;
     students?: string | null;
+    technologies?: string[];
+    description?: string;
 }
 
 export interface ProjectDetails {

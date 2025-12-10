@@ -13,14 +13,47 @@
     <div class="results-section">
       <div class="results-header">
         Wyniki dla „{{ searchTerm || 'Projekt' }}”
+        <span class="results-count">({{ filteredProjects.length }} projektów)</span>
       </div>
 
-      <div class="minimal-projects">
+      <!-- Loading indicator -->
+      <div *ngIf="loadingProjects" class="loading-projects">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Ładowanie projektów...</p>
+      </div>
+
+      <!-- No projects found -->
+      <div *ngIf="!loadingProjects && filteredProjects.length === 0" class="no-projects">
+        <mat-icon style="font-size: 48px; color: #ccc;">folder_off</mat-icon>
+        <p>Nie znaleziono projektów</p>
+        <p *ngIf="searchTerm" style="font-size: 14px; color: #666;">
+          Spróbuj zmienić kryteria wyszukiwania
+        </p>
+      </div>
+
+      <!-- Projects list -->
+      <div class="minimal-projects" *ngIf="!loadingProjects && filteredProjects.length > 0">
         <div *ngFor="let project of filteredProjects" 
             class="minimal-project"
             [routerLink]="['/projects/marketplace-project', project.id || 'brak-id']">
-          <mat-icon class="minimal-icon">folder_open</mat-icon>
-          <span class="minimal-name">{{ project.name }}</span>
+          <mat-icon class="minimal-icon" [style.color]="project.accepted ? '#4CAF50' : '#FF9800'">
+            {{ project.accepted ? 'check_circle' : 'pending' }}
+          </mat-icon>
+          <div class="project-info">
+            <div class="project-title-row">
+              <span class="minimal-name">{{ project.name }}</span>
+              <span class="supervisor-badge" *ngIf="project.supervisor?.name">
+                <mat-icon class="supervisor-icon">person</mat-icon>
+                <span class="supervisor-name">{{ project.supervisor.name }}</span>
+              </span>
+            </div>
+            <div class="project-details">
+              <span class="technologies" *ngIf="project.technologies && project.technologies.length > 0">
+                <mat-icon>code</mat-icon>
+                {{ project.technologies.join(', ') }}
+              </span>
+            </div>
+          </div>
           <span class="minimal-id">{{ project.id }}</span>
           <mat-icon class="minimal-arrow">navigate_next</mat-icon>
         </div>
@@ -51,7 +84,7 @@
     </div>
 
     <!-- Debug Section -->
-    <div class="debug-section" style="margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+    <div class="debug-section" style="margin-top:80px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
       <h3 style="margin-top: 0;">🔍 Backend API Tester</h3>
       
       <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
@@ -108,6 +141,7 @@
       </div>
 
       <div class="dialog-content">
+        <label class="section-label">Dane podstawowe</label>
         <form [formGroup]="newProjectForm">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nazwa projektu</mat-label>
@@ -132,8 +166,9 @@
             </mat-error>
           </mat-form-field>
 
+          <label class="section-label">Technologie</label>
           <div class="technologies-section">
-            <label class="section-label">Technologie</label>
+            
             <div formArrayName="technologies">
               <div *ngFor="let tech of technologies.controls; let i = index" class="technology-row">
                 <mat-form-field appearance="outline" class="tech-input">
@@ -153,9 +188,10 @@
             </button>
           </div>
 
+          <label class="section-label">Kontakt</label>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Email kontaktowy</mat-label>
-            <input matInput formControlName="contactData" type="email" placeholder="twoj.email@example.com">
+            <input matInput formControlName="contactData" type="email" placeholder="email@st.amu.edu.pl">
             <mat-error *ngIf="newProjectForm.get('contactData')?.hasError('required')">
               Email jest wymagany
             </mat-error>
@@ -164,9 +200,10 @@
             </mat-error>
           </mat-form-field>
 
+          <label class="section-label">Kandydaci</label>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Maksymalna liczba członków zespołu</mat-label>
-            <input matInput formControlName="maxMembers" type="number" min="1" max="10">
+            <mat-label>Wymagana ilość kandydatów</mat-label>
+            <input matInput formControlName="maxMembers" type="number" min="1" max="5">
             <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('required')">
               Liczba członków jest wymagana
             </mat-error>
@@ -174,7 +211,7 @@
               Minimum 1 członek
             </mat-error>
             <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('max')">
-              Maksimum 10 członków
+              Maksimum 5 członków
             </mat-error>
           </mat-form-field>
         </form>
@@ -188,7 +225,7 @@
                 [disabled]="isSubmitting || newProjectForm.invalid">
           <mat-icon *ngIf="!isSubmitting">send</mat-icon>
           <mat-icon *ngIf="isSubmitting" class="spinner">refresh</mat-icon>
-          {{ isSubmitting ? 'Wysyłanie...' : 'Zgłoś projekt' }}
+          {{ isSubmitting ? 'Wysyłanie...' : 'Utwórz zgłoszenie' }}
         </button>
       </div>
     </div>
