@@ -9,16 +9,20 @@ import { Observable, retry, throwError, catchError } from "rxjs";
 export class DataFeedService {
     constructor(private http: HttpClient) { }
 
+
+
     resetDataBase():Observable<string>
     {
         return this.http.delete<string>(`./pri/data/reset`).pipe(
-                retry(0),//There can be no retrys 
+                retry(0),//there can be no retrys 
                     catchError((err: HttpErrorResponse) => {
       console.error("Database reset failed", err);
       return throwError(() => new Error("Failed to reset database."));
     })
   );
+
     }
+
 
 
     uploadStudents(data: FormData): Observable<null>  {
@@ -41,7 +45,10 @@ export class DataFeedService {
             responseType: 'blob',
             observe: 'response'
         }
+        
     }
+
+
 
     uploadSupervisors(data: FormData): Observable<null>  {
         return this.http
@@ -52,6 +59,8 @@ export class DataFeedService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
 
     uploadCriteria(data: FormData): Observable<null>  {
         return this.http
@@ -74,6 +83,8 @@ export class DataFeedService {
             )
     }
 
+
+
     exportCriteria(): Observable<any> {
         return this.http
             .get<HttpResponse<Blob>>(`./pri/data/export/criteria`, this.setHttpHeadersForFile())
@@ -83,6 +94,8 @@ export class DataFeedService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
 
     exportGrades(): Observable<any> {
         return this.http
@@ -94,6 +107,9 @@ export class DataFeedService {
             )
     }
 
+
+
+
     getAvailableStudyYearsForExport(): Observable<string[]> {
         return this.http
             .get<string[]>(`./pri/export/study-year`)
@@ -104,6 +120,9 @@ export class DataFeedService {
             )
     }
 
+
+
+
     exportStudyYearData(studyYear: string): Observable<any> {
         return this.http
             .get<HttpResponse<Blob>>(`./pri/export/study-year/${studyYear}`, this.setHttpHeadersForFile())
@@ -113,4 +132,8 @@ export class DataFeedService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
+
+
 }

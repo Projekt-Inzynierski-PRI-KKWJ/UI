@@ -44,7 +44,13 @@ const routes: Routes = [
     path: 'data-feed',
     loadChildren: () => import('./modules/data-feed/data-feed.module').then(m => m.DataFeedModule),
     canActivate: [CoordinatorGuard]
+  },
+  {
+    path: 'statistics',
+    loadChildren: () => import('./modules/statistics/statistics.module').then(m => m.StatisticsModule),
+    canActivate: [CoordinatorGuard]
   }
+
 ];
 
 @NgModule({

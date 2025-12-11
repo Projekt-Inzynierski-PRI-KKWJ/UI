@@ -42,3 +42,11 @@ export const isCoordinator = createSelector(
     getUserState,
     state => state?.role === 'COORDINATOR'
 )
+
+export const selectActualYear = createSelector(
+  getUserState,
+  (state: UserState) => state.actualYear
+);
+
+
+

@@ -57,6 +57,9 @@
         <a mat-list-item (click)="navigateTo('defense-schedule')" class="translate" data-translate="defense_schedule">
           <span class="translate-text">Defense schedule</span>
         </a>
+        <a *ngIf="isCoordinator" mat-list-item (click)="navigateTo('statistics')" class="translate" data-translate="statistics_module">
+          <span class="translate-text">Statistics</span>
+        </a>
       </mat-nav-list>
     </mat-sidenav>
 
