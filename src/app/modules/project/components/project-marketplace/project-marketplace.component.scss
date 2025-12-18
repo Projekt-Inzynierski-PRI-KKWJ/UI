@@ -70,6 +70,7 @@
   right: 40px;
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: 24px;
 
@@ -199,7 +200,6 @@
   }
 }
 
-// Dialog styles
 .dialog-overlay {
   position: fixed;
   top: 0;
@@ -229,6 +229,7 @@
   display: flex;
   flex-direction: column;
   animation: slideUp 0.3s ease;
+  margin: 0;
 }
 
 @keyframes slideUp {
@@ -315,3 +316,65 @@ label .section-label {
     transform: translateX(2px);
   }
 }
+
+.centered-custom-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .mat-mdc-dialog-container, 
+  .mat-dialog-container {
+    padding: 0 !important;
+    overflow: hidden;
+    border-radius: 8px !important;
+  }
+}
+
+.cdk-global-overlay-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+::ng-deep .centered-custom-modal {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  .mat-mdc-dialog-container {
+    overflow: hidden !important;
+    display: flex;
+    flex-direction: column;
+    --mdc-dialog-container-shape: 12px;
+    padding: 0 !important;
+  }
+}
+
+::ng-deep .cdk-global-overlay-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.project-title-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .results-section {
+    padding: 0;
+  }
+  .minimal-project {
+    padding-left: 0;
+    padding-right: 0;
+    gap: 6px;
+  }
+}
+
+.minimal-project .mat-icon {
+  overflow: visible !important;
+}
+

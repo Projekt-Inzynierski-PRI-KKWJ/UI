@@ -1,11 +1,38 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/app.state';
-import { first } from 'rxjs';
-import { Project } from '../../models/project.model';
-import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+import {
+  HttpClient,
+  HttpHeaders
+} from '@angular/common/http';
+import {
+  Store
+} from '@ngrx/store';
+import {
+  State
+} from 'src/app/app.state';
+import {
+  first
+} from 'rxjs';
+import {
+  Project
+} from '../../models/project.model';
+import {
+  MatDialog
+} from '@angular/material/dialog';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormArray
+} from '@angular/forms';
+import {
+  Supervisor
+} from '../../../../modules/user/models/supervisor.model';
+import {
+  ProjectMarketplaceDetailsComponent
+} from '../project-marketplace-details/project-marketplace-details.component';
 
 @Component({
   selector: 'app-project-marketplace',
@@ -28,8 +55,9 @@ export class ProjectMarketplaceComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private store: Store<State>,
-    private fb: FormBuilder
+    private store: Store < State > ,
+    private fb: FormBuilder,
+    private dialog: MatDialog
   ) {
     this.newProjectForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -43,7 +71,6 @@ export class ProjectMarketplaceComponent implements OnInit {
   ngOnInit() {
     this.loadProjects();
 
-    // Get user info for headers
     this.store.select('user').pipe(first()).subscribe(user => {
       this.userHeaders = {
         'study-year': user.actualYear,
@@ -53,55 +80,122 @@ export class ProjectMarketplaceComponent implements OnInit {
     });
   }
 
-  // Dodaj tę metodę do ładowania projektów
+  openProjectDetails(projectId: number | string | undefined): void {
+    if (!projectId) {
+      console.error('Project ID is undefined');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ProjectMarketplaceDetailsComponent, {
+      width: '900px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      data: {
+        projectId: projectId
+      },
+      panelClass: 'centered-custom-modal',
+      autoFocus: false,
+      restoreFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'updated') {
+        this.refreshProjects();
+      }
+    });
+  }
+
   loadProjects() {
     this.loadingProjects = true;
     this.http.get('./pri/api/project-market/market?page=0&size=100')
       .subscribe({
         next: (response: any) => {
           console.log('Projects loaded:', response);
-          
+
           if (response && response.content) {
-            // Jeśli backend używa paginacji (Spring Page)
-            this.projects = response.content.map((project: any) => ({
-              id: project.id || project.projectId,
-              name: project.name || project.title,
-              supervisor: project.supervisor || { name: 'Brak przypisanego opiekuna' },
-              accepted: project.accepted || project.status === 'ACCEPTED' || false,
-              description: project.description,
-              technologies: project.technologies || [],
-              maxMembers: project.maxMembers || project.maxStudents || 1
-            }));
-          } else if (Array.isArray(response)) {
-            // Jeśli backend zwraca bezpośrednio tablicę
+            if (Array.isArray(response.content) && response.content.length > 0) {
+              this.projects = response.content.map((project: any) => ({
+                id: project.id,
+                name: project.projectName,
+                ownerDetails: project.ownerDetails,
+                supervisor: this.createSupervisorFromOwner(project.ownerDetails),
+                accepted: false,
+                description: project.projectDescription,
+                technologies: project.technologies || [],
+                maxMembers: project.maxMembers,
+                contactData: project.contactData,
+                currentMembers: project.currentMembers || [],
+                creationDate: project.creationDate,
+                modificationDate: project.modificationDate,
+                studyYear: project.studyYear
+              }));
+            } else {
+              this.projects = [];
+            }
+          } else if (Array.isArray(response) && response.length > 0) {
             this.projects = response.map((project: any) => ({
-              id: project.id || project.projectId,
-              name: project.name || project.title,
-              supervisor: project.supervisor || { name: 'Brak przypisanego opiekuna' },
-              accepted: project.accepted || project.status === 'ACCEPTED' || false,
-              description: project.description,
+              id: project.id,
+              name: project.projectName,
+              ownerDetails: project.ownerDetails,
+              supervisor: this.createSupervisorFromOwner(project.ownerDetails),
+              accepted: false,
+              description: project.projectDescription,
               technologies: project.technologies || [],
-              maxMembers: project.maxMembers || project.maxStudents || 1
+              maxMembers: project.maxMembers,
+              contactData: project.contactData,
+              currentMembers: project.currentMembers || [],
+              creationDate: project.creationDate,
+              modificationDate: project.modificationDate,
+              studyYear: project.studyYear
             }));
+          } else {
+            this.projects = [];
           }
-          
+
           this.filteredProjects = [...this.projects];
           this.loadingProjects = false;
         },
         error: (error) => {
           console.error('Error loading projects:', error);
-          // Fallback do przykładowych danych
-          this.projects = [
-            { id: 'P001', name: 'System rezerwacji sal', supervisor: { name: 'Dr Kowalski' } as any, accepted: true },
-            { id: 'P002', name: 'Analiza danych pogodowych', supervisor: { name: 'Mgr Nowak' } as any, accepted: false }
-          ];
-          this.filteredProjects = [...this.projects];
+          this.projects = [];
+          this.filteredProjects = [];
           this.loadingProjects = false;
         }
       });
   }
 
-  // Dodaj tę metodę do odświeżania listy po dodaniu projektu
+  private createSupervisorFromOwner(ownerDetails: any): Supervisor {
+    if (!ownerDetails) {
+      return {
+        name: 'Brak właściciela',
+        email: '',
+        indexNumber: '',
+        initials: '',
+        id: ''
+      };
+    }
+
+    const firstName = ownerDetails.firstName || '';
+    const lastName = ownerDetails.lastName || '';
+    const email = ownerDetails.email || '';
+
+    const firstInitial = firstName ? firstName.charAt(0).toUpperCase() : '';
+    const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : '';
+    const initials = `${firstInitial}${lastInitial}`;
+
+    const indexNumber = ownerDetails.indexNumber || email.split('@')[0] || '';
+    const id = ownerDetails.id || indexNumber || '';
+
+    return {
+      name: `${firstName} ${lastName}`.trim(),
+      email: email,
+      indexNumber: indexNumber,
+      initials: initials,
+      id: id,
+      accepted: false
+    };
+  }
+
   refreshProjects() {
     this.loadProjects();
   }
@@ -171,7 +265,7 @@ export class ProjectMarketplaceComponent implements OnInit {
   submitNewProject() {
     if (this.newProjectForm.invalid) {
       Object.keys(this.newProjectForm.controls).forEach(key => {
-        this.newProjectForm.get(key)?.markAsTouched();
+        this.newProjectForm.get(key) ?.markAsTouched();
       });
       this.technologies.controls.forEach(ctrl => ctrl.markAsTouched());
       return;
@@ -180,12 +274,13 @@ export class ProjectMarketplaceComponent implements OnInit {
     this.isSubmitting = true;
     const formValue = this.newProjectForm.value;
     const projectData = {
-      name: formValue.name,
-      description: formValue.description,
+      projectName: formValue.name,
+      projectDescription: formValue.description,
       technologies: formValue.technologies.filter((t: string) => t.trim() !== ''),
       studyYear: this.userHeaders['study-year'] || '2024/2025',
       contactData: formValue.contactData,
-      maxMembers: formValue.maxMembers
+      maxMembers: formValue.maxMembers,
+      accepted: false
     };
 
     this.http.post('./pri/api/project-market/project', projectData)
@@ -193,16 +288,12 @@ export class ProjectMarketplaceComponent implements OnInit {
         next: (response) => {
           console.log('Project created successfully:', response);
           this.closeNewProjectDialog();
-          
-          // Odśwież listę projektów po dodaniu nowego
           this.refreshProjects();
-          
-          // Możesz też dodać powiadomienie dla użytkownika
           alert('Projekt został pomyślnie dodany!');
         },
         error: (error) => {
           console.error('Failed to create project:', error);
-          alert('Błąd podczas tworzenia projektu: ' + (error.error?.errorMessage || error.message));
+          alert('Błąd podczas tworzenia projektu: ' + (error.error ?.errorMessage || error.message));
           this.isSubmitting = false;
         }
       });
