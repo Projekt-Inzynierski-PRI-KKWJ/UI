@@ -8,32 +8,36 @@ import { State } from 'src/app/app.state';
 export class UserInterceptor implements HttpInterceptor {
     constructor(private store: Store<State>) { }
 
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return this.store.select('user').pipe(
-            first(),
-            mergeMap(user => {
-                //To prevent index reading on initialization
-        if (req.url.includes('/initialization')) 
-            {
-          return next.handle(req);
-        }
-            const headersConfig: { [name: string]: string } = {
-                'index-number': user.indexNumber,
-                'study-year': user.actualYear,
-                'lang': user.lang,
-            };
+    // user.interceptor.ts
 
-            if (user.token) {
-                headersConfig['Authorization'] = `Bearer ${user.token}`;
-            }
+intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  return this.store.select('user').pipe(
+    first(),
+    mergeMap(user => {
+      // 1. Check if user exists
+      // 2. Skip for initialization calls
+      // 3. Skip for local assets (translations)
+      if (!user || req.url.includes('/initialization') || req.url.includes('assets/')) {
+        return next.handle(req);
+      }
 
-            const modifiedReq = req.clone({
-                setHeaders: headersConfig,
-                withCredentials: true
-            });
-            return next.handle(modifiedReq);
-            })
-        );
-    }
+      const headersConfig: { [name: string]: string } = {
+        'index-number': user.indexNumber || '',
+        'study-year': user.actualYear || '',
+        'lang': user.lang || '',
+      };
 
+      if (user.token) {
+        headersConfig['Authorization'] = `Bearer ${user.token}`;
+      }
+
+      const modifiedReq = req.clone({
+        setHeaders: headersConfig,
+        withCredentials: true
+      });
+      
+      return next.handle(modifiedReq);
+    })
+  );
+}
 }
