@@ -8,7 +8,7 @@
     data-translate="help"
   >
     <mat-icon>help_outline</mat-icon>
-    Pomoc CSV/JSON
+    <span class="translate" data-translate="csv_json_help">Pomoc CSV/JSON</span>
   </button>
 </div>
 
@@ -16,7 +16,7 @@
 <div class="modal-backdrop" *ngIf="showHelpModal" (click)="closeHelpModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>Instrukcje dotyczące formatów plików</h2>
+      <h2>Instrukcja</h2>
       <button class="close-button" (click)="closeHelpModal()">
         <mat-icon>close</mat-icon>
       </button>
@@ -280,6 +280,8 @@ Nazwisko;Imię;654321;imie.nazwisko@example.pl</code></pre>
         mat-raised-button 
         color="primary" 
         (click)="closeHelpModal()"
+        class="translate"
+        data-translate="close"
       >
         Zamknij
       </button>
@@ -289,48 +291,49 @@ Nazwisko;Imię;654321;imie.nazwisko@example.pl</code></pre>
 
 <h2 class="translate" data-translate="import">Import</h2>
 <div class="file-inputs">
+  
   <input type="file" class="file-input" (change)="uploadStudents($event)" #studentsFileUpload>
   <div class="file-upload">
-    <button
-      mat-mini-fab
-      color="primary"
-      class="upload-btn"
-      (click)="studentsFileUpload.click()"
-      test="students-attach-button-data-feed"
-    >
+    <button mat-mini-fab color="primary" class="upload-btn" (click)="studentsFileUpload.click()">
       <mat-icon>attach_file</mat-icon>
     </button>
-    {{studentsFileName || "Students"}}
+    <ng-container *ngIf="studentsFileName; else translateStudents">
+      {{ studentsFileName }}
+    </ng-container>
+    <ng-template #translateStudents>
+      <span class="translate" data-translate="students">Students</span>
+    </ng-template>
   </div>
-  
+ 
   <input type="file" class="file-input" (change)="uploadSupervisors($event)" #supervisorsFileUpload>
   <div class="file-upload">
-    <button 
-      mat-mini-fab
-      color="primary"
-      class="upload-btn"
-      (click)="supervisorsFileUpload.click()"
-      test="supervisors-attach-button-data-feed"
-    >
+    <button mat-mini-fab color="primary" class="upload-btn" (click)="supervisorsFileUpload.click()">
       <mat-icon>attach_file</mat-icon>
     </button>
-    {{supervisorsFileName || "Supervisors"}}
+    <ng-container *ngIf="supervisorsFileName; else translateSupervisors">
+      {{ supervisorsFileName }}
+    </ng-container>
+    <ng-template #translateSupervisors>
+      <span class="translate" data-translate="supervisors">Supervisors</span>
+    </ng-template>
   </div>  
 
   <input type="file" class="file-input" (change)="uploadCriteria($event)" #criteriaFileUpload>
   <div class="file-upload">
-    <button
-      mat-mini-fab
-      color="primary"
-      class="upload-btn"
-      (click)="criteriaFileUpload.click()"
-      test="criteria-attach-button-data-feed"
-    >
+    <button mat-mini-fab color="primary" class="upload-btn" (click)="criteriaFileUpload.click()">
       <mat-icon>attach_file</mat-icon>
     </button>
-    {{criteriaFileName || "Criteria"}}
+    <ng-container *ngIf="criteriaFileName; else translateCriteria">
+      {{ criteriaFileName }}
+    </ng-container>
+    <ng-template #translateCriteria>
+      <span class="translate" data-translate="criteria">Criteria</span>
+    </ng-template>
   </div>  
-  <button (click)="uploadFiles()" mat-raised-button color="primary" test="submit-button-data-feed" class="translate" data-translate="submit">Submit</button>
+
+  <button (click)="uploadFiles()" mat-raised-button color="primary" class="translate" data-translate="submit">
+    Submit
+  </button>
 </div>
 
 <h2 class="translate" data-translate="export">Export</h2>
@@ -340,21 +343,21 @@ Nazwisko;Imię;654321;imie.nazwisko@example.pl</code></pre>
   <button (click)="exportGrades()" mat-raised-button color="primary" class="translate" data-translate="grades">Grades</button>
 </div>
 
-<h2>Study Year Data Export</h2>
+<h2 class="translate" data-translate="study_year_data_export">Study Year Data Export</h2>
 <div class="study-year-export">
   <div class="section-header">
-    <p>Export complete study year data including projects, students, grades, links, and metadata</p>
+    <p class="translate" data-translate="export_complete_study_year">Export complete study year data including projects, students, grades, links, and metadata</p>
   </div>
   
   <div *ngIf="availableStudyYears.length === 0" class="no-data">
     <mat-icon>info</mat-icon>
-    <span>No study years available for export</span>
+    <span class="translate" data-translate="no_study_years_available_for_export">No study years available for export</span>
   </div>
   
   <div *ngIf="availableStudyYears.length > 0" class="study-years-table">
     <table mat-table [dataSource]="availableStudyYears" class="export-table">
       <ng-container matColumnDef="studyYear">
-        <th mat-header-cell *matHeaderCellDef>Study Year</th>
+        <th mat-header-cell *matHeaderCellDef class="translate" data-translate="study_year">Study Year</th>
         <td mat-cell *matCellDef="let studyYear" class="study-year-cell">
           <div class="study-year-info">
             <mat-icon>school</mat-icon>
@@ -362,7 +365,7 @@ Nazwisko;Imię;654321;imie.nazwisko@example.pl</code></pre>
           </div>
         </td>
       </ng-container>        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+          <th mat-header-cell *matHeaderCellDef class="actions-header translate" data-translate="actions">Actions</th>
           <td mat-cell *matCellDef="let studyYear" class="actions-cell">
           <div class="action-buttons">
             <button 
@@ -385,7 +388,7 @@ Nazwisko;Imię;654321;imie.nazwisko@example.pl</code></pre>
 </div>
 
    
-<h2>Critical Operations</h2>
+<h2 class="translate" data-translate="critical_operations">Critical Operations</h2>
 <div class="reset-section">
   <button 
     mat-raised-button 
@@ -393,6 +396,8 @@ Nazwisko;Imię;654321;imie.nazwisko@example.pl</code></pre>
     class="reset-btn" 
     (click)="openResetDialog()">
     <mat-icon>warning</mat-icon>
-    Reset Database
+    <span class="translate" data-translate="reset_database">
+      Reset Database
+    </span> 
   </button>
 </div>

@@ -1,12 +1,14 @@
-<h1 mat-dialog-title>Are you sure?</h1>
+<h1 mat-dialog-title class="translate" data-translate="are_you_sure">Are you sure?</h1>
 <div mat-dialog-content>
-  <p>By clicking confirm you will: <span>{{data.actionName}}</span></p>
+  <p><span class="translate" data-translate="by_clicking_confirm">By clicking confirm you will:</span><span>{{data.actionName}}</span></p>
 </div>
 <div class="actions" mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button mat-dialog-close class="translate" data-translate="cancel">Cancel</button>
   <button 
     color="primary" mat-raised-button 
     [mat-dialog-close]="true" 
-    cdkFocusInitial>Confirm
+    cdkFocusInitial
+    class="translate"
+    data-translate="confirm">Confirm
   </button>
 </div>
