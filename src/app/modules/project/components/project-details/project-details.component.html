@@ -72,11 +72,11 @@
         </div>
       </div>
       <div class="defense-data">
-        <p *ngIf="data.defenseDay"><span>Defense day:</span> {{data.defenseDay}}</p>
-        <p *ngIf="data.defenseTime"><span>Defense time:</span> {{data.defenseTime}}</p>
-        <p *ngIf="data.classroom"><span>Classroom:</span> {{data.classroom}}</p>
-        <p *ngIf="data.defenseDay && data.evaluationPhase"><span>Evaluation phase</span> {{data.evaluationPhase}}</p>
-        <p *ngIf="data.committee"><span>Committee:</span> {{data.committee}}</p>
+        <p *ngIf="data.defenseDay"><span class="translate" data-translate="defense_day">Defense day:</span> {{data.defenseDay}}</p>
+        <p *ngIf="data.defenseTime"><span class="translate" data-translate="defense_time">Defense time:</span> {{data.defenseTime}}</p>
+        <p *ngIf="data.classroom"><span class="translate" data-translate="classroom">Classroom:</span> {{data.classroom}}</p>
+        <p *ngIf="data.defenseDay && data.evaluationPhase"><span class="translate" data-translate="evaluation_phase">Evaluation phase</span> {{data.evaluationPhase}}</p>
+        <p *ngIf="data.committee"><span class="translate" data-translate="committee">Committee:</span> {{data.committee}}</p>
       </div>
     </div>
   </div>
@@ -151,25 +151,25 @@
   </mat-tab>
 
   <!-- Zakładka: Criteria -->
-  <mat-tab label="Criteria">
+  <mat-tab [label]="app.translations['criteria'] || 'Criteria'">
     <div class="criteria-container">
       <mat-tab-group>
         <!-- Criteria - First Semester -->
-        <mat-tab label="First semester of criteria" class="criteria-main-tab">
+        <mat-tab [label]="app.translations['first_semester_criteria'] || 'First semester of criteria'">
           <div class="tab-content-container">
             <project-criteria [semester]="'FIRST'" [type]="'ALL'"></project-criteria>
           </div>
         </mat-tab>
 
         <!-- Criteria - Second Semester -->
-        <mat-tab label="Second semester of criteria" class="criteria-main-tab">
+        <mat-tab [label]="app.translations['second_semester_criteria'] || 'Second semester of criteria'">
           <div class="tab-content-container">
             <project-criteria [semester]="'SECOND'" [type]="'ALL'"></project-criteria>
           </div>
         </mat-tab>
 
         <!-- Measurable Implementation Indicators -->
-        <mat-tab label="Measurable Implementation Indicators" class="criteria-main-tab">
+        <mat-tab [label]="app.translations['measurable_implementation_indicators'] || 'Measurable Implementation Indicators'" class="criteria-main-tab">
           <div class="tab-content-container">
             <project-criteria [type]="'MEASURABLE_IMPLEMENTATION_INDICATORS'"></project-criteria>
           </div>
@@ -179,7 +179,7 @@
   </mat-tab>
 
   <div *ngIf="gradesShown && criteriaShown" class="grade-info mat-elevation-z8">
-    <h2>Grade: {{grade}}</h2>
+    <h2 class="translate" data-translate="grade">Grade: {{grade}}</h2>
     <div>
       <h2 class="criteriaMet">Criteria met: <div [class.accepted]="criteriaMet" class="ellipse"></div>
       </h2>
