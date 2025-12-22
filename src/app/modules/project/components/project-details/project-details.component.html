@@ -2,19 +2,13 @@
   <div class="details">
     <div class="back" (click)="navigateBack()">
       <mat-icon>arrow_back</mat-icon>
-        <span class="translate" data-translate="project_list">Project List</span>
+      <span class="translate" data-translate="project_list">Project List</span>
     </div>
     <h1>{{data.name}}</h1>
     <p>{{data.description}}</p>
-    
-    <mat-chip-set
-          class="chips"
-          cdkDropList 
-          cdkDropListOrientation="horizontal">
-      <mat-chip
-        class="example-box"
-        cdkDrag
-        *ngFor="let technology of data.technologies">
+
+    <mat-chip-set class="chips" cdkDropList cdkDropListOrientation="horizontal">
+      <mat-chip class="example-box" cdkDrag *ngFor="let technology of data.technologies">
         {{technology}}
       </mat-chip>
     </mat-chip-set>
@@ -24,82 +18,65 @@
           <div class="link-main">
             <!-- Available URL link -->
             <div *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && externalLink.url">
-                <a target="_blank" 
-                    [href]="externalLink.url" 
-                    mat-icon-button>
-                    <mat-icon>link</mat-icon>
-                </a>
+              <a target="_blank" [href]="externalLink.url" mat-icon-button>
+                <mat-icon>link</mat-icon>
+              </a>
             </div>
-            
+
             <!-- Available file link -->
             <div *ngIf="externalLink.linkType === 'INTERNAL' && externalLink.originalFileName">
-                <a (click)="downloadExternalLinkFile(externalLink.id)" 
-                    mat-icon-button
-                    style="cursor: pointer;">
-                    <mat-icon>download</mat-icon>
-                </a>
+              <a (click)="downloadExternalLinkFile(externalLink.id)" mat-icon-button style="cursor: pointer;">
+                <mat-icon>download</mat-icon>
+              </a>
             </div>
-            
+
             <!-- Unavailable URL link -->
             <div *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && !externalLink.url">
-                <a mat-icon-button 
-                   class="unavailable" 
-                   style="pointer-events: none;"
-                   matTooltip="No URL provided">
-                    <mat-icon>link_off</mat-icon>
-                </a>
+              <a mat-icon-button class="unavailable" style="pointer-events: none;" matTooltip="No URL provided">
+                <mat-icon>link_off</mat-icon>
+              </a>
             </div>
-            
+
             <!-- Unavailable file link -->
             <div *ngIf="externalLink.linkType === 'INTERNAL' && !externalLink.originalFileName">
-                <a mat-icon-button 
-                   class="unavailable" 
-                   style="pointer-events: none;"
-                   matTooltip="No file uploaded">
-                    <mat-icon>link_off</mat-icon>
-                </a>
+              <a mat-icon-button class="unavailable" style="pointer-events: none;" matTooltip="No file uploaded">
+                <mat-icon>link_off</mat-icon>
+              </a>
             </div>
-            
+
             <!-- Available URL link name -->
-            <a *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && externalLink.url" 
-               target="_blank" 
-               [href]="externalLink.url">{{ externalLink.name }}</a>
-            
+            <a *ngIf="(externalLink.linkType === 'EXTERNAL' || !externalLink.linkType) && externalLink.url"
+              target="_blank" [href]="externalLink.url">{{ externalLink.name }}</a>
+
             <!-- Available file link name -->
-            <a *ngIf="externalLink.linkType === 'INTERNAL' && externalLink.originalFileName" 
-               (click)="downloadExternalLinkFile(externalLink.id)"
-               style="cursor: pointer;">{{ externalLink.name }}</a>
-            
+            <a *ngIf="externalLink.linkType === 'INTERNAL' && externalLink.originalFileName"
+              (click)="downloadExternalLinkFile(externalLink.id)" style="cursor: pointer;">{{ externalLink.name }}</a>
+
             <!-- Unavailable link name -->
             <a *ngIf="(!externalLink.url && (externalLink.linkType === 'EXTERNAL' || !externalLink.linkType)) || 
-                      (!externalLink.originalFileName && externalLink.linkType === 'INTERNAL')"
-               class="unavailable"
-               style="pointer-events: none;">{{ externalLink.name }}</a>
+                      (!externalLink.originalFileName && externalLink.linkType === 'INTERNAL')" class="unavailable"
+              style="pointer-events: none;">{{ externalLink.name }}</a>
 
             <!-- History Toggle Button -->
-            <button mat-icon-button 
-                    class="history-toggle"
-                    (click)="toggleHistory(externalLink.id)"
-                    matTooltip="Toggle change history">
-                <mat-icon>{{ isHistoryExpanded(externalLink.id) ? 'expand_less' : 'history' }}</mat-icon>
+            <button mat-icon-button class="history-toggle" (click)="toggleHistory(externalLink.id)"
+              matTooltip="Toggle change history">
+              <mat-icon>{{ isHistoryExpanded(externalLink.id) ? 'expand_less' : 'history' }}</mat-icon>
             </button>
           </div>
 
           <!-- History Component -->
           <div *ngIf="isHistoryExpanded(externalLink.id)" class="history-section">
-            <external-link-history 
-              [externalLinkId]="externalLink.id"
-              [externalLinkName]="externalLink.name">
+            <external-link-history [externalLinkId]="externalLink.id" [externalLinkName]="externalLink.name">
             </external-link-history>
           </div>
-        </div>  
+        </div>
       </div>
       <div class="defense-data">
-        <p *ngIf="data.defenseDay"><span>Defense day:</span> {{data.defenseDay}}</p>
-        <p *ngIf="data.defenseTime"><span>Defense time:</span> {{data.defenseTime}}</p>
-        <p *ngIf="data.classroom"><span>Classroom:</span> {{data.classroom}}</p>
-        <p *ngIf="data.defenseDay && data.evaluationPhase"><span>Evaluation phase</span> {{data.evaluationPhase}}</p>
-        <p *ngIf="data.committee"><span>Committee:</span> {{data.committee}}</p>
+        <p *ngIf="data.defenseDay"><span class="translate" data-translate="defense_day">Defense day:</span> {{data.defenseDay}}</p>
+        <p *ngIf="data.defenseTime"><span class="translate" data-translate="defense_time">Defense time:</span> {{data.defenseTime}}</p>
+        <p *ngIf="data.classroom"><span class="translate" data-translate="classroom">Classroom:</span> {{data.classroom}}</p>
+        <p *ngIf="data.defenseDay && data.evaluationPhase"><span class="translate" data-translate="evaluation_phase">Evaluation phase</span> {{data.evaluationPhase}}</p>
+        <p *ngIf="data.committee"><span class="translate" data-translate="committee">Committee:</span> {{data.committee}}</p>
       </div>
     </div>
   </div>
@@ -107,24 +84,25 @@
     <table class="mat-elevation-z5" mat-table [dataSource]="members" matSort>
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef class="translate" data-translate="name"> Name </th>
-        <td mat-cell *matCellDef="let member"> 
+        <td mat-cell *matCellDef="let member">
           <div class="cellWithIcon">
-            {{member.name}} 
+            {{member.name}}
             <mat-icon *ngIf="isProjectAdmin(member)">manage_accounts</mat-icon>
             <mat-icon *ngIf="isSupervisor(member)">supervisor_account</mat-icon>
           </div>
         </td>
       </ng-container>
       <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef> Email </th>
-          <td mat-cell *matCellDef="let member"> {{member.email}} </td>
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let member"> {{member.email}} </td>
       </ng-container>
       <ng-container matColumnDef="role">
         <th mat-header-cell *matHeaderCellDef class="translate" data-translate="role"> Role </th>
         <td mat-cell *matCellDef="let member"> {{getRole(member.role)}} </td>
       </ng-container>
       <ng-container matColumnDef="status">
-        <th class="acceptance-status-header" mat-header-cell *matHeaderCellDef class="translate" data-translate="status"> Status </th>
+        <th class="acceptance-status-header" mat-header-cell *matHeaderCellDef class="translate"
+          data-translate="status"> Status </th>
         <td mat-cell *matCellDef="let member">
           <div [class.accepted]="member.accepted" class="ellipse"></div>
         </td>
@@ -133,36 +111,39 @@
       <tr mat-row *matRowDef="let row; columns: columns;"></tr>
     </table>
     <div class="buttons">
-      <button *ngIf="showPublishButton" (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary" cdkFocusInitial>Publish</button>
-      <button *ngIf="showOpenRetakePhaseButton" (click)="openAreYouSureDialog('retake')" mat-raised-button color="primary" cdkFocusInitial>Open retake phase</button>
-      <button *ngIf="showFreezeGradingButton" (click)="openAreYouSureDialog('freeze')" mat-raised-button color="primary" cdkFocusInitial>Freeze grading</button>
-      <button *ngIf="showEditButton" (click)="editProject()" mat-raised-button color="primary" cdkFocusInitial class="translate" data-translate="edit_project">Edit project</button>
-      <button *ngIf="showRemoveButton" (click)="openRemoveProjectDialog()" mat-raised-button color="primary" cdkFocusInitial>Remove project</button>
-      <button *ngIf="showAcceptButton" (click)="acceptProject()" mat-raised-button color="primary" cdkFocusInitial>Accept project</button>
-      <button *ngIf="showUnacceptButton" (click)="unacceptProject()" mat-raised-button color="primary" cdkFocusInitial>Unaccept project</button>
-      <button *ngIf="showAddCriteriaButton" (click)="addCriteria()" mat-raised-button color="primary" cdkFocusInitial class="translate" data-translate="add_criteria">Add criteria</button>
+      <button *ngIf="showPublishButton" (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary"
+        cdkFocusInitial>Publish</button>
+      <button *ngIf="showOpenRetakePhaseButton" (click)="openAreYouSureDialog('retake')" mat-raised-button
+        color="primary" cdkFocusInitial>Open retake phase</button>
+      <button *ngIf="showFreezeGradingButton" (click)="openAreYouSureDialog('freeze')" mat-raised-button color="primary"
+        cdkFocusInitial>Freeze grading</button>
+      <button *ngIf="showEditButton" (click)="editProject()" mat-raised-button color="primary" cdkFocusInitial
+        class="translate" data-translate="edit_project">Edit project</button>
+      <button *ngIf="showRemoveButton" (click)="openRemoveProjectDialog()" mat-raised-button color="primary"
+        cdkFocusInitial>Remove project</button>
+      <button *ngIf="showAcceptButton" (click)="acceptProject()" mat-raised-button color="primary"
+        cdkFocusInitial>Accept project</button>
+      <button *ngIf="showUnacceptButton" (click)="unacceptProject()" mat-raised-button color="primary"
+        cdkFocusInitial>Unaccept project</button>
+      <button *ngIf="showAddCriteriaButton" (click)="addCriteria()" mat-raised-button color="primary" cdkFocusInitial
+        class="translate" data-translate="add_criteria">Add criteria</button>
     </div>
   </div>
 </div>
-<mat-tab-group (selectedTabChange)="onSemesterTabChange($event)" [selectedIndex]="selectedSemesterIndex" *ngIf="gradesShown" class="mat-elevation-z8">
-  
+<mat-tab-group (selectedTabChange)="onSemesterTabChange($event)" [selectedIndex]="selectedSemesterIndex"
+  *ngIf="gradesShown" class="mat-elevation-z8">
+
   <!-- Istniejące semestry -->
-  <mat-tab #semesterTab *ngFor="let semester of objectKeys(evaluationCards)" [label]="getEvaluationCardsTranslations(semester)">
-    
+  <mat-tab #semesterTab *ngFor="let semester of objectKeys(evaluationCards)"
+    [label]="getEvaluationCardsTranslations(semester)">
+
     <mat-tab-group (selectedTabChange)="onPhaseTabChange($event)" [selectedIndex]="selectedPhaseIndex">
-      <mat-tab 
-        #phaseTab
-        *ngFor="let phase of objectKeys(evaluationCards[semester])"
-        [label]="getEvaluationCardsTranslations(phase)"
-      >
+      <mat-tab #phaseTab *ngFor="let phase of objectKeys(evaluationCards[semester])"
+        [label]="getEvaluationCardsTranslations(phase)">
         <div class="tab-content-container">
-          <project-grade 
-            [isActive]="phaseTab.isActive && semesterTab.isActive"
-            (gradeChange)="onGradeChange($event)"
-            [projectId]="data.id!"
-            [semester]="semester"
-            [evaulationCard]="evaluationCards[semester][phase]"
-          ></project-grade>
+          <project-grade [isActive]="phaseTab.isActive && semesterTab.isActive" (gradeChange)="onGradeChange($event)"
+            [projectId]="data.id!" [semester]="semester" [evaulationCard]="evaluationCards[semester][phase]">
+          </project-grade>
         </div>
       </mat-tab>
     </mat-tab-group>
@@ -170,35 +151,38 @@
   </mat-tab>
 
   <!-- Zakładka: Criteria -->
-  <mat-tab label="Criteria">
-    <mat-tab-group>
-      <!-- Criteria - First Semester -->
-      <mat-tab label="First semester">
-        <div class="tab-content-container">
-          <project-criteria [semester]="'FIRST'" [type]="'ALL'"></project-criteria>
-        </div>
-      </mat-tab>
+  <mat-tab [label]="app.translations['criteria'] || 'Criteria'">
+    <div class="criteria-container">
+      <mat-tab-group>
+        <!-- Criteria - First Semester -->
+        <mat-tab [label]="app.translations['first_semester_criteria'] || 'First semester of criteria'">
+          <div class="tab-content-container">
+            <project-criteria [semester]="'FIRST'" [type]="'ALL'"></project-criteria>
+          </div>
+        </mat-tab>
 
-      <!-- Criteria - Second Semester -->
-      <mat-tab label="Second semester">
-        <div class="tab-content-container">
-          <project-criteria [semester]="'SECOND'" [type]="'ALL'"></project-criteria>
-        </div>
-      </mat-tab>
+        <!-- Criteria - Second Semester -->
+        <mat-tab [label]="app.translations['second_semester_criteria'] || 'Second semester of criteria'">
+          <div class="tab-content-container">
+            <project-criteria [semester]="'SECOND'" [type]="'ALL'"></project-criteria>
+          </div>
+        </mat-tab>
 
-      <!-- Measurable Implementation Indicators -->
-      <mat-tab label="Measurable Implementation Indicators">
-        <div class="tab-content-container">
-          <project-criteria [type]="'MEASURABLE_IMPLEMENTATION_INDICATORS'"></project-criteria>
-        </div>
-      </mat-tab>
-    </mat-tab-group>
+        <!-- Measurable Implementation Indicators -->
+        <mat-tab [label]="app.translations['measurable_implementation_indicators'] || 'Measurable Implementation Indicators'" class="criteria-main-tab">
+          <div class="tab-content-container">
+            <project-criteria [type]="'MEASURABLE_IMPLEMENTATION_INDICATORS'"></project-criteria>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
   </mat-tab>
 
-<div *ngIf="gradesShown && criteriaShown" class="grade-info mat-elevation-z8">
-  <h2>Grade: {{grade}}</h2>
-  <div>
-    <h2 class="criteriaMet">Criteria met: <div [class.accepted]="criteriaMet" class="ellipse"></div></h2>
-    <h2>Selected criteria: {{selectedCriteria}}</h2>
+  <div *ngIf="gradesShown && criteriaShown" class="grade-info mat-elevation-z8">
+    <h2 class="translate" data-translate="grade">Grade: {{grade}}</h2>
+    <div>
+      <h2 class="criteriaMet">Criteria met: <div [class.accepted]="criteriaMet" class="ellipse"></div>
+      </h2>
+      <h2>Selected criteria: {{selectedCriteria}}</h2>
+    </div>
   </div>
-</div>

@@ -1,11 +1,12 @@
 import { Component, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ChangeGradeResponse, EvaluationCard } from '../../models/grade.model';
 import { GradeService } from '../../services/grade.service';
 import { updateGrade } from '../../state/project.actions';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/app.state';
+import { AppComponent } from '../../../../app.component';
 
 @Component({
   selector: 'project-grade',
@@ -30,7 +31,8 @@ export class ProjectGradeComponent implements OnDestroy, OnChanges {
   constructor(
     private gradeSerice: GradeService,
     private router: Router,
-    private store: Store<State>
+    private store: Store<State>,
+    public app: AppComponent
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {

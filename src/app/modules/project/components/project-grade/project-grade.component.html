@@ -12,8 +12,10 @@
                 </div>
                 <div class="criterion-header-and-expand-button">
                     <p class="translate" data-translate="selected_criterion_details">Selected criterion / Details</p>
-                    <button color="primary" mat-button (click)="expanded = !expanded">
-                        {{ expanded ? 'Hide all' : 'Expand all'}}
+                    <button color="primary" mat-button (click)="expanded = !expanded"
+                            class="translate"
+                            [attr.data-translate]="expanded ? 'hide_all' : 'expand_all'">
+                        {{ expanded ? (app.translations['hide_all'] || 'Hide all') : (app.translations['expand_all'] || 'Expand all') }}
                     </button>
                 </div>
             </th>

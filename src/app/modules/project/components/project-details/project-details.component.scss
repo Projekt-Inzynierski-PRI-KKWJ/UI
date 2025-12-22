@@ -222,3 +222,37 @@
 mat-tab-group {
     min-height: 640px;
 }
+
+::ng-deep .criteria-container {
+  mat-tab-group {
+    .mat-mdc-tab-header {
+      background-color: #f5f5f5;
+      padding: 0 20px 0 20px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    .mat-mdc-tab {
+      &:hover {
+        background-color: #e8eaf6;
+      }
+      
+    }
+    
+    .mdc-tab--active {
+      background-color: #3f51b5 !important;
+        transition: background-color 0.3s ease-in-out;
+      .mdc-tab__text-label {
+        color: white !important;
+        font-weight: 600;
+      }
+    }
+    
+    .mdc-tab__text-label {
+      color: #5c6bc0;
+      font-weight: 500;
+    }
+  }
+  .mdc-tab-indicator__content--underline {
+    border: none !important;
+  }
+}

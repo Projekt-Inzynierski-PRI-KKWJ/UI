@@ -1,14 +1,14 @@
-<h2 mat-dialog-title>⚠️ Critical Operation</h2>
+<h2 mat-dialog-title class="translate" data-translate="critical_operation">⚠️ Critical Operation</h2>
 <mat-dialog-content>
-  <p>
+  <p class="translate" data-translate="critical_operation_warning">
     This is a <strong>critical operation</strong>.<br>
     This operation will reset the database, all tables would be deleted and recreated, after that all coordinators would be re-added. 
     <br>
-    This action will delete <strong>all</strong> data except coordinators from database <strong>forever</strong>, that's realy realy long, are you sure you want to do this ??<br><br>
+    This action will delete <strong>all data</strong> except coordinators from database <strong>forever</strong>, that's realy realy long, are you sure you want to do this ??<br><br>
     <strong>Are you sure you want to proceed?</strong>
   </p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button color="warn" [mat-dialog-close]="true">OK</button>
+  <button mat-button mat-dialog-close class="translate" data-translate="cancel">Cancel</button>
+  <button mat-raised-button color="warn" [mat-dialog-close]="true" class="translate" data-translate="confirm">Potwierdź</button>
 </mat-dialog-actions>

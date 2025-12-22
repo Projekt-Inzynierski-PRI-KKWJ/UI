@@ -20,7 +20,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AreYouSureDialogComponent } from 'src/app/modules/shared/are-you-sure-dialog/are-you-sure-dialog.component';
 import { FormGroup, FormArray, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ExternalLinkService } from '../../services/external-link.service';
-
+import { AppComponent } from '../../../../app.component';
 
 enum ROLE {
   FRONTEND = 'front-end',
@@ -87,8 +87,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private _snackbar: MatSnackBar,
     private gradeService: GradeService,
     private fb: FormBuilder,
-    private externalLinkService: ExternalLinkService
-
+    private externalLinkService: ExternalLinkService,
+    public app: AppComponent
   ){}
 
   projectCriteria: FormGroup = this.fb.group({
@@ -303,16 +303,33 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
-  getEvaluationCardsTranslations(key: string): string{
-    const translations: {[key: string]: string} = {
-      'FIRST': 'First semester',
-      'SECOND': 'Second semester',
-      'SEMESTER_PHASE': 'Semester phase',
-      'DEFENSE_PHASE': 'Defense phase',
-      'RETAKE_PHASE': 'Retake phase',
+  getEvaluationCardsTranslations(key: string): string {
+    const keyMap: { [key: string]: string } = {
+      'FIRST': 'first_semester',
+      'SECOND': 'second_semester',
+      'SEMESTER_PHASE': 'semester_phase',
+      'DEFENSE_PHASE': 'defense_phase',
+      'RETAKE_PHASE': 'retake_phase',
+    };
+
+    const targetKey = keyMap[key] || key.toLowerCase();
+
+    // Sprawdź, czy app.translations w ogóle istnieje i czy ma ten klucz
+    if (this.app.translations && this.app.translations[targetKey]) {
+      return this.app.translations[targetKey];
     }
 
-    return translations[key];
+    // Jeśli nie ma tłumaczenia, spróbujmy chociaż zwrócić ładniejszą nazwę domyślną
+    // zamiast surowego klucza, dopóki JSON się nie załaduje
+    const fallbacks: { [key: string]: string } = {
+      'first_semester': 'First Semester',
+      'second_semester': 'Second Semester',
+      'semester_phase': 'Semester Phase',
+      'defense_phase': 'Defense Phase',
+      'retake_phase': 'Retake Phase'
+    };
+
+    return fallbacks[targetKey] || targetKey;
   }
 
   getRole(role: keyof typeof ROLE): string {

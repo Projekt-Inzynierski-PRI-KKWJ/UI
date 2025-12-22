@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { CriteriaGroup } from 'src/app/modules/project/models/grade.model';
+import { AppComponent } from '../../../../../../app.component';
 
 @Component({
   selector: 'radio-criterion-select',
@@ -8,6 +9,7 @@ import { CriteriaGroup } from 'src/app/modules/project/models/grade.model';
   styleUrls: ['./radio-criterion-select.component.scss']
 })
 export class RadioCriterionSelectComponent {
+  constructor(public app: AppComponent) {}
   @Input() expanded!: boolean;
   @Input() criteriaGroup!: CriteriaGroup;
   @Input() editable!: boolean;

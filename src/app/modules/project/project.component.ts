@@ -13,6 +13,7 @@ import { ProjectDetails } from './models/project.model';
 import { AreYouSureDialogComponent } from '../shared/are-you-sure-dialog/are-you-sure-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataFeedService } from '../data-feed/data-feed.service';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'project',
@@ -40,7 +41,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
       private store: Store<State>,
       private _snackbar: MatSnackBar,
       private router: Router,
-      private dataFeedService: DataFeedService
+      private dataFeedService: DataFeedService,
+      public app: AppComponent
   ) {}
 
   ngOnInit(): void {
@@ -100,19 +102,22 @@ export class ProjectComponent implements OnInit, OnDestroy {
   }
 
   openAreYouSureDialog(action: string): void {
-    const actionMap: {[key: string]: { name: string, action: Function}} = {
+    const actionMap: {[key: string]: { translationKey: string, action: Function}} = {
       'publish': {
-        name: 'publish all projects, evaluation cards will be available for students to view.',
+        translationKey: 'confirm_publish_all',
         action: this.publishAllProjects.bind(this),
       },
       'activateSecondSemester': {
-        name: 'activate the evaluation card for the second semester, the entire evaluation process will start from the beginning for the second semester.',
+        translationKey: 'confirm_activate_semester',
         action: this.activateSecondSemester.bind(this),
       }
     }
 
+    const translatedName = this.app.translations[actionMap[action].translationKey] 
+                          || 'Missing translation: ' + actionMap[action].translationKey;
+
     const dialogRef = this.dialog.open(AreYouSureDialogComponent, {
-      data: { actionName: actionMap[action].name },
+      data: { actionName: translatedName },
     });
 
     dialogRef.afterClosed().subscribe(result => {

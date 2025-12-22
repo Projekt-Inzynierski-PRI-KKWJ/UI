@@ -4,8 +4,9 @@
     {{ comingFromDetailsPage ? 'Project Details' : 'Project List' }}
   </span>
 </div>
-<h2 mat-dialog-title>
-    {{ projectDetails ? 'Edit project form' : 'New project form'  }}
+<h2 mat-dialog-title class="translate" 
+    [attr.data-translate]="projectDetails ? 'edit_project_form' : 'new_project_form'">
+    {{ projectDetails ? 'Edit project form' : 'New project form' }}
 </h2>
 <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
     <div class="fieldContainer">

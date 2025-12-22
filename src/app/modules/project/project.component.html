@@ -10,13 +10,15 @@
                     [class.saturated-zero]="!areCriteriaLoaded"
                     [disabled]="!areCriteriaLoaded"
                     [attr.disabled]="!areCriteriaLoaded ? true : null"
-                    matTooltip="{{ !areCriteriaLoaded ? 'Please upload criteria first to add projects' : '' }}">
+                    class="translate"
+                    [attr.data-translate]="projectButtonText === 'Add project' ? 'add_project' : 'edit_project'"
+                    [matTooltip]="!areCriteriaLoaded ? (app.translations['tooltip_upload_criteria'] || 'Please upload criteria first') : ''">
                 {{ projectButtonText }}
             </button>
-            <button *ngIf="showPublishAllButton" (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary">
+            <button *ngIf="showPublishAllButton" (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary" class="translate" data-translate="publish_all">
                 Publish all
             </button>
-            <button *ngIf="showActivateSecondSemesterButton" (click)="openAreYouSureDialog('activateSecondSemester')" mat-raised-button color="primary">
+            <button *ngIf="showActivateSecondSemesterButton" (click)="openAreYouSureDialog('activateSecondSemester')" mat-raised-button color="primary" class="translate" data-translate="activate_second_semester">
                 Activate second semester
             </button>
             <mat-menu xPosition="before" #supervisorAvailability="matMenu">

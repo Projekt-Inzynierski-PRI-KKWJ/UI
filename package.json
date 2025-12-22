@@ -30,7 +30,8 @@
     "pri": "file:",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.12.0"
+    "zone.js": "~0.12.0",
+    "jspdf": "^2.5.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "15.2.8",
