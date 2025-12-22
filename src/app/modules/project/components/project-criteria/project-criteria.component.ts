@@ -55,23 +55,13 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🔵 ProjectCriteriaComponent initialized');
-    
     // Subskrypcja do stanu użytkownika
     this.store.select('user').pipe(takeUntil(this.unsubscribe$)).subscribe(user => {
-      console.log('🔵 User state updated:', user);
-      console.log('🔵 User role:', user?.role);
-      console.log('🔵 Is user logged:', user?.logged);
       this.user = user;
-      
-      // Dodatkowe logi po przypisaniu usera
-      console.log('🔵 this.user after assignment:', this.user);
-      console.log('🔵 this.canDeleteCriteria value:', this.canDeleteCriteria);
     });
 
     this.activatedRoute.params.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       this.projectId = +params['id'];
-      console.log('🔵 Project ID from route:', this.projectId);
       this.loadCriteria();
     });
   }
@@ -79,46 +69,38 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   // Getter sprawdzający czy użytkownik może usuwać kryteria
   get canDeleteCriteria(): boolean {
     const canDelete = this.user?.role === 'SUPERVISOR' || this.user?.role === 'COORDINATOR';
-    console.log('🔵 canDeleteCriteria getter called:');
-    console.log('   - this.user?.role:', this.user?.role);
-    console.log('   - result:', canDelete);
     return canDelete;
   }
 
   loadCriteria(): void {
-    console.log('🔵 Loading criteria for project:', this.projectId);
     this.criteriaService.getCriteriaByProjectId(this.projectId).pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: (criteria: CriteriaProjectDTO[]) => {
-        console.log('🟢 Criteria loaded:', criteria.length, 'items');
         this.criteriaList = criteria.filter(c =>
           (!this.semester || c.semester === this.semester) &&
           (this.type === 'ALL' || c.type === this.type) &&
           (!this.semester || c.type !== 'MEASURABLE_IMPLEMENTATION_INDICATORS')
         );
-        console.log('🟢 Filtered criteria:', this.criteriaList.length, 'items');
       },
       error: (err) => {
-        console.error('🔴 Error loading criteria:', err);
+        console.error('Error loading criteria:', err);
       }
     });
   }
 
   deleteCriterion(id?: number): void {
-    console.log('🔵 Attempting to delete criterion:', id);
     if (!id) {
-      console.warn('🔴 Tried to delete criterion with undefined ID.');
+      console.warn('Tried to delete criterion with undefined ID.');
       return;
     }
 
     this.http.delete(`/pri/api/criteria-projects/${id}`).subscribe({
       next: () => {
-        console.log('🟢 Criterion deleted:', id);
         this.loadCriteria();
       },
       error: err => {
-        console.error('🔴 Error deleting criterion:', err);
+        console.error('Error deleting criterion:', err);
       }
     });
   }
@@ -133,7 +115,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('🔵 Confirm dialog result:', result);
       if (result === true) {
         this.deleteCriterion(id);
       }
@@ -176,7 +157,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     const newType = target.value as 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS';
     this.criteriaService.updateType(id, newType).subscribe({
       next: () => {
-        console.log(`Type updated for ID ${id}`);
         this.loadCriteria();
       },
       error: err => {
@@ -208,7 +188,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   updateCriterionComment(id: number, comment: string): void {
     this.criteriaService.updateComment(id, comment).subscribe({
       next: () => {
-        console.log(`Updated comment for criterion ${id}`);
         this.loadCriteria();
       },
       error: err => console.error(`Error updating comment:`, err)
@@ -221,7 +200,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
       levelOfRealization: level
     }).subscribe({
       next: () => {
-        console.log(`Updated comment and level for criterion ${id}`);
         this.loadCriteria();
       },
       error: err => console.error(`Error updating both:`, err)
@@ -231,7 +209,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   updateEnable(id: number, enable: boolean): void {
     this.criteriaService.updateEnableForModification(id, enable).subscribe({
       next: () => {
-        console.log(`Updated enable flag for criterion ${id}`);
         this.loadCriteria();
       },
       error: err => console.error(`Error updating enable:`, err)
@@ -247,9 +224,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     const target = event.target as HTMLSelectElement;
     const value = target.value;
     this.criteriaService.updateLevel(id, value).subscribe({
-      next: () => {
-        console.log(`Level updated for ID ${id}`);
-      },
       error: err => {
         console.error('Error updating level:', err);
       }
@@ -268,7 +242,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     }
 
     this.criteriaService.updateComment(id, comment).subscribe({
-      next: () => console.log(`Updated comment for criterion ${id}`),
       error: (err) => console.error('Error updating comment:', err)
     });
   }
@@ -287,7 +260,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('🔵 ProjectCriteriaComponent destroyed');
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }

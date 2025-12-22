@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { changeFilters, loadProjects } from '../../state/project.actions';
 import { Project } from '../../models/project.model';
 import { ExternalLinkService } from '../../services/external-link.service';
+import { AppComponent } from '../../../../app.component';
 
 @Component({
   selector: 'project-list',
@@ -33,6 +34,7 @@ export class ProjectListComponent implements OnDestroy, OnInit{
     private store: Store<State>,
     private router: Router,
     private externalLinkService: ExternalLinkService,
+    public app: AppComponent
   ) {}
 
   ngOnInit(): void {

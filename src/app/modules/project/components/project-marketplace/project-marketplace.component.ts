@@ -33,6 +33,7 @@ import {
 import {
   ProjectMarketplaceDetailsComponent
 } from '../project-marketplace-details/project-marketplace-details.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-project-marketplace',
@@ -57,7 +58,8 @@ export class ProjectMarketplaceComponent implements OnInit {
     private http: HttpClient,
     private store: Store < State > ,
     private fb: FormBuilder,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.newProjectForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -265,7 +267,7 @@ export class ProjectMarketplaceComponent implements OnInit {
   submitNewProject() {
     if (this.newProjectForm.invalid) {
       Object.keys(this.newProjectForm.controls).forEach(key => {
-        this.newProjectForm.get(key) ?.markAsTouched();
+        this.newProjectForm.get(key)?.markAsTouched();
       });
       this.technologies.controls.forEach(ctrl => ctrl.markAsTouched());
       return;
@@ -274,8 +276,8 @@ export class ProjectMarketplaceComponent implements OnInit {
     this.isSubmitting = true;
     const formValue = this.newProjectForm.value;
     const projectData = {
-      projectName: formValue.name,
-      projectDescription: formValue.description,
+      name: formValue.name,
+      description: formValue.description,
       technologies: formValue.technologies.filter((t: string) => t.trim() !== ''),
       studyYear: this.userHeaders['study-year'] || '2024/2025',
       contactData: formValue.contactData,
@@ -289,11 +291,23 @@ export class ProjectMarketplaceComponent implements OnInit {
           console.log('Project created successfully:', response);
           this.closeNewProjectDialog();
           this.refreshProjects();
-          alert('Projekt został pomyślnie dodany!');
+
+          this.snackBar.open('Projekt został pomyślnie dodany!', 'Zamknij', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            panelClass: ['success-snackbar']
+          });
         },
         error: (error) => {
           console.error('Failed to create project:', error);
-          alert('Błąd podczas tworzenia projektu: ' + (error.error ?.errorMessage || error.message));
+
+          const errorMessage = error.error?.errorMessage || error.message || 'Wystąpił nieoczekiwany błąd';
+          this.snackBar.open(`Błąd: ${errorMessage}`, 'OK', {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          });
+          
           this.isSubmitting = false;
         }
       });
