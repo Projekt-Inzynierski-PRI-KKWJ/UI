@@ -10,6 +10,7 @@ import { User } from 'src/app/modules/user/models/user.model';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/app.state';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AppComponent } from '../../../../app.component';
 
 @Component({
   selector: 'defense-schedule-selection',
@@ -27,9 +28,11 @@ export class DefenseScheduleSelectionComponent implements OnInit, OnDestroy, OnC
   @Input() defenses!: ProjectDefense[];
   updatedDefenses: ProjectDefense[] = [];
 
-
-  constructor(private defenseScheduleService: DefenseScheduleService, private store: Store<State>,
+  constructor(
+    private defenseScheduleService: DefenseScheduleService,
+    private store: Store<State>,
      private _snackbar: MatSnackBar,
+    public app: AppComponent,
     ){}
 
   ngOnInit(): void {
@@ -47,7 +50,6 @@ export class DefenseScheduleSelectionComponent implements OnInit, OnDestroy, OnC
     this.dataSource = new MatTableDataSource<ProjectDefense>([]);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -65,7 +67,8 @@ export class DefenseScheduleSelectionComponent implements OnInit, OnDestroy, OnC
         this.dataSource = new MatTableDataSource<ProjectDefense>(defenses);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this._snackbar.open('Defenses successfully updated', 'close')
+        this._snackbar.open('Defenses successfully updated', 'close', {
+            panelClass: ['success-snackbar']})
   })
   }
 
@@ -78,9 +81,10 @@ export class DefenseScheduleSelectionComponent implements OnInit, OnDestroy, OnC
       .pipe(takeUntil(this.unsubscribe$)).subscribe(defenses => { 
 
         if(defenses.find(def => def.projectDefenseId === defenseId)?.projectId === String(this.user.acceptedProjects[0])){
-          this._snackbar.open('Defense successfully registered', 'close');
+          this._snackbar.open('Defense successfully registered', 'close', {
+            panelClass: ['success-snackbar']});
         } else {
-          this._snackbar.open('Unfortunately, another team has already registered, please select another slot', 'close');
+          this._snackbar.open('Unfortunately, another team has already registered, please select another slot', 'close', { panelClass: ['error-snackbar']});
         }
         
         this.defenses = defenses;
