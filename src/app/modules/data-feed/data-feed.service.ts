@@ -8,16 +8,20 @@ import { Observable, retry, throwError, catchError, map, of } from "rxjs";
 export class DataFeedService {
     constructor(private http: HttpClient) { }
 
+
+
     resetDataBase():Observable<string>
     {
         return this.http.delete<string>(`./pri/data/reset`).pipe(
-                retry(0),//There can be no retrys 
+                retry(0),//there can be no retrys 
                     catchError((err: HttpErrorResponse) => {
       console.error("Database reset failed", err);
       return throwError(() => new Error("Failed to reset database."));
     })
   );
+
     }
+
 
 
     uploadStudents(data: FormData): Observable<null>  {
@@ -40,7 +44,10 @@ export class DataFeedService {
             responseType: 'blob',
             observe: 'response'
         }
+        
     }
+
+
 
     uploadSupervisors(data: FormData): Observable<null>  {
         return this.http
@@ -51,6 +58,8 @@ export class DataFeedService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
 
     uploadCriteria(data: FormData): Observable<null>  {
         return this.http
@@ -72,6 +81,8 @@ export class DataFeedService {
             )
     }
 
+
+
     exportCriteria(): Observable<any> {
         return this.http
             .get<HttpResponse<Blob>>(`./pri/data/export/criteria`, this.setHttpHeadersForFile())
@@ -82,6 +93,8 @@ export class DataFeedService {
             )
     }
 
+
+
     exportGrades(): Observable<any> {
         return this.http
             .get<HttpResponse<Blob>>(`./pri/data/export/grades`, this.setHttpHeadersForFile())
@@ -91,6 +104,9 @@ export class DataFeedService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
+
 
     checkCriteriaExists(): Observable<boolean> {
         return this.http.get<Blob>(`./pri/data/export/criteria`, {
@@ -120,6 +136,9 @@ export class DataFeedService {
             )
     }
 
+
+
+
     exportStudyYearData(studyYear: string): Observable<any> {
         return this.http
             .get<HttpResponse<Blob>>(`./pri/export/study-year/${studyYear}`, this.setHttpHeadersForFile())
@@ -129,4 +148,8 @@ export class DataFeedService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
+
+
 }

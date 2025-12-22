@@ -7,12 +7,17 @@ import { Student } from "../user/models/student.model";
 import { ExternalLink } from "./models/external-link.model";
 import { Project, ProjectDetails } from "./models/project.model";
 
+
 @Injectable({
     providedIn: 'root'
 })
-export class ProjectService {
+
+export class ProjectService 
+{
     constructor(private http: HttpClient) { }
 
+
+    
     getProjectDetails(id: string): Observable<ProjectDetails> {
         return this.http
             .get<ProjectDetails>(`./pri/project/${id}`)
@@ -22,6 +27,9 @@ export class ProjectService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
+
 
     removeProject(id: string): Observable<null> {
         return this.http
@@ -34,6 +42,8 @@ export class ProjectService {
     }
     
 
+
+
     addProject(project: ProjectDetails): Observable<ProjectDetails> {
         return this.http
             .post<ProjectDetails>(`./pri/project`, project)
@@ -43,6 +53,8 @@ export class ProjectService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
 
     updateProject(project: ProjectDetails): Observable<ProjectDetails>  {
         return this.http
@@ -54,6 +66,8 @@ export class ProjectService {
             )
     }
 
+
+
     updateSupervisorAvailability(supervisorAvailability: SupervisorAvailability[]): Observable<SupervisorAvailability[]> {
         return this.http
             .put<SupervisorAvailability[]>('./pri/project/supervisor/availability', supervisorAvailability)
@@ -64,7 +78,11 @@ export class ProjectService {
             )
     }
 
-    acceptProject(projectId: string): Observable<null> {
+
+
+    acceptProject(projectId: string): Observable<null> 
+    {
+
         return this.http
             .patch<null>(`./pri/project/${projectId}/accept`, null)
             .pipe(
@@ -74,7 +92,11 @@ export class ProjectService {
             )
     }
 
-    unacceptProject(projectId: string): Observable<null> {
+
+
+    unacceptProject(projectId: string): Observable<null> 
+    {
+
         return this.http
             .patch<null>(`./pri/project/${projectId}/unaccept`, null)
             .pipe(
@@ -82,7 +104,11 @@ export class ProjectService {
                 catchError(
                     (err: HttpErrorResponse) => throwError(() => err))
             )
+
     }
+
+
+
 
     getExternalLinks(projectId: string): Observable<ExternalLink[]> {
         return this.http
@@ -94,6 +120,9 @@ export class ProjectService {
         )
     }
 
+
+
+
     publishAllProjects(): Observable<null> {
         return this.http
             .put<null>(`./pri/project/evaluation-card/publish`, null)
@@ -103,6 +132,8 @@ export class ProjectService {
                     (err: HttpErrorResponse) => throwError(() => err))
             )
     }
+
+
 
     activateSecondSemester(): Observable<null> {
         return this.http
@@ -114,6 +145,8 @@ export class ProjectService {
             )
     }
 
+
+
     projects$: Observable<Project[]> = this.http
         .get<Project[]>('./pri/project')
         .pipe(
@@ -121,6 +154,8 @@ export class ProjectService {
             catchError(
                 (err: HttpErrorResponse) => throwError(() => err))
         )
+
+
 
     supervisorsAvailability$: Observable<SupervisorAvailability[]> = 
         this.http
@@ -130,4 +165,8 @@ export class ProjectService {
                 catchError(
                     (err: HttpErrorResponse) => throwError(() => err))
             )
+
+
+
+
 }

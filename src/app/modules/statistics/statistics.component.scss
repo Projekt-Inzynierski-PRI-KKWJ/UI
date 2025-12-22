@@ -1,0 +1,78 @@
+.chart-header {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.toggle-btn {
+  background: #fafafa;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
+
+  &:hover {
+    background: #c8cffe;
+  }
+}
+
+
+
+.big-chart {
+  width: 600px;
+  height: 350px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.big-chart canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.projects-wrapper {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.project-card {
+  padding: 16px;
+  background: #e5e5e5;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 200px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.project-card:hover {
+  background: #d0d0d0;
+}
+
+.details-wrapper {
+  margin-top: 30px;
+}
+
+.charts-container {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.chart-box {
+  width: 300px;
+}
+.small-chart {
+  width: 300px;  
+  margin-bottom: 20px;
+}
+.charts-row {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 40px;
+}

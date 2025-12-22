@@ -1,0 +1,143 @@
+<div class="chart-header">
+  <button class="toggle-btn" (click)="toggleChartType()">
+    🔄
+  </button>
+</div>
+
+<div class="big-chart">
+  <canvas baseChart
+          [data]="criteriaSummaryChartData"
+          [type]="chartType"
+          [options]="chartOptions">
+  </canvas>
+</div>
+
+<div class="results-lists">
+
+  <div class="passed-list">
+    <h3>Passed projects ({{ passedProjects.length }})</h3>
+    <ul>
+      <li *ngFor="let p of passedProjects">{{ p }}</li>
+    </ul>
+  </div>
+
+  <div class="failed-list">
+    <h3>Faild projects ({{ failedProjects.length }})</h3>
+    <ul>
+      <li *ngFor="let p of failedProjects">{{ p }}</li>
+    </ul>
+  </div>
+
+</div>
+
+
+<div class="projects-wrapper">
+  <div class="project-card"
+       *ngFor="let p of projects"
+       (click)="openProject(p)">
+    {{ p.name }}
+  </div>
+</div>
+
+<!-- sekcja szczegółów po kliknięciu -->
+<div *ngIf="selectedProject" class="details-wrapper">
+
+  <h2>Project Details: {{ selectedProject.name }}</h2>
+
+  <div class="charts-container">
+    <div class="chart-box">
+      <h3>First Semestr Grade</h3>
+      <canvas baseChart
+              [data]="firstSemesterChartData"
+              [options]="chartOptions"
+              [type]="chartType">
+      </canvas>
+    </div>
+
+    <div class="chart-box">
+      <h3>Second Semestr Grade</h3>
+      <canvas baseChart
+              [data]="secondSemesterChartData"
+              [options]="chartOptions"
+              [type]="chartType">
+      </canvas>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="info-box">
+    <h3>Information about the project</h3>
+    <p><b>Name:</b> {{ selectedProject.name }}</p>
+    <p><b>Supervisor:</b> {{ selectedProject.supervisor.name }}</p>
+    <p><b>Accepted:</b> {{ selectedProject.accepted ? 'Tak' : 'Nie' }}</p>
+    <p><b>Criteria Met:</b> {{ selectedProject.criteriaMet ? 'Tak' : 'Nie' }}</p>
+    <p><b>Grading Phase:</b> {{ selectedProject.evaluationPhase }}</p>
+    <p><b>Students:</b> {{ selectedProject.students }}</p>
+    <p><b>Room:</b> {{ selectedProject.classroom || 'Brak' }}</p>
+    <p><b>Defence Date:</b> {{ selectedProject.defenseDay || 'Brak' }}</p>
+  </div>
+
+  <h2>SEMESTR 1</h2>
+
+  <div class="charts-row">
+    <div class="chart-box small-chart">
+      <h3>Expected</h3>
+      <canvas baseChart
+              [data]="expectedFirst"
+              [options]="chartOptions"
+              [type]="chartType">
+      </canvas>
+    </div>
+
+    <div class="chart-box small-chart">
+      <h3>Required</h3>
+      <canvas baseChart
+              [data]="requiredFirst"
+              [options]="chartOptions"
+              [type]="chartType">
+      </canvas>
+    </div>
+
+    <div class="chart-box small-chart">
+      <h3>Measurable Indicators</h3>
+      <canvas baseChart
+              [data]="measurableFirst"
+              [options]="chartOptions"
+              [type]="chartType">
+      </canvas>
+    </div>
+  </div>
+
+  <h2>SEMESTR 2</h2>
+
+  <div class="charts-row">
+    <div class="chart-box small-chart">
+      <h3>Expected</h3>
+      <canvas baseChart
+              [data]="expectedSecond"
+              [options]="chartOptions"
+              [type]="chartType">
+      </canvas>
+    </div>
+
+    <div class="chart-box small-chart">
+      <h3>Required</h3>
+      <canvas baseChart
+              [data]="requiredSecond"
+              [options]="chartOptions"
+              [type]="chartType">
+      </canvas>
+    </div>
+
+    <div class="chart-box small-chart">
+      <h3>Measurable Indicators</h3>
+      <canvas baseChart
+              [data]="measurableSecond"
+              [options]="chartOptions"
+              [type]="chartType">
+      </canvas>
+    </div>
+  </div>
+
+</div>

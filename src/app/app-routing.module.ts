@@ -60,10 +60,16 @@ const routes: Routes = [
     canActivate: [CoordinatorGuard]
   },
   {
+    path: 'statistics',
+    loadChildren: () => import('./modules/statistics/statistics.module').then(m => m.StatisticsModule),
+    canActivate: [CoordinatorGuard]
+  },
+  {
     path: 'student-info',
     loadChildren: () => import('./modules/student-info/student-info.module').then(m => m.StudentInfoModule),
     canActivate: [SupervisorCoordinatorGuard]
   }
+
 ];
 
 @NgModule({
