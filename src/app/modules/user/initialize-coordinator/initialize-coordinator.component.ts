@@ -41,7 +41,8 @@ form = this.fb.group({
         // If count == 0 go to initialization
       },
       error: () => {
-        this.snackBar.open('Failed to check coordinator count', 'Close',{duration: 2000});
+        this.snackBar.open('Failed to check coordinator count', 'Close',{duration: 2000,
+            panelClass: ['error-snackbar']});
       }
     });
   }
@@ -52,12 +53,14 @@ onSubmit(): void {
   if (this.form.valid) {
     const payload = this.form.getRawValue(); 
     this.userService.initializeCoordinator(payload).subscribe({
-      next: () => {this.snackBar.open('Coordinator initialized successfully', 'Close',{duration: 2000});
+      next: () => {this.snackBar.open('Coordinator initialized successfully', 'Close',{duration: 2000,
+            panelClass: ['success-snackbar']});
       this.router.navigateByUrl('/login');
     },
       error: (err) => {
         console.error('POST failed:', err);
-        this.snackBar.open('Failed to initialize coordinator', 'Close',{duration: 2000});
+        this.snackBar.open('Failed to initialize coordinator', 'Close',{duration: 2000,
+            panelClass: ['error-snackbar']});
       }
     });
   }
