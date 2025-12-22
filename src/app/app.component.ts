@@ -242,6 +242,10 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     return this.user ?.role === 'COORDINATOR';
   }
 
+    get isSupervisor(): boolean {
+    return this.user ?.role === 'SUPERVISOR';
+  }
+
   get showExternalLinks(): boolean {
     return this.projectId !== undefined || this.user ?.role === 'COORDINATOR';
   }

@@ -63,7 +63,7 @@
         <a *ngIf="isCoordinator" mat-list-item (click)="navigateTo('statistics')" class="translate" data-translate="statistics_module">
           <span class="translate-text">Statistics</span>
         </a>
-        <a *ngIf="user.role === 'COORDINATOR' || user.role === 'SUPERVISOR'" mat-list-item (click)="navigateTo('student-info')" class="translate" data-translate="student_info">
+        <a *ngIf="isCoordinator || isSupervisor " mat-list-item (click)="navigateTo('student-info')" class="translate" data-translate="student_info">
           <span class="translate-text">Student Information</span>
         </a>
       </mat-nav-list>
