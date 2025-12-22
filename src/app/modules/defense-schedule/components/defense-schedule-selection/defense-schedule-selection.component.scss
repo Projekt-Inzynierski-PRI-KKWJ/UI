@@ -48,6 +48,19 @@
     background-color: #dfffdf !important;
 }
 
+.empty-slot {
+    background-color: #ffcccc !important;
+}
+
+.empty-slot:hover {
+    background-color: #ffcccc !important;
+}
+
+.empty-slot-text {
+    color: #d32f2f;
+    font-weight: 500;
+}
+
 .centered-header, .centered-cell {
     text-align: center;
 }
