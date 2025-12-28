@@ -114,16 +114,19 @@ export class ProjectAddCriteriaComponent implements OnInit, OnDestroy {
 
       this.criteriaService.addCriteria(payload).subscribe({
         next: () => {
-          this.snackBar.open('Criteria successfully submitted', 'Close', { duration: 3000 });
+          this.snackBar.open('Criteria successfully submitted', 'Close', { duration: 3000,
+            panelClass: ['success-snackbar'] });
           this.navigateBack();
         },
         error: (err) => {
           console.error('Submission error:', err);
-          this.snackBar.open('Something went wrong when submitting criteria!!!', 'Close', { duration: 3000 });
+          this.snackBar.open('Something went wrong when submitting criteria!!!', 'Close', { duration: 3000,
+            panelClass: ['error-snackbar'] });
         }
       });
     } else if (!this.indexNumber) {
-      this.snackBar.open('User data not available', 'Close', { duration: 3000 });
+      this.snackBar.open('User data not available', 'Close', { duration: 3000,
+            panelClass: ['error-snackbar'] });
     }
   }
 

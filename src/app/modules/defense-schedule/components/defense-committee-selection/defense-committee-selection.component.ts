@@ -14,6 +14,7 @@ import { State } from 'src/app/app.state';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { RegistrationDialogComponent } from './registration-dialog.component';
+import { AppComponent } from '../../../../app.component';
 
 interface SupervisorTimeReference {
   supervisor: string,
@@ -84,6 +85,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
     private userService: UserService,
     private store: Store<State>,
     private _snackbar: MatSnackBar,
+    public app: AppComponent
     private dialog: MatDialog,
   )
   {
@@ -236,7 +238,8 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
       (file: HttpResponse<Blob>) => {
         if(file?.body){
           saveAs(file.body!, 'summary.csv');
-          this._snackbar.open('Summary successfully exported', 'close')
+          this._snackbar.open('Summary successfully exported', 'close', {
+            panelClass: ['success-snackbar']})
         }
       }
     )
@@ -390,17 +393,18 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
     this.defenseScheduleService.openRegistration().pipe(takeUntil(this.unsubscribe$)).subscribe(
       phase => {
         this.currentPhase = phase.phase;
-        this._snackbar.open('Registration successfully opened', 'close')
+        this._snackbar.open('Registration successfully opened', 'close', {
+            panelClass: ['success-snackbar']})
       }
     )
   }
-
 
   closeRegistration(){
     this.defenseScheduleService.closeRegistration().pipe(takeUntil(this.unsubscribe$)).subscribe(
       phase =>  {
         this.currentPhase = phase.phase;
-        this._snackbar.open('Registration successfully closed', 'close')
+        this._snackbar.open('Registration successfully closed', 'close', {
+            panelClass: ['success-snackbar']})
       }
     )
   }

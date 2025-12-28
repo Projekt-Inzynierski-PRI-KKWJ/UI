@@ -1,23 +1,21 @@
-
-
-
 <div #slotMenu *ngIf="slotsSelected" class="slot-menu mat-elevation-z8" [ngStyle]="{top: cursorPositionY, left: cursorPositionX}">
-    committee: <mat-form-field class="committee-select">
+    <span class="translate" data-translate="committee">committee</span><span>:</span> 
+    <mat-form-field class="committee-select">
         <mat-select [(ngModel)]="committeeMultipleSelection" (selectionChange)="multipleCommitteeSelectionChanged($event)">
             <mat-option *ngFor="let committee of ['A','B','C','D']" [value]="committee">{{ committee }}</mat-option>
         </mat-select>
     </mat-form-field>
     <br>
     <div>
-        <button (click)="closeSelectionMenu()" mat-button color="primary" cdkFocusInitial>Close</button>
-        <button (click)="unselectSlots()" mat-raised-button color="primary" cdkFocusInitial>Unselect</button>
+        <button (click)="closeSelectionMenu()" mat-button color="primary" class="translate" data-translate="close">Close</button>
+        <button (click)="unselectSlots()" mat-raised-button color="primary" class="translate" data-translate="unselect">Unselect</button>
     </div>
 </div>
 
 <div class="selection-table-and-statistics">
     <table class="committee-selection-table">
         <tr>
-            <th>Time</th>
+            <th class="translate" data-translate="time">Time</th>
             <th *ngFor="let supervisor of supervisors">{{ supervisor.initials }}</th>
         </tr>
         <tr *ngFor="let time of times">
@@ -50,25 +48,32 @@
     <div class="statistics-and-config-container">
         <defense-committee-statistics [statistics]="statistics"></defense-committee-statistics>
         <br>
-        <h3>Current phase: <b>{{currentPhase}}</b></h3>
-        <div *ngIf="user.role === 'COORDINATOR'"  class="buttons-container">
-            <button (click)="getDefenseSummary()" mat-button color="primary">Export summary</button>
-            <button (click)="openRegistrationDialog()" mat-button color="primary">Open registration</button>
-            <button (click)="closeRegistrationDialog()" mat-button color="primary">Close registration</button>
+        <h3>
+            <span class="translate" data-translate="current_phase">Current phase</span><span>:</span> 
+            <b>{{ app.translations[currentPhase.toLowerCase()] || currentPhase }}</b>
+        </h3>
+        
+        <div *ngIf="user.role === 'COORDINATOR'"  class="buttons-container"> 
+            <button (click)="getDefenseSummary()" mat-button color="primary" class="translate" data-translate="export_summary">Export summary</button>
+            <button (click)="openRegistration()" mat-button color="primary" class="translate" data-translate="open_registration">Open registration</button>
+            <button (click)="closeRegistration()" mat-button color="primary" class="translate" data-translate="close_registration">Close registration</button>
         </div>
+
         <div *ngIf="user.role === 'COORDINATOR'" class="committee-config-container">
             <ng-container *ngFor="let assignment of chairpersonAssignment | keyvalue">
                 <div *ngIf="doesCommitteeExist(assignment.key)">
                     <h3>{{assignment.key}}</h3>
                     <mat-form-field class="chairperson-select">
-                        <mat-label>Chairperson</mat-label>
+                        <mat-label class="translate" data-translate="chairperson">Chairperson</mat-label>
                         <mat-select [(ngModel)]="chairpersonAssignment[assignment.key].chairpersonId" (selectionChange)="committeeChairpersonSelected($event, assignment.key)">
                             <mat-option [value]="null">---</mat-option>
                             <mat-option *ngFor="let supervisor of chairpersonCandidates(assignment.key)" [value]="supervisor.id">{{ supervisor.initials + ' | ' + supervisor.name }}</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field class="classroom-input">
-                        <input placeholder="Classroom" [formControl]="classroomFormControls[assignment.key]" matInput type="text" />
+                        <input [placeholder]="app.translations['classroom_placeholder'] || 'Classroom'" 
+                               [formControl]="classroomFormControls[assignment.key]" 
+                               matInput type="text" />
                     </mat-form-field>
                 </div>
              </ng-container>
@@ -80,4 +85,3 @@
 <br>
 <br>
 <defense-schedule-selection [defenses]="defenses" userRole="COORDINATOR"></defense-schedule-selection>
-

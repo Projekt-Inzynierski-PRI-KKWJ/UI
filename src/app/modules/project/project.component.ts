@@ -83,11 +83,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: (criteriaExists) => {
-        console.log('Criteria loaded status:', criteriaExists); // DEBUG
         this.areCriteriaLoaded = criteriaExists;
       },
       error: (error) => {
-        console.error('Error checking criteria:', error); // DEBUG
+        console.error('Error checking criteria:', error);
         this.areCriteriaLoaded = false;
       }
     });
@@ -136,14 +135,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
   publishAllProjects(): void{
     this.projectService.publishAllProjects().pipe(takeUntil(this.unsubscribe$)).subscribe(
       () => window.location.reload(),
-      () =>  this._snackbar.open('A problem occured, projects were not published', 'close')
+      () =>  this._snackbar.open('A problem occured, projects were not published', 'close', {
+            panelClass: ['error-snackbar']})
     )
   }
 
   activateSecondSemester(): void{
     this.projectService.activateSecondSemester().pipe(takeUntil(this.unsubscribe$)).subscribe(
       () => window.location.reload(),
-      () =>  this._snackbar.open('A problem occured, second semester was not activated', 'close')
+      () =>  this._snackbar.open('A problem occured, second semester was not activated', 'close', {
+            panelClass: ['error-snackbar']})
     )
   }
 

@@ -69,7 +69,8 @@ export class SupervisorAvailabilityFormComponent implements OnInit, OnDestroy{
       this.store.dispatch(updateSupervisorAvailability({supervisorAvailability: updatedSupervisorAvailability}))
       this.actions$.pipe(ofType(updateSupervisorAvailabilitySuccess),takeUntil(this.unsubscribe$))
         .subscribe(() => {
-          this._snackbar.open('Supervisors availability successfully updated', 'close');
+          this._snackbar.open('Supervisors availability successfully updated', 'close', {
+            panelClass: ['success-snackbar']});
           this.router.navigate([{outlets: {modal: null}}]);
         });
     }

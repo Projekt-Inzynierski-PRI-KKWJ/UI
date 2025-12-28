@@ -3,6 +3,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ExternalLinkHistory } from '../../models/external-link-history.model';
 import { ExternalLinkService } from '../../services/external-link.service';
 import { MatTableDataSource } from '@angular/material/table';
+import { AppComponent } from '../../../../app.component';
 
 @Component({
   selector: 'external-link-history',
@@ -18,7 +19,10 @@ export class ExternalLinkHistoryComponent implements OnInit, OnDestroy {
   loading = false;
   unsubscribe$ = new Subject<void>();
 
-  constructor(private externalLinkService: ExternalLinkService) {}
+  constructor(
+    private externalLinkService: ExternalLinkService,
+    public app: AppComponent,
+  ) {}
 
   ngOnInit(): void {
     this.loadHistory();
@@ -74,10 +78,28 @@ export class ExternalLinkHistoryComponent implements OnInit, OnDestroy {
   formatDateTime(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleString();
+    
+    const locale = this.app.language === 'pl' ? 'pl-PL' : 'en-US';
+    
+    return new Intl.DateTimeFormat(locale, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date);
   }
 
   formatChangeType(changeType: string): string {
+    if (!changeType) return '';
+    
+    const translationKey = changeType.toLowerCase();
+
+    return this.app.translations[translationKey] || this.getFallbackChangeType(changeType);
+  }
+
+  private getFallbackChangeType(changeType: string): string {
     switch (changeType) {
       case 'URL_UPDATED': return 'URL Updated';
       case 'FILE_UPLOADED': return 'File Uploaded';

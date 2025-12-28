@@ -322,7 +322,8 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
             control.get('fileSize')?.setValue(null);
             control.get('contentType')?.setValue(null);
           }
-          this._snackbar.open('File deleted successfully', 'close');
+          this._snackbar.open('File deleted successfully', 'close', {
+            panelClass: ['success-snackbar']});
         });
     }
   }
@@ -379,13 +380,15 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
           this.isSubmitting = false;
           // Upload files after project update
           this.uploadPendingFiles();
-          this._snackbar.open('Project successfully updated', 'close');
+          this._snackbar.open('Project successfully updated', 'close', {
+            panelClass: ['success-snackbar']});
           // Navigation to project overview handled in uploadPendingFiles()
         });
         this.actions$.pipe(ofType(updateProjectFailure),takeUntil(this.unsubscribe$)).subscribe(() => {
           // Re-enable button
           this.isSubmitting = false;
-          this._snackbar.open('Something went wrong while updating the project', 'close');
+          this._snackbar.open('Something went wrong while updating the project', 'close', {
+            panelClass: ['error-snackbar']});
         });
       } else {
         this.store.dispatch(addProject({project: projectDetails, userRole: this.user.role}))
@@ -394,7 +397,8 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
           this.isSubmitting = false;
           // Upload files after project creation
           this.uploadPendingFiles();
-          this._snackbar.open('Project successfully created', 'close');
+          this._snackbar.open('Project successfully created', 'close', {
+            panelClass: ['success-snackbar']});
           // Navigation to project overview handled in uploadPendingFiles()
         });
         this.actions$.pipe(ofType(addProjectFailure),takeUntil(this.unsubscribe$)).subscribe((action) => {
@@ -403,7 +407,8 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
           const errorMessage = (action.error as any)?.status === 412 
             ? 'Please make sure that all necessary files have been uploaded before creating the project'
             : 'Something went wrong while creating the project';
-          this._snackbar.open(errorMessage, 'close');
+          this._snackbar.open(errorMessage, 'close', {
+            panelClass: ['error-snackbar']});
         });
       }
     }
@@ -438,7 +443,8 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
               errorMessage = error.message;
             }
             
-            this._snackbar.open(errorMessage, 'close', { duration: 5000 });
+            this._snackbar.open(errorMessage, 'close', { duration: 5000,
+            panelClass: ['error-snackbar'] });
           });
           
         uploadPromises.push(uploadPromise);

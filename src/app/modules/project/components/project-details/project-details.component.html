@@ -58,9 +58,11 @@
               style="pointer-events: none;">{{ externalLink.name }}</a>
 
             <!-- History Toggle Button -->
-            <button mat-icon-button class="history-toggle" (click)="toggleHistory(externalLink.id)"
-              matTooltip="Toggle change history">
-              <mat-icon>{{ isHistoryExpanded(externalLink.id) ? 'expand_less' : 'history' }}</mat-icon>
+            <button mat-icon-button 
+                    class="history-toggle" 
+                    (click)="toggleHistory(externalLink.id)"
+                    [matTooltip]="app.translations['toggle_change_history'] || 'Toggle change history'">
+                <mat-icon>{{ isHistoryExpanded(externalLink.id) ? 'expand_less' : 'history' }}</mat-icon>
             </button>
           </div>
 
@@ -179,10 +181,15 @@
   </mat-tab>
 
   <div *ngIf="gradesShown && criteriaShown" class="grade-info mat-elevation-z8">
-    <h2 class="translate" data-translate="grade">Grade: {{grade}}</h2>
-    <div>
-      <h2 class="criteriaMet">Criteria met: <div [class.accepted]="criteriaMet" class="ellipse"></div>
-      </h2>
-      <h2>Selected criteria: {{selectedCriteria}}</h2>
-    </div>
+  <h2><span class="translate" data-translate="grade">Grade</span>: {{grade}}</h2>
+  <div>
+    <h2 class="criteriaMet">
+      <span><span class="translate" data-translate="criteria_met">Criteria met</span>:</span>
+      <div [class.accepted]="criteriaMet" class="ellipse"></div>
+    </h2>
+    <h2>
+      <span><span class="translate" data-translate="selected_criteria">Selected criteria</span>:</span> 
+      {{ app.translations[selectedCriteria.toLowerCase()] || selectedCriteria }}
+    </h2>
   </div>
+</div>

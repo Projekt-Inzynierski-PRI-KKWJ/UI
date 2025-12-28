@@ -1,9 +1,8 @@
-
-
 <div [class.table-and-actions-container]="user.role === 'COORDINATOR'" *ngIf="defenses.length > 0" [ngClass]="{'mat-elevation-z8': user.role !== 'COORDINATOR' && user.role !== 'SUPERVISOR', 'normal-border':  user.role === 'COORDINATOR' || user.role === 'SUPERVISOR'}">
   <table mat-table [dataSource]="dataSource" matSort>
+    
     <ng-container matColumnDef="checkbox">
-      <th mat-header-cell *matHeaderCellDef>Select</th>
+      <th mat-header-cell *matHeaderCellDef class="translate" data-translate="select">Select</th>
       <td mat-cell *matCellDef="let defense">
         <mat-radio-button 
           [value]="false" 
@@ -14,45 +13,51 @@
         </mat-radio-button>
       </td>
     </ng-container>
+
     <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="date">Date</th>
       <td mat-cell *matCellDef="let defense">{{defense.date}}</td>
     </ng-container>
+
     <ng-container matColumnDef="time">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Time</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="time">Time</th>
       <td mat-cell *matCellDef="let defense">{{defense.time}}</td>
     </ng-container>
+
     <ng-container matColumnDef="committeeIdentifier">
-      <th class="centered-header" mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+      <th class="centered-header translate" mat-header-cell *matHeaderCellDef mat-sort-header data-translate="id">ID</th>
       <td class="centered-cell" mat-cell *matCellDef="let defense">{{defense.committeeIdentifier}}</td>
     </ng-container>
+
     <ng-container matColumnDef="project">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Project</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="project">Project</th>
       <td mat-cell *matCellDef="let defense">
         <mat-select *ngIf="user.role === 'COORDINATOR'" [(ngModel)]="defense.projectId">
           <mat-option [value]="null">---</mat-option>
-          <mat-option *ngFor="let project of projects" [value]="project.id">{{ 
-          project.name 
-          
-          }}
-        </mat-option>
+          <mat-option *ngFor="let project of projects" [value]="project.id">
+            {{ project.name }}
+          </mat-option>
         </mat-select>
         <span *ngIf="user.role !== 'COORDINATOR' && defense.projectName">{{ defense.projectName }}</span>
         <span *ngIf="user.role !== 'COORDINATOR' && !defense.projectName && defense.committeeIdentifier" class="empty-slot-text">SLOT EMPTY</span>
     </td>
     </ng-container>
+
     <ng-container matColumnDef="class">
-      <th  mat-header-cell *matHeaderCellDef mat-sort-header> Class </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="class"> Class </th>
       <td mat-cell *matCellDef="let defense">{{ defense.classRoom }}</td>
     </ng-container>
+
     <ng-container matColumnDef="committee">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Committee</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="committee">Committee</th>
       <td mat-cell *matCellDef="let defense">{{ defense.committee }}</td>
     </ng-container>
+
     <ng-container matColumnDef="students">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Students</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="students">Students</th>
       <td class="students-cell" mat-cell *matCellDef="let defense">{{ defense.students }}</td>
     </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="columns"></tr>
     <tr 
       [class.selected]="defense.projectId !== null"
@@ -63,17 +68,21 @@
     </tr>
   </table>
   
-  <mat-paginator [pageSizeOptions]="[50, 100, 200]" showFirstLastButtons aria-label="Select page"></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[50, 100, 200]" 
+                 showFirstLastButtons 
+                 [ariaLabel]="app.translations['select_page'] || 'Select page'">
+  </mat-paginator>
+
   <div *ngIf="user.role === 'COORDINATOR'" class="actions-container">
-    <h2>Booked slots: {{ registeredDefenses }}</h2>
-    <button  (click)="updateDefenses()" mat-raised-button color="primary" cdkFocusInitial>Update</button>
+    <h2>
+      <span class="translate" data-translate="booked_slots">Booked slots</span><span>:</span> {{ registeredDefenses }}
+    </h2>
+    <button (click)="updateDefenses()" mat-raised-button color="primary" cdkFocusInitial class="translate" data-translate="update">
+      Update
+    </button>
   </div>  
 </div>
 
-
-<h2 *ngIf="defenses.length === 0 && (user.role === 'STUDENT' || user.role === 'PROJECT_ADMIN')">
+<h2 *ngIf="defenses.length === 0 && (user.role === 'STUDENT' || user.role === 'PROJECT_ADMIN')" class="translate" data-translate="registration_not_possible">
   It is not possible to register for the defense yet. Please wait for the coordinator to publish the defense schedule.
 </h2>
-
-
-

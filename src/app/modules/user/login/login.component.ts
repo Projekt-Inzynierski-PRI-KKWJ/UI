@@ -60,7 +60,8 @@ export class LoginComponent implements OnInit, OnDestroy{
       .subscribe(() => this.store.dispatch(loadUser()));
 
     this.actions$.pipe(ofType(authenticateFailure), takeUntil(this.unsubscribe$),)
-      .subscribe(() => this._snackbar.open('Authentication failed, invalid login or password', 'close'));
+      .subscribe(() => this._snackbar.open('Authentication failed, invalid login or password', 'close', {
+            panelClass: ['error-snackbar']}));
 
     this.actions$.pipe(ofType(accessTokenRefreshSuccess), takeUntil(this.unsubscribe$))
       .subscribe(() => this.store.dispatch(loadUser()));

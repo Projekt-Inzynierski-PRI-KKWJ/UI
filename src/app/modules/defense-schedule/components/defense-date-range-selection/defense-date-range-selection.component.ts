@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DefenseScheduleService } from '../../defense-schedule.service';
+import { AppComponent } from '../../../../app.component';
 
 @Component({
   selector: 'defense-date-range-selection',
@@ -16,7 +17,11 @@ export class DefenseDateRangeSelectionComponent {
     endTime: [null, Validators.required],
   })
 
-  constructor(private fb: FormBuilder, private defenseScheduleService: DefenseScheduleService){}
+  constructor(
+    private fb: FormBuilder,
+    private defenseScheduleService: DefenseScheduleService,
+    public app: AppComponent,
+  ){}
 
   formatDate(dateStr: string): string {
     let date = new Date(dateStr);

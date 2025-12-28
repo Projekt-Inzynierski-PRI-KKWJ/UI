@@ -9,10 +9,6 @@ export class ProjectCriteriaService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Send multiple criteria at once.
-   * Accepts an array of CriteriaProjectDTO.
-   */
   addCriteria(criteriaList: CriteriaProjectDTO[]): Observable<any> {
     return this.http.post(this.baseUrl, criteriaList,{ withCredentials: true }).pipe(
       retry(1),
@@ -23,9 +19,6 @@ export class ProjectCriteriaService {
     );
   }
 
-  /**
-   * Optionally, fetch all criteria (per documentation).
-   */
   getAllCriteria(): Observable<any> {
     return this.http.get(this.baseUrl,{ withCredentials: true }).pipe(
       retry(1),
@@ -59,6 +52,5 @@ export class ProjectCriteriaService {
   updateType(id: number, type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS'): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/${id}/type`, { type }, { withCredentials: true });
   }
-
 
 }
