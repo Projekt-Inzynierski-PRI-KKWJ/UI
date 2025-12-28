@@ -2,7 +2,6 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
 
-
 html, body { height: 100%; }
 body { 
     margin: 0; 
@@ -19,7 +18,30 @@ button[mat-icon-button] {
     align-items: center;
 }
 
-
 .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
     line-height: 35px;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #f44336;
+  --mdc-snackbar-supporting-text-color: white;
+  --mat-snack-bar-button-color: white;
+  .mat-mdc-snack-bar-action {
+    color: white !important;
+    --mdc-text-button-label-text-color: white;
+  }
+}
+
+.success-snackbar {
+  --mdc-snackbar-container-color: #4caf50;
+  --mdc-snackbar-supporting-text-color: white;
+  --mat-snack-bar-button-color: #e8f5e9;
+  .mat-mdc-snack-bar-action {
+    color: white !important;
+    --mdc-text-button-label-text-color: white;
+  }
+}
+
+.error-snackbar .mat-mdc-button-touch-target, .success-snackbar .mat-mdc-button-touch-target {
+    color: white;
 }

@@ -1,9 +1,11 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-form-field>
         <mat-label class="translate" data-translate="enter_a_date_range">Enter a date range</mat-label>
-        <mat-date-range-input  [rangePicker]="picker">
-        <input matStartDate formControlName="startDate" placeholder="Start date">
-        <input matEndDate formControlName="endDate" placeholder="End date">
+        <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate formControlName="startDate" 
+                   [placeholder]="app.translations['start_date'] || 'Start date'">
+            <input matEndDate formControlName="endDate" 
+                   [placeholder]="app.translations['end_date'] || 'End date'">
         </mat-date-range-input>
         <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
@@ -26,6 +28,9 @@
     </mat-form-field>
     <br>
     <div class="buttons-container">
-        <button color="primary"  type="submit" mat-raised-button  [disabled]="!form.valid" cdkFocusInitial class="translate" data-translate="submit">Submit</button>
+        <button color="primary" type="submit" mat-raised-button [disabled]="!form.valid" 
+                cdkFocusInitial class="translate" data-translate="submit">
+            Submit
+        </button>
     </div>
 </form>

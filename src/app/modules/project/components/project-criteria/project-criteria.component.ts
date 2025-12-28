@@ -29,6 +29,9 @@ import {
 import {
   ConfirmDialogComponent
 } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { Store } from '@ngrx/store';
+import { State } from '../../../../app.state';
+import { UserState } from '../../../../modules/user/state/user.state';
 
 @Component({
   selector: 'project-criteria',
@@ -36,24 +39,37 @@ import {
   styleUrls: ['./project-criteria.component.scss']
 })
 export class ProjectCriteriaComponent implements OnInit, OnDestroy {
-  @Input() semester ? : 'FIRST' | 'SECOND';
+  @Input() semester?: 'FIRST' | 'SECOND';
   @Input() type: 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS' | 'ALL' = 'ALL';
   projectId!: number;
+  user!: UserState;
   criteriaList: CriteriaProjectDTO[] = [];
-  private unsubscribe$ = new Subject < void > ();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private criteriaService: ProjectCriteriaService,
     private http: HttpClient,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private store: Store<State>
   ) {}
 
   ngOnInit(): void {
+    // Subskrypcja do stanu użytkownika
+    this.store.select('user').pipe(takeUntil(this.unsubscribe$)).subscribe(user => {
+      this.user = user;
+    });
+
     this.activatedRoute.params.pipe(takeUntil(this.unsubscribe$)).subscribe(params => {
       this.projectId = +params['id'];
       this.loadCriteria();
     });
+  }
+
+  // Getter sprawdzający czy użytkownik może usuwać kryteria
+  get canDeleteCriteria(): boolean {
+    const canDelete = this.user?.role === 'SUPERVISOR' || this.user?.role === 'COORDINATOR';
+    return canDelete;
   }
 
   loadCriteria(): void {
@@ -73,7 +89,7 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteCriterion(id ? : number): void {
+  deleteCriterion(id?: number): void {
     if (!id) {
       console.warn('Tried to delete criterion with undefined ID.');
       return;
@@ -81,17 +97,16 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
 
     this.http.delete(`/pri/api/criteria-projects/${id}`).subscribe({
       next: () => {
-        console.log(`Criterion ${id} deleted.`);
         this.loadCriteria();
       },
       error: err => {
-        console.error(`Error deleting criterion ${id}:`, err);
+        console.error('Error deleting criterion:', err);
       }
     });
   }
 
-  // Nowa metoda otwierająca dialog potwierdzenia usunięcia
   openConfirmDialog(id: number): void {
+    console.log('🔵 Opening confirm dialog for criterion:', id);
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {
@@ -142,7 +157,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     const newType = target.value as 'REQUIRED' | 'EXPECTED' | 'MEASURABLE_IMPLEMENTATION_INDICATORS';
     this.criteriaService.updateType(id, newType).subscribe({
       next: () => {
-        console.log(`Type updated for ID ${id}`);
         this.loadCriteria();
       },
       error: err => {
@@ -164,7 +178,7 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateCriterionLevel(id: number, newLevel: string): Observable < any > {
+  updateCriterionLevel(id: number, newLevel: string): Observable<any> {
     const url = `/pri/api/criteria-projects/${id}/level`;
     return this.http.patch(url, {
       levelOfRealization: newLevel
@@ -174,7 +188,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   updateCriterionComment(id: number, comment: string): void {
     this.criteriaService.updateComment(id, comment).subscribe({
       next: () => {
-        console.log(`Updated comment for criterion ${id}`);
         this.loadCriteria();
       },
       error: err => console.error(`Error updating comment:`, err)
@@ -187,7 +200,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
       levelOfRealization: level
     }).subscribe({
       next: () => {
-        console.log(`Updated comment and level for criterion ${id}`);
         this.loadCriteria();
       },
       error: err => console.error(`Error updating both:`, err)
@@ -197,36 +209,32 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
   updateEnable(id: number, enable: boolean): void {
     this.criteriaService.updateEnableForModification(id, enable).subscribe({
       next: () => {
-        console.log(`Updated enable flag for criterion ${id}`);
         this.loadCriteria();
       },
       error: err => console.error(`Error updating enable:`, err)
     });
   }
 
-    onLevelChange(event: Event, id: number | undefined): void {
-      if (id === undefined) {
-        console.error('Missing criterion ID for level update');
-        return;
-      }
-
-      const target = event.target as HTMLSelectElement;
-      const value = target.value;
-      this.criteriaService.updateLevel(id, value).subscribe({
-        next: () => {
-          console.log(`Level updated for ID ${id}`);
-        },
-        error: err => {
-          console.error('Error updating level:', err);
-        }
-      });
+  onLevelChange(event: Event, id: number | undefined): void {
+    if (id === undefined) {
+      console.error('Missing criterion ID for level update');
+      return;
     }
+
+    const target = event.target as HTMLSelectElement;
+    const value = target.value;
+    this.criteriaService.updateLevel(id, value).subscribe({
+      error: err => {
+        console.error('Error updating level:', err);
+      }
+    });
+  }
 
   onToggleLock(id: number, newValue: boolean): void {
     this.updateEnable(id, newValue);
   }
 
-  onCommentChange(event: Event, id ? : number): void {
+  onCommentChange(event: Event, id?: number): void {
     const comment = (event.target as HTMLInputElement).value.trim();
     if (!id) {
       console.error('Missing criterion ID for comment update');
@@ -234,7 +242,6 @@ export class ProjectCriteriaComponent implements OnInit, OnDestroy {
     }
 
     this.criteriaService.updateComment(id, comment).subscribe({
-      next: () => console.log(`Updated comment for criterion ${id}`),
       error: (err) => console.error('Error updating comment:', err)
     });
   }

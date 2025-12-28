@@ -1,17 +1,19 @@
-<h1 mat-dialog-title>Remove project</h1>
+<h1 mat-dialog-title class="translate" data-translate="remove_project">Remove project</h1>
 <div mat-dialog-content>
-  <p>Are you sure you want to remove the project: <span>{{data.projectName}}</span>?</p>
+  <p class="translate" data-translate="are_you_sure_you_want_to_remove_the_project">Are you sure you want to remove the project: <span>{{data.projectName}}</span>?</p>
   <mat-form-field>
-    <mat-label>Fill the input with the project name</mat-label>
+    <mat-label class="translate" data-translate="fill_the_input_with_the_project_name">Fill the input with the project name</mat-label>
     <input [(ngModel)]="projectName" matInput>
   </mat-form-field>
 </div>
 <div class="actions" mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button mat-dialog-close class="translate" data-translate="cancel">Cancel</button>
   <button 
     [disabled]="projectName !== data.projectName" 
     color="primary" mat-raised-button 
     [mat-dialog-close]="true" 
-    cdkFocusInitial>Remove
+    cdkFocusInitial
+    class="translate"
+    data-translate="remove">Remove
   </button>
 </div>

@@ -13,10 +13,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { UserRoutingModule } from './user-routing.module';
 import { CommonModule } from '@angular/common';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { InitializeCoordinatorComponent } from './initialize-coordinator/initialize-coordinator.component';
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    InitializeCoordinatorComponent
   ],
   imports: [
     CommonModule,

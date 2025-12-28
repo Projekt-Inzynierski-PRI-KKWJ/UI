@@ -2,7 +2,7 @@
   <div class="marketplace-card">
     <div class="search-bar">
       <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Znajdź projekt</mat-label>
+        <mat-label class="translate" data-translate="find_project">Znajdź projekt</mat-label>
         <input matInput [(ngModel)]="searchTerm" (input)="searchProjects()" placeholder="Wpisz nazwę projektu..." />
         <button mat-icon-button matSuffix>
           <mat-icon>search</mat-icon>
@@ -12,15 +12,43 @@
 
     <div class="results-section">
       <div class="results-header">
-        Wyniki dla „{{ searchTerm || 'Projekt' }}”
+        <span class="translate" data-translate="results_for">Wyniki dla</span> „{{ searchTerm || 'Projekt' }}”
+        <span class="results-count">({{ filteredProjects.length }})</span>
       </div>
 
-      <div class="minimal-projects">
-        <div *ngFor="let project of filteredProjects" 
-            class="minimal-project"
-            [routerLink]="['/projects/marketplace-project', project.id || 'brak-id']">
-          <mat-icon class="minimal-icon">folder_open</mat-icon>
-          <span class="minimal-name">{{ project.name }}</span>
+      <!-- Loading indicator -->
+      <div *ngIf="loadingProjects" class="loading-projects">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p class="translate" data-translate="loading_projects">Ładowanie projektów...</p>
+      </div>
+
+      <!-- No projects found -->
+      <div *ngIf="!loadingProjects && filteredProjects.length === 0" class="no-projects">
+        <mat-icon style="font-size: 48px; color: #ccc;">folder_off</mat-icon>
+        <p class="translate" data-translate="no_projects_found">Nie znaleziono projektów</p>
+        <p *ngIf="searchTerm" style="font-size: 14px; color: #666;" class="translate"
+          data-translate="try_changing_search_term">
+          Spróbuj zmienić frazę wyszukiwania
+        </p>
+      </div>
+
+      <!-- Projects list -->
+      <div class="minimal-projects" *ngIf="!loadingProjects && filteredProjects.length > 0">
+        <div *ngFor="let project of filteredProjects" class="minimal-project" (click)="openProjectDetails(project.id)">
+          <mat-icon class="minimal-icon" [style.color]="project.accepted ? '#4CAF50' : '#FF9800'">
+            {{ project.accepted ? 'check_circle' : 'pending' }}
+          </mat-icon>
+          <div class="project-info">
+            <div class="project-title-row">
+              <span class="minimal-name">{{ project.name }}</span>
+            </div>
+            <div class="project-details">
+              <span class="technologies" *ngIf="project.technologies && project.technologies.length > 0">
+                <mat-icon>code</mat-icon>
+                {{ project.technologies.join(', ') }}
+              </span>
+            </div>
+          </div>
           <span class="minimal-id">{{ project.id }}</span>
           <mat-icon class="minimal-arrow">navigate_next</mat-icon>
         </div>
@@ -32,21 +60,188 @@
         <button mat-fab color="primary" (click)="openAddProjectDialog()">
           <mat-icon>add</mat-icon>
         </button>
-        <span>Zgłoś nowy projekt</span>
+        <span class="translate" data-translate="submit_a_new_project">Zgłoś nowy projekt</span>
       </div>
 
       <div class="action-item">
         <button mat-fab color="primary" (click)="openMyApplications()">
           <mat-icon>description</mat-icon>
         </button>
-        <span>Moje wnioski</span>
+        <span class="translate" data-translate="my_applications">Moje wnioski</span>
       </div>
 
       <div class="action-item">
         <button mat-fab color="primary" (click)="openMyProject()">
           <mat-icon>assignment</mat-icon>
         </button>
-        <span>Mój projekt</span>
+        <span class="translate" data-translate="my_project">Mój projekt</span>
+      </div>
+    </div>
+
+    <!-- Debug Section -->
+    <div class="debug-section" style="margin-top:80px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+      <h3 style="margin-top: 0;">🔍 Backend API Tester</h3>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+        <mat-form-field appearance="outline" style="flex: 1;">
+          <mat-label>API Endpoint URL</mat-label>
+          <input matInput [(ngModel)]="debugUrl" placeholder="Enter full URL..." />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="testBackendCall()" [disabled]="isLoading"
+          style="height: 56px;">
+          <mat-icon *ngIf="!isLoading">send</mat-icon>
+          <mat-icon *ngIf="isLoading" class="spinner">refresh</mat-icon>
+          {{ isLoading ? 'Calling...' : 'Call API' }}
+        </button>
+      </div>
+
+      <div style="margin-bottom: 10px; font-size: 12px; color: #666;">
+        <strong>Quick URLs (GET):</strong><br>
+        <button mat-button (click)="debugUrl='./pri/api/project-market/market?page=0&size=10'"
+          style="font-size: 11px;">Markets List</button>
+        <button mat-button (click)="debugUrl='./pri/api/project-market/market/1'" style="font-size: 11px;">Market
+          Details</button>
+        <button mat-button (click)="debugUrl='./pri/api/project-market/application/student'" style="font-size: 11px;">My
+          Applications</button>
+        <button mat-button (click)="debugUrl='./pri/api/project-market/supervisor/projects'"
+          style="font-size: 11px;">Supervisor Projects</button>
+      </div>
+
+      <div *ngIf="debugResponse" style="margin-bottom: 15px;">
+        <h4 style="color: green; margin: 10px 0;">✅ Success Response:</h4>
+        <pre
+          style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto; max-height: 500px;">{{ debugResponse | json }}</pre>
+      </div>
+
+      <div *ngIf="debugError" style="margin-bottom: 15px;">
+        <h4 style="color: red; margin: 10px 0;">❌ Error Response:</h4>
+        <pre style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto; max-height: 500px;">Status: {{ debugError.status }} {{ debugError.statusText }}
+
+{{ debugError | json }}</pre>
+      </div>
+
+      <div *ngIf="isLoading && !debugResponse && !debugError">
+        <p style="text-align: center;">⏳ Loading...</p>
+      </div>
+
+      <div *ngIf="!isLoading && !debugResponse && !debugError" style="padding: 20px; text-align: center; color: #999;">
+        <mat-icon style="font-size: 48px; width: 48px; height: 48px;">api</mat-icon>
+        <p>Enter a URL and click "Call API" to test backend endpoints</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Project Dialog -->
+  <div class="dialog-overlay" *ngIf="showNewProjectDialog" (click)="closeNewProjectDialog()">
+    <div class="dialog-container" (click)="$event.stopPropagation()">
+      <div class="dialog-header">
+        <h2 class="translate" data-translate="submit_a_new_project">Zgłoś nowy projekt</h2>
+        <button mat-icon-button (click)="closeNewProjectDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="dialog-content">
+        <label class="section-label translate" data-translate="basic_data">Dane podstawowe</label>
+        <form [formGroup]="newProjectForm">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label class="translate" data-translate="project_name">Nazwa projektu</mat-label>
+            <input matInput formControlName="name" placeholder="Np. System rezerwacji sal">
+            <mat-error *ngIf="newProjectForm.get('name')?.hasError('required')" class="translate"
+              data-translate="this_field_is_required">
+              Nazwa jest wymagana
+            </mat-error>
+            <mat-error *ngIf="newProjectForm.get('name')?.hasError('minlength')" class="translate"
+              data-translate="the_name_must_have_at_least_3_characters">
+              Nazwa musi mieć minimum 3 znaki
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label class="translate" data-translate="project_description">Opis projektu</mat-label>
+            <textarea matInput formControlName="description" rows="4"
+              placeholder="Opisz cel i zakres projektu..."></textarea>
+            <mat-error *ngIf="newProjectForm.get('description')?.hasError('required')" class="translate"
+              data-translate="this_field_is_required">
+              Opis jest wymagany
+            </mat-error>
+            <mat-error *ngIf="newProjectForm.get('description')?.hasError('minlength')" class="translate"
+              data-translate="the_description_must_have_at_least_10_characters">
+              Opis musi mieć minimum 10 znaków
+            </mat-error>
+          </mat-form-field>
+
+          <label class="section-label translate" data-translate="technologies">Technologie</label>
+          <div class="technologies-section">
+
+            <div formArrayName="technologies">
+              <div *ngFor="let tech of technologies.controls; let i = index" class="technology-row">
+                <mat-form-field appearance="outline" class="tech-input">
+                  <mat-label><span class="translate" data-translate="technology">Technologia</span> {{ i + 1 }}
+                  </mat-label>
+                  <input matInput [formControlName]="i" placeholder="Np. Angular, Java, Python">
+                  <mat-error class="translate" data-translate="this_field_is_required">Pole jest wymagane</mat-error>
+                </mat-form-field>
+                <button mat-icon-button color="warn" (click)="removeTechnology(i)"
+                  [disabled]="technologies.length === 1" type="button">
+                  <mat-icon>remove_circle</mat-icon>
+                </button>
+              </div>
+            </div>
+            <button mat-stroked-button color="primary" (click)="addTechnology()" type="button">
+              <mat-icon>add</mat-icon>
+              <span class="translate" data-translate="add_technology">Dodaj technologię</span>
+            </button>
+          </div>
+
+          <label class="section-label translate" data-translate="contact">Kontakt</label>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label class="translate" data-translate="contact_email">Email kontaktowy</mat-label>
+            <input matInput formControlName="contactData" type="email" placeholder="email@st.amu.edu.pl">
+            <mat-error *ngIf="newProjectForm.get('contactData')?.hasError('required')" class="translate"
+              data-translate="this_field_is_required">
+              Email jest wymagany
+            </mat-error>
+            <mat-error *ngIf="newProjectForm.get('contactData')?.hasError('email')" class="translate"
+              data-translate="please_enter_a_valid_email_address">
+              Podaj poprawny adres email
+            </mat-error>
+          </mat-form-field>
+
+          <label class="section-label translate" data-translate="candidates">Kandydaci</label>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label class="translate" data-translate="required_number_of_candidates">Wymagana ilość kandydatów
+            </mat-label>
+            <input matInput formControlName="maxMembers" type="number" min="1" max="5">
+            <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('required')" class="translate"
+              data-translate="this_field_is_required">
+              Liczba członków jest wymagana
+            </mat-error>
+            <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('min')" class="translate"
+              data-translate="minimum_1_member">
+              Minimum 1 członek
+            </mat-error>
+            <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('max')" class="translate"
+              data-translate="maximum_5_members">
+              Maksimum 5 członków
+            </mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+
+      <div class="dialog-actions">
+        <button mat-button (click)="closeNewProjectDialog()" [disabled]="isSubmitting" class="translate"
+          data-translate="cancel">
+          Anuluj
+        </button>
+        <button mat-raised-button color="primary" (click)="submitNewProject()"
+          [disabled]="isSubmitting || newProjectForm.invalid">
+          <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+          <mat-icon *ngIf="isSubmitting" class="spinner">refresh</mat-icon>
+          <span class="translate" [attr.data-translate]="isSubmitting ? 'sending' : 'create_submission'">
+            {{ isSubmitting ? 'Wysyłanie...' : 'Utwórz zgłoszenie' }}
+          </span>
+        </button>
       </div>
     </div>
   </div>

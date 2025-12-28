@@ -16,7 +16,7 @@ export interface CriteriaProject {
   levelOfRealization: string;
   semester: string;
   userThatAddedTheCriterium: {
-    id: number;
+    index: string;
   };
   project: {
     id: number;

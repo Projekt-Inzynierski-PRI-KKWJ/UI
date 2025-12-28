@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Student } from 'src/app/modules/user/models/student.model';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Subject, catchError, takeUntil} from 'rxjs';
+import { Subject, takeUntil} from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/app.state';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,9 +18,9 @@ import { EvaluationCards, PhaseChangeResponse } from '../../models/grade.model';
 import { GradeService } from '../../services/grade.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AreYouSureDialogComponent } from 'src/app/modules/shared/are-you-sure-dialog/are-you-sure-dialog.component';
-import { FormGroup, FormArray, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { ExternalLinkService } from '../../services/external-link.service';
-
+import { AppComponent } from '../../../../app.component';
 
 enum ROLE {
   FRONTEND = 'front-end',
@@ -53,8 +53,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   selectedSemesterIndex = 0;
   selectedPhaseIndex = 0;
   selectedCriteria = '';
-  
-  // Track which external link histories are expanded
+
   expandedHistoryIds = new Set<string>();
   
   semesterMap: {[key: number]: string} = {
@@ -87,23 +86,21 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private _snackbar: MatSnackBar,
     private gradeService: GradeService,
     private fb: FormBuilder,
-    private externalLinkService: ExternalLinkService
-
+    private externalLinkService: ExternalLinkService,
+    public app: AppComponent
   ){}
 
   projectCriteria: FormGroup = this.fb.group({
-    criteriaList: this.fb.array([]) // <-- lista dodanych kryteriów
+    criteriaList: this.fb.array([])
   });
 
   criteriaList: any[] = [
     { criterium: 'Współpraca', levelOfRealization: 3, semester: 'semester1' },
     { criterium: 'Kreatywność', levelOfRealization: 4, semester: 'semester2' },
-    // dodaj więcej danych zgodnie z potrzebą
   ];
 
   getCriteriaForSemester(semester: string) {
     return this.criteriaList.filter(c => c.semester === semester);
-    
   }
    
   ngOnInit(): void {
@@ -121,7 +118,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
       if(evaluationCards.status === 204){
         this.gradesShown = false;
-        this._snackbar.open('Evaluation cards are locked at the moment', 'close');
+        this._snackbar.open('Evaluation cards are locked at the moment', 'close', {
+            panelClass: ['error-snackbar']});
       } else {
         this.evaluationCards = evaluationCards.body;
       }
@@ -164,7 +162,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             return member
           }
         ))
-        this._snackbar.open('Project successfully accepted', 'close');
+        this._snackbar.open('Project successfully accepted', 'close', {
+            panelClass: ['success-snackbar']});
     });
   }
 
@@ -190,7 +189,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             return member
           }
         ))
-        this._snackbar.open('Project successfully unaccepted', 'close');
+        this._snackbar.open('Project successfully unaccepted', 'close', {
+            panelClass: ['success-snackbar']});
     })
   }
 
@@ -212,7 +212,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         this.store.dispatch(removeProject({projectId: this.data.id!}))
         this.actions$.pipe(ofType(removeProjectSuccess),takeUntil(this.unsubscribe$),).subscribe(() => {
           this.router.navigate([{outlets: {modal: null}}]);
-          this._snackbar.open('Project successfully removed', 'close');
+          this._snackbar.open('Project successfully removed', 'close', {
+            panelClass: ['success-snackbar']});
         })
       }
     });
@@ -248,7 +249,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   onSemesterTabChange(event: MatTabChangeEvent) {
   this.selectedSemesterIndex = event.index;
 
-  // Załóżmy, że zakładka "Criteria" ma indeks 2
   this.criteriaShown = event.index !== 2;
 
   if (this.gradesShown && this.criteriaShown) {
@@ -264,7 +264,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   freezeGrading(){
     this.gradeService.freezeGrading(this.data.id!).pipe(takeUntil(this.unsubscribe$),).subscribe(
         (response: PhaseChangeResponse) => {
-          this._snackbar.open('Successful freeze', 'close');
+          this._snackbar.open('Successful freeze', 'close', {
+            panelClass: ['success-snackbar']});
           this.data.freezeButtonShown = false;
           this.data.publishButtonShown = true;
           this.evaluationCards = response.evaluationCards;
@@ -278,7 +279,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   openRetakePhase(){
     this.gradeService.openRetakePhase(this.data.id!).pipe(takeUntil(this.unsubscribe$))
       .subscribe((response: PhaseChangeResponse) => {
-        this._snackbar.open('Successful retake phase opening', 'close');
+        this._snackbar.open('Successful retake phase opening', 'close', {
+            panelClass: ['success-snackbar']});
         this.data.retakeButtonShown = false;
         this.data.publishButtonShown = false;
         this.evaluationCards = response.evaluationCards;
@@ -292,7 +294,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   publish(){
     this.gradeService.publish(this.data.id!).pipe(takeUntil(this.unsubscribe$))
       .subscribe((response: PhaseChangeResponse) => {
-        this._snackbar.open('Successful publishing', 'close');
+        this._snackbar.open('Successful publishing', 'close', {
+            panelClass: ['success-snackbar']});
         this.data.retakeButtonShown = false;
         this.data.publishButtonShown = false;
         this.evaluationCards = response.evaluationCards;
@@ -303,20 +306,36 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     );
   }
 
-  getEvaluationCardsTranslations(key: string): string{
-    const translations: {[key: string]: string} = {
-      'FIRST': 'First semester',
-      'SECOND': 'Second semester',
-      'SEMESTER_PHASE': 'Semester phase',
-      'DEFENSE_PHASE': 'Defense phase',
-      'RETAKE_PHASE': 'Retake phase',
+  getEvaluationCardsTranslations(key: string): string {
+    const keyMap: { [key: string]: string } = {
+      'FIRST': 'first_semester',
+      'SECOND': 'second_semester',
+      'SEMESTER_PHASE': 'semester_phase',
+      'DEFENSE_PHASE': 'defense_phase',
+      'RETAKE_PHASE': 'retake_phase',
+    };
+
+    const targetKey = keyMap[key] || key.toLowerCase();
+
+    if (this.app.translations && this.app.translations[targetKey]) {
+      return this.app.translations[targetKey];
     }
 
-    return translations[key];
+    const fallbacks: { [key: string]: string } = {
+      'first_semester': 'First Semester',
+      'second_semester': 'Second Semester',
+      'semester_phase': 'Semester Phase',
+      'defense_phase': 'Defense Phase',
+      'retake_phase': 'Retake Phase'
+    };
+
+    return fallbacks[targetKey] || targetKey;
   }
 
   getRole(role: keyof typeof ROLE): string {
-    return ROLE[role]
+    const roleValue = ROLE[role];
+    // Jeśli nie znajdzie, zwraca wartość domyślną (fallback)
+    return this.app.translations[roleValue] || roleValue;
   }
 
   navigateBack(){
@@ -329,12 +348,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         this.data.id, 
         externalLinkId
       );
-      
-      // Create a temporary a element
+
       const link = document.createElement('a');
       link.href = downloadUrl;
       
-      // Get filename from external link data
       const externalLink = this.data.externalLinks?.find(link => link.id === externalLinkId);
       if (externalLink?.originalFileName) {
         link.download = externalLink.originalFileName;
@@ -346,7 +363,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // History toggle methods
   toggleHistory(externalLinkId: string): void {
     if (this.expandedHistoryIds.has(externalLinkId)) {
       this.expandedHistoryIds.delete(externalLinkId);

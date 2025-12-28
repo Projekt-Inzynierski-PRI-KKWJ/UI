@@ -7,8 +7,8 @@ import { Store } from '@ngrx/store';
 import { User } from '../user/models/user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { AreYouSureDialogComponent } from '../shared/are-you-sure-dialog/are-you-sure-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { DefenseAdditonalDayFormComponent } from './components/defense-additional-day-form/defense-additional-day-form.component';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'defense-schedule',
@@ -28,6 +28,7 @@ export class DefenseScheduleComponent implements OnInit, OnDestroy {
     private defenseScheduleService: DefenseScheduleService,
     private store: Store<State>,
     private dialog: MatDialog,
+    public app: AppComponent
   ){}
 
   ngOnInit(): void {
@@ -86,21 +87,22 @@ export class DefenseScheduleComponent implements OnInit, OnDestroy {
     });
   }
 
-  
   openAreYouSureDialog(action: string): void {
-    const actionMap: {[key: string]: { name: string, action: Function}} = {
+    const actionMap: {[key: string]: { translationKey: string, defaultName: string, action: Function}} = {
       'rebuild': {
-        name: 'rebuild defense schedule - schedule will be irreversibly removed, you will need to create a new one',
+        translationKey: 'rebuild_warning',
+        defaultName: 'rebuild defense schedule - schedule will be irreversibly removed, you will need to create a new one',
         action: this.rebuildDefenseSchedule.bind(this),
       },
       'archive': {
-        name: 'archive defense schedule - schedule will be irreversibly archived, you will need to create a new one',
+        translationKey: 'archive_warning',
+        defaultName: 'archive defense schedule - schedule will be irreversibly archived, you will need to create a new one',
         action: this.archiveDefenseSchedule.bind(this),
       }
     }
 
     const dialogRef = this.dialog.open(AreYouSureDialogComponent, {
-      data: { actionName: actionMap[action].name },
+      data: { actionName: this.app.translations[actionMap[action].translationKey] || actionMap[action].defaultName },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -109,7 +111,6 @@ export class DefenseScheduleComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
   get showDefenseScheduleConfig(): boolean {
     return this.user?.role === 'COORDINATOR' && this.defenseAssignments === null;
@@ -139,11 +140,8 @@ export class DefenseScheduleComponent implements OnInit, OnDestroy {
     return this.user?.role === 'COORDINATOR' && this.defenseAssignments !== null;
   }
 
-
-
   ngOnDestroy(): void {
     this.unsubscribe$.next(null);
     this.unsubscribe$.complete()
   }
-
 }

@@ -1,0 +1,205 @@
+<div class="modal-header">
+  <h2 class="dialog-title translate" [attr.data-translate]="isEditMode ? 'edit_project' : 'project_details'">
+    {{ isEditMode ? 'Edytuj projekt' : 'Szczegóły projektu' }}
+  </h2>
+  <button mat-icon-button (click)="closeDialog()" class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<!-- Tryb edycji -->
+<div class="project-edit-container" *ngIf="isEditMode && !isLoading">
+  <form [formGroup]="editProjectForm" class="edit-form">
+    <div class="form-section">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label class="translate" data-translate="project_name">Nazwa projektu</mat-label>
+        <input matInput formControlName="projectName" placeholder="Np. System rezerwacji sal">
+        <mat-error *ngIf="editProjectForm.get('projectName')?.hasError('required')" class="translate"
+          data-translate="this_field_is_required">
+          Nazwa jest wymagana
+        </mat-error>
+        <mat-error *ngIf="editProjectForm.get('projectName')?.hasError('minlength')" class="translate"
+          data-translate="the_name_must_have_at_least_3_characters">
+          Nazwa musi mieć minimum 3 znaki
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label class="translate" data-translate="project_description">Opis projektu</mat-label>
+        <textarea matInput formControlName="projectDescription" rows="6"
+          placeholder="Opisz cel i zakres projektu..."></textarea>
+        <mat-error *ngIf="editProjectForm.get('projectDescription')?.hasError('required')" class="translate"
+          data-translate="this_field_is_required">
+          Opis jest wymagany
+        </mat-error>
+        <mat-error *ngIf="editProjectForm.get('projectDescription')?.hasError('minlength')" class="translate"
+          data-translate="the_description_must_have_at_least_10_characters">
+          Opis musi mieć minimum 10 znaków
+        </mat-error>
+      </mat-form-field>
+
+      <div class="section-label translate" data-translate="technologies">Technologie</div>
+      <div class="technologies-section" formArrayName="technologies">
+        <div *ngFor="let tech of technologies.controls; let i = index" class="technology-row">
+          <mat-form-field appearance="outline" class="tech-input">
+            <mat-label><span class="translate" data-translate="technology">Technologia</span> {{ i + 1 }}</mat-label>
+            <input matInput [formControlName]="i" placeholder="Np. Angular, Java, Python">
+            <mat-error class="translate" data-translate="this_field_is_required">Pole jest wymagane</mat-error>
+          </mat-form-field>
+          <button mat-icon-button color="warn" (click)="removeTechnology(i)" [disabled]="technologies.length === 1"
+            type="button">
+            <mat-icon>remove_circle</mat-icon>
+          </button>
+        </div>
+        <button mat-stroked-button color="primary" (click)="addTechnology()" type="button" class="translate"
+          data-translate="add_technology">
+          <mat-icon>add</mat-icon>
+          Dodaj technologię
+        </button>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label class="translate" data-translate="contact_email">Email kontaktowy</mat-label>
+        <input matInput formControlName="contactData" type="email" placeholder="email@st.amu.edu.pl">
+        <mat-error *ngIf="editProjectForm.get('contactData')?.hasError('required')" class="translate"
+          data-translate="this_field_is_required">
+          Email jest wymagany
+        </mat-error>
+        <mat-error *ngIf="editProjectForm.get('contactData')?.hasError('email')" class="translate"
+          data-translate="please_enter_a_valid_email_address">
+          Podaj poprawny adres email
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label class="translate" data-translate="required_number_of_candidates">Wymagana ilość kandydatów
+        </mat-label>
+        <input matInput formControlName="maxMembers" type="number" min="1" max="5">
+        <mat-error *ngIf="editProjectForm.get('maxMembers')?.hasError('required')" class="translate"
+          data-translate="this_field_is_required">
+          Liczba członków jest wymagana
+        </mat-error>
+        <mat-error *ngIf="editProjectForm.get('maxMembers')?.hasError('min')" class="translate"
+          data-translate="minimum_1_member">
+          Minimum 1 członek
+        </mat-error>
+        <mat-error *ngIf="editProjectForm.get('maxMembers')?.hasError('max')" class="translate"
+          data-translate="maximum_5_members">
+          Maksimum 5 członków
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="edit-actions">
+      <button mat-button (click)="cancelEdit()" [disabled]="isSubmitting" type="button" class="translate"
+        data-translate="cancel">
+        Anuluj
+      </button>
+      <button mat-raised-button color="primary" (click)="submitProjectUpdate()"
+        [disabled]="isSubmitting || editProjectForm.invalid" class="btn-indigo" type="button">
+        <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+        <mat-icon *ngIf="isSubmitting" class="spinner">refresh</mat-icon>
+        <span class="translate" [attr.data-translate]="isSubmitting ? 'sending' : 'send_to_supervisor'">
+          {{ isSubmitting ? 'Wysyłanie...' : 'Wyślij do promotora' }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Tryb przeglądania -->
+<div class="project-view-container" *ngIf="!isEditMode && project && !isLoading">
+
+  <div class="sidebar-members">
+    <h3 class="members-header translate" data-translate="group_members">
+      Członkowie grupy<br>
+      <span class="count">({{ project.currentMembers?.length || 0 }}/{{ project.maxMembers }})</span>
+    </h3>
+
+    <div class="members-list">
+      <div class="member-item" *ngFor="let member of project.currentMembers">
+        <div class="avatar-circle">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <span class="member-name">
+          {{ member.firstName }}<br>{{ member.lastName }}
+        </span>
+      </div>
+
+      <div class="member-item empty-slot" *ngIf="(project.currentMembers?.length || 0) < project.maxMembers">
+        <div class="avatar-circle">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <span class="member-name translate" data-translate="empty_slot">Wolne miejsce</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content-card">
+
+    <div class="date-section">
+      <span class="translate" data-translate="submission_date_label">Data zgłoszenia: </span>
+      <span class="submission-date">{{ formatDate(project.creationDate) }}</span>
+      <span *ngIf="project.modificationDate" class="modified-date">
+        (<span class="translate" data-translate="last_modified">Ostatnia modyfikacja</span>:
+        {{ formatDate(project.modificationDate) }})
+      </span>
+    </div>
+
+    <h1 class="project-title">{{ project.projectName }}</h1>
+
+    <div class="project-description">
+      <p>{{ project.projectDescription }}</p>
+    </div>
+
+    <div class="info-section">
+      <span style="font-weight: 500;" class="translate" data-translate="technological_requirements">Wymagania
+        Technologiczne</span><span>:</span>
+      <ul class="tech-list" *ngIf="project.technologies?.length">
+        <li *ngFor="let tech of project.technologies">{{ tech }}</li>
+      </ul>
+      <p *ngIf="!project.technologies?.length" class="translate" data-translate="no_definied_requirements">Brak
+        zdefiniowanych wymagań</p>
+    </div>
+
+    <div class="info-section">
+      <span style="font-weight: 500;" class="translate" data-translate="contact">Kontakt</span><span>: </span>
+      <a [href]="'mailto:' + project.contactData" class="contact-link">{{ project.contactData }}</a>
+    </div>
+
+    <div class="info-section" *ngIf="project.accepted !== undefined">
+      <span style="font-weight: 500;">Status: </span>
+      <span class="status-badge" [class.accepted]="project.accepted" [class.pending]="!project.accepted">
+        {{ project.accepted ? 'Zaakceptowany' : 'Oczekujący na akceptację' }}
+      </span>
+    </div>
+
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="view_applications"
+        *ngIf="isOwner && !project.accepted">
+        Zobacz wnioski
+      </button>
+
+      <!-- Przycisk edycji tylko dla właściciela i gdy projekt nie jest zaakceptowany -->
+      <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="edit_project"
+        *ngIf="isOwner && !project.accepted" (click)="enableEditMode()">
+        Edytuj projekt
+      </button>
+
+      <!-- Przycisk dla promotora do akceptacji -->
+      <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="accept_project"
+        *ngIf="isSupervisor && !project.accepted">
+        Zaakceptuj projekt
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isLoading" class="loading-state">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+
+<div *ngIf="error" class="error-state">
+  <mat-icon style="color: #f44336; font-size: 48px;">error</mat-icon>
+  <p>{{ error }}</p>
+</div>

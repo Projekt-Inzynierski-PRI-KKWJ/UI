@@ -14,7 +14,9 @@ import { UserInterceptor } from './modules/user/user.interceptor';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ProjectModule } from './modules/project/project.module';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import {MatSelectModule} from '@angular/material/select';
     MatMenuModule,
     MatButtonToggleModule,
     FormsModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSnackBarModule,
+    ProjectModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: UserInterceptor, multi: true },

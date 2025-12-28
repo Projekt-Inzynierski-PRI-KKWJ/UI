@@ -1,20 +1,24 @@
-
-
 <div mat-dialog-content>
-    <h1>Additional defense day</h1>
+    <h1 class="translate" data-translate="additional_defense_day">Additional defense day</h1>
     <form [formGroup]="form">
         <mat-form-field>
-            <input matInput formControlName="date" [matDatepicker]="picker" placeholder="Choose a date">
+            <input matInput 
+                   formControlName="date" 
+                   [matDatepicker]="picker" 
+                   [placeholder]="app.translations['choose_date'] || 'Choose a date'">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
+
         <div class="buttons-container" mat-dialog-actions>
-          <button mat-button mat-dialog-close>Cancel</button>
+          <button mat-button mat-dialog-close class="translate" data-translate="cancel">Cancel</button>
           <button 
             [disabled]="form.invalid" 
             color="primary" mat-raised-button 
             [mat-dialog-close]="formatDate(form.value.date!)" 
-            cdkFocusInitial>Add day
+            cdkFocusInitial
+            class="translate"
+            data-translate="add_day">Add day
           </button>
         </div>
     </form>

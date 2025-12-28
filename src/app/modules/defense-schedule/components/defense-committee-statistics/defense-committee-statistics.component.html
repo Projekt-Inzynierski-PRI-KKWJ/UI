@@ -1,11 +1,10 @@
-
 <table *ngIf="statistics[0]">
     <tr>
         <th></th>
         <th *ngFor="let statistic of statistics">{{ statistic.supervisor }}</th>
     </tr>
     <tr class="grey-background">
-        <td>Groups</td>
+        <td class="translate" data-translate="groups">Groups</td>
         <th *ngFor="let statistic of statistics">{{ statistic.numberOfGroups }}</th>
     </tr>
     <tr *ngFor="let date of objectKeys(statistics[0].committeesPerDay)">
@@ -15,11 +14,11 @@
         </td>       
     </tr>
     <tr class="grey-background">
-        <td>Sum</td>
+        <td class="translate" data-translate="sum">Sum</td>
         <td [class.zero]="statistic.totalNumberOfCommittees === 0" *ngFor="let statistic of statistics">{{ statistic.totalNumberOfCommittees }}</td>       
     </tr>
     <tr class="grey-background">
-        <td>Load</td>
-        <td  [class.zero]="statistic.load === 0" *ngFor="let statistic of statistics">{{ statistic.load }}</td>       
+        <td class="translate" data-translate="load">Load</td>
+        <td [class.zero]="statistic.load === 0" *ngFor="let statistic of statistics">{{ statistic.load }}</td>       
     </tr>
 </table>

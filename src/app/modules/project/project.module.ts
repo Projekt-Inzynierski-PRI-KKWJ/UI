@@ -42,6 +42,7 @@ import { ProjectAddCriteriaComponent } from './components/project-add-criteria/p
 import { ProjectCriteriaComponent } from './components/project-criteria/project-criteria.component';
 import { ProjectMarketplaceComponent } from './components/project-marketplace/project-marketplace.component';
 import { MatListModule } from '@angular/material/list';
+import { ProjectMarketplaceDetailsComponent } from './components/project-marketplace-details/project-marketplace-details.component';
 
 
 @NgModule({
@@ -60,6 +61,7 @@ import { MatListModule } from '@angular/material/list';
     ProjectAddCriteriaComponent,
     ProjectCriteriaComponent,
     ProjectMarketplaceComponent,
+    ProjectMarketplaceDetailsComponent,
   ],
   imports: [
     CommonModule,

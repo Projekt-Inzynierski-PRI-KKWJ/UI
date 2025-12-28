@@ -1,0 +1,32 @@
+<div class="form-page">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="init-form">
+
+    <h2 class="form-title translate" data-translate="init_coordinator_title">
+      PRI Coordinator Initialization
+    </h2>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label class="translate" data-translate="ldap_login">LDAP Login</mat-label>
+      <input matInput formControlName="indexNumber" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label class="translate" data-translate="first_name">First Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label class="translate" data-translate="last_name">Last Name</mat-label>
+      <input matInput formControlName="last_name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label class="translate" data-translate="email">Email</mat-label>
+      <input matInput formControlName="email" />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+      <span class="translate" data-translate="initialize_coordinator"> Initialize Coordinator </span>
+    </button>
+  </form>
+</div>

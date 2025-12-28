@@ -1,10 +1,10 @@
-<project-filters [externalLinkColumnHeaders]="externalLinkColumnHeaders"/>
+<project-filters [externalLinkColumnHeaders]="externalLinkColumnHeaders" />
 
 <div *ngIf="!loading" style="overflow-x:auto;" class="mat-elevation-z8">
   <table mat-table [dataSource]="projects" matSort>
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="name"> Name </th>
-      <td  class="projectNameCell" mat-cell *matCellDef="let project"> 
+      <td class="projectNameCell" mat-cell *matCellDef="let project">
         <div>
           <span>{{project.name}} </span>
           <mat-icon *ngIf="isProjectAccepted(project.id)">person</mat-icon>
@@ -13,7 +13,8 @@
       </td>
     </ng-container>
     <ng-container matColumnDef="supervisorName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="supervisor"> Supervisor </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="supervisor"> Supervisor
+      </th>
       <td mat-cell *matCellDef="let project"> {{project.supervisorName}} </td>
     </ng-container>
     <ng-container matColumnDef="accepted">
@@ -23,39 +24,48 @@
       </td>
     </ng-container>
     <ng-container matColumnDef="firstSemesterGrade">
-      <th class="centered-header" mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="grade_I"> Grade I </th>
+      <th class="centered-header" mat-header-cell *matHeaderCellDef mat-sort-header class="translate"
+        data-translate="grade_I"> Grade I </th>
       <td class="centered-cell" mat-cell *matCellDef="let project">{{ project.firstSemesterGrade }}</td>
 
     </ng-container>
     <ng-container matColumnDef="secondSemesterGrade">
-      <th class="centered-header" mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="grade_II"> Grade II </th>
+      <th class="centered-header" mat-header-cell *matHeaderCellDef mat-sort-header class="translate"
+        data-translate="grade_II"> Grade II </th>
       <td class="centered-cell" mat-cell *matCellDef="let project">{{ project.secondSemesterGrade }}</td>
     </ng-container>
 
     <ng-container matColumnDef="criteriaMetStatus">
-      <th class="centered-header translate" mat-header-cell *matHeaderCellDef mat-sort-header data-translate="criteria_met"> Criteria met </th>
+      <th class="centered-header translate" mat-header-cell *matHeaderCellDef mat-sort-header
+        data-translate="criteria_met"> Criteria met </th>
       <td mat-cell *matCellDef="let project">
         <div *ngIf="project.criteriaMet !== undefined" [class.accepted]="project.criteriaMet" class="ellipse"></div>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="defenseDay">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Defense day </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="defense_day"> Defense day
+      </th>
       <td mat-cell *matCellDef="let project"> {{project.defenseDay}} </td>
     </ng-container>
 
     <ng-container matColumnDef="evaluationPhase">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Evaluation phase </th>
-      <td mat-cell *matCellDef="let project"> {{project.evaluationPhase}} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="evaluation_phase">
+        Evaluation phase </th>
+      <td mat-cell *matCellDef="let project">
+        {{ project.evaluationPhase ? (app.translations[project.evaluationPhase.toLowerCase()] || project.evaluationPhase) : '' }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="classroom">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="classroom"> Classroom </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="classroom"> Classroom
+      </th>
       <td mat-cell *matCellDef="let project"> {{project.classroom}} </td>
     </ng-container>
 
     <ng-container matColumnDef="committee">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Committee </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="committee"> Committee
+      </th>
       <td mat-cell *matCellDef="let project"> {{project.committee}} </td>
     </ng-container>
 
@@ -63,48 +73,46 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header class="translate" data-translate="students"> Students </th>
       <td class="studentsCell" mat-cell *matCellDef="let project"> {{project.students}} </td>
     </ng-container>
-  
-    <ng-container *ngFor="let externalLinkColumnHeader of externalLinkColumnHeaders; let i = index;" [matColumnDef]="externalLinkColumnHeader">
+
+    <ng-container *ngFor="let externalLinkColumnHeader of externalLinkColumnHeaders; let i = index;"
+      [matColumnDef]="externalLinkColumnHeader">
       <th class="link-header" mat-header-cell *matHeaderCellDef> {{externalLinkColumnHeader}} </th>
       <td mat-cell *matCellDef="let element">
-          <div *ngIf="getSortedExternalLinks(element) && getSortedExternalLinks(element)[i]" class="link" >
-              <!-- Only show if URL exists -->
-              <a target="_blank" 
-                 [href]="getSortedExternalLinks(element)[i]?.url" 
-                 *ngIf="getSortedExternalLinks(element)[i]?.url && (getSortedExternalLinks(element)[i]?.linkType === 'EXTERNAL' || !getSortedExternalLinks(element)[i]?.linkType)" 
-                 mat-icon-button>
-                  <mat-icon>link</mat-icon>
-              </a>
-              
-              <!-- Only show if file exists -->
-              <a (click)="downloadExternalLinkFile(element.id, getSortedExternalLinks(element)[i]?.id)" 
-                 *ngIf="getSortedExternalLinks(element)[i]?.linkType === 'INTERNAL' && getSortedExternalLinks(element)[i]?.originalFileName"
-                 mat-icon-button
-                 style="cursor: pointer;">
-                  <mat-icon>download</mat-icon>
-              </a>
-              
-              <!-- Show greyed out if no link -->
-              <mat-icon *ngIf="!getSortedExternalLinks(element)[i]?.url && (getSortedExternalLinks(element)[i]?.linkType === 'EXTERNAL' || !getSortedExternalLinks(element)[i]?.linkType)"
-                        mat-icon-button 
-                        style="color: #ccc; cursor: not-allowed;" 
-                        matTooltip="No URL provided">
-                  link_off
-              </mat-icon>
-              
-              <!-- Show greyed out if no file -->
-              <mat-icon *ngIf="getSortedExternalLinks(element)[i]?.linkType === 'INTERNAL' && !getSortedExternalLinks(element)[i]?.originalFileName"
-                        mat-icon-button 
-                        style="color: #ccc; cursor: not-allowed;" 
-                        matTooltip="No file uploaded">
-                  link_off
-              </mat-icon>
-          </div>
+        <div *ngIf="getSortedExternalLinks(element) && getSortedExternalLinks(element)[i]" class="link">
+          <!-- Only show if URL exists -->
+          <a target="_blank" [href]="getSortedExternalLinks(element)[i]?.url"
+            *ngIf="getSortedExternalLinks(element)[i]?.url && (getSortedExternalLinks(element)[i]?.linkType === 'EXTERNAL' || !getSortedExternalLinks(element)[i]?.linkType)"
+            mat-icon-button>
+            <mat-icon>link</mat-icon>
+          </a>
+
+          <!-- Only show if file exists -->
+          <a (click)="downloadExternalLinkFile(element.id, getSortedExternalLinks(element)[i]?.id)"
+            *ngIf="getSortedExternalLinks(element)[i]?.linkType === 'INTERNAL' && getSortedExternalLinks(element)[i]?.originalFileName"
+            mat-icon-button style="cursor: pointer;">
+            <mat-icon>download</mat-icon>
+          </a>
+
+          <!-- Show greyed out if no link -->
+          <mat-icon
+            *ngIf="!getSortedExternalLinks(element)[i]?.url && (getSortedExternalLinks(element)[i]?.linkType === 'EXTERNAL' || !getSortedExternalLinks(element)[i]?.linkType)"
+            mat-icon-button style="color: #ccc; cursor: not-allowed;" matTooltip="No URL provided">
+            link_off
+          </mat-icon>
+
+          <!-- Show greyed out if no file -->
+          <mat-icon
+            *ngIf="getSortedExternalLinks(element)[i]?.linkType === 'INTERNAL' && !getSortedExternalLinks(element)[i]?.originalFileName"
+            mat-icon-button style="color: #ccc; cursor: not-allowed;" matTooltip="No file uploaded">
+            link_off
+          </mat-icon>
+        </div>
       </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="columns"></tr>
-    <tr style="cursor: pointer" (click)="navigateToDetails(project.id)" mat-row *matRowDef="let row; columns: columns; let project"></tr>
+    <tr style="cursor: pointer" (click)="navigateToDetails(project.id)" mat-row
+      *matRowDef="let row; columns: columns; let project"></tr>
   </table>
 
   <mat-paginator [pageSizeOptions]="[50, 100, 150]" showFirstLastButtons aria-label="Select page">
@@ -112,4 +120,3 @@
 </div>
 
 <mat-spinner *ngIf="loading"></mat-spinner>
-

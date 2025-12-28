@@ -27,8 +27,13 @@
         </div>                       
     </div>
     <div class="selected-criterion" *ngIf="!expanded">
-        <p>{{  criteriaGroup.selectedCriterion ? criteriaGroup.criteria[criteriaGroup.selectedCriterion].description : 'Not selected' }}</p>
-    </div>
+    <p>
+        {{ criteriaGroup.selectedCriterion ? 
+           criteriaGroup.criteria[criteriaGroup.selectedCriterion].description : 
+           (app.translations['not_selected'] || 'Not selected') 
+        }}
+    </p>
+</div>
     <div class="action-buttons">
         <div>
             <span 
@@ -42,8 +47,10 @@
             </span>
         </div>
 
-        <mat-icon  matTooltipPosition="below" [matTooltip]="expanded ? 'Hide' : 'Expand'" (click)="expanded = !expanded">
+        <mat-icon matTooltipPosition="below" 
+                [matTooltip]="expanded ? (app.translations['hide'] || 'Hide') : (app.translations['expand'] || 'Expand')" 
+                (click)="expanded = !expanded">
             {{ expanded ? 'expand_less' : 'expand_more' }}
-        </mat-icon> 
+        </mat-icon>
     </div>
 </div>
