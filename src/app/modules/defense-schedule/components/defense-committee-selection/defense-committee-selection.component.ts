@@ -85,7 +85,7 @@ export class DefenseCommitteeSelectionComponent implements OnChanges, OnDestroy,
     private userService: UserService,
     private store: Store<State>,
     private _snackbar: MatSnackBar,
-    public app: AppComponent
+    public app: AppComponent,
     private dialog: MatDialog,
   )
   {
