@@ -43,6 +43,10 @@ import { ProjectCriteriaComponent } from './components/project-criteria/project-
 import { ProjectMarketplaceComponent } from './components/project-marketplace/project-marketplace.component';
 import { MatListModule } from '@angular/material/list';
 import { ProjectMarketplaceDetailsComponent } from './components/project-marketplace-details/project-marketplace-details.component';
+import { ApplyToProjectDialogComponent } from './components/apply-to-project-dialog/apply-to-project-dialog.component';
+import { MyApplicationsComponent } from './components/my-applications/my-applications.component';
+import { ViewApplicationsDialogComponent } from './components/view-applications-dialog/view-applications-dialog.component';
+import { MyProjectsComponent } from './components/my-projects/my-projects.component';
 
 
 @NgModule({
@@ -62,6 +66,10 @@ import { ProjectMarketplaceDetailsComponent } from './components/project-marketp
     ProjectCriteriaComponent,
     ProjectMarketplaceComponent,
     ProjectMarketplaceDetailsComponent,
+    ApplyToProjectDialogComponent,
+    MyApplicationsComponent,
+    ViewApplicationsDialogComponent,
+    MyProjectsComponent,
   ],
   imports: [
     CommonModule,

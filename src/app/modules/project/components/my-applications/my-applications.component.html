@@ -1,0 +1,102 @@
+<div class="marketplace-container">
+  <div class="marketplace-card">
+    <div class="header-section">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="translate" data-translate="my_applications">My Applications</h1>
+    </div>
+
+    <div class="search-bar">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label class="translate" data-translate="search">Search</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Search projects...">
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="tabs-section">
+      <button mat-button [class.active]="selectedTab === 'all'" (click)="selectTab('all')">
+        <span class="translate" data-translate="all">All</span>
+        <span class="badge">{{ getStatusCount('all') }}</span>
+      </button>
+      <button mat-button [class.active]="selectedTab === 'pending'" (click)="selectTab('pending')">
+        <span class="translate" data-translate="pending">Pending</span>
+        <span class="badge pending">{{ getStatusCount('pending') }}</span>
+      </button>
+      <button mat-button [class.active]="selectedTab === 'accepted'" (click)="selectTab('accepted')">
+        <span class="translate" data-translate="accepted">Accepted</span>
+        <span class="badge accepted">{{ getStatusCount('accepted') }}</span>
+      </button>
+      <button mat-button [class.active]="selectedTab === 'rejected'" (click)="selectTab('rejected')">
+        <span class="translate" data-translate="rejected">Rejected</span>
+        <span class="badge rejected">{{ getStatusCount('rejected') }}</span>
+      </button>
+    </div>
+
+    <div class="results-section">
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="loading-section">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="translate" data-translate="loading">Loading...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && applications.length === 0" class="empty-state">
+        <mat-icon>description</mat-icon>
+        <h2 class="translate" data-translate="no_applications_yet">No Applications Yet</h2>
+        <p class="translate" data-translate="no_applications_message">You haven't applied to any projects. Browse the marketplace to find interesting projects!</p>
+        <button mat-raised-button color="primary" (click)="goToMarketplace()">
+          <mat-icon>explore</mat-icon>
+          <span class="translate" data-translate="browse_projects">Browse Projects</span>
+        </button>
+      </div>
+
+      <!-- No Filtered Results -->
+      <div *ngIf="!isLoading && applications.length > 0 && filteredApplications.length === 0" class="empty-state">
+        <mat-icon>filter_list_off</mat-icon>
+        <h2 class="translate" data-translate="no_results">No Results</h2>
+        <p *ngIf="searchTerm" class="translate" data-translate="no_search_results">No applications match your search</p>
+        <p *ngIf="!searchTerm" class="translate" data-translate="no_filtered_results">No applications in this category</p>
+      </div>
+
+      <!-- Applications List -->
+      <div *ngIf="!isLoading && filteredApplications.length > 0" class="minimal-projects">
+        <div *ngFor="let application of filteredApplications" class="minimal-project">
+          <mat-icon class="minimal-icon" [style.color]="getStatusColor(application.status)">
+            {{ getStatusIcon(application.status) }}
+          </mat-icon>
+          
+          <div class="project-info">
+            <div class="project-title-row">
+              <span class="minimal-name" (click)="viewProjectDetails(application.projectId!)">
+                {{ application.projectName || 'Project #' + application.id }}
+              </span>
+            </div>
+            <div class="project-details" *ngIf="application.technologies && application.technologies.length > 0">
+              <span class="technologies">
+                <mat-icon>code</mat-icon>
+                {{ application.technologies.join(', ') }}
+              </span>
+            </div>
+          </div>
+
+          <div class="status-badge-inline" [style.background-color]="getStatusColor(application.status)">
+            {{ application.status }}
+          </div>
+          
+          <span class="minimal-date">{{ formatDate(application.applicationDate) }}</span>
+
+          <div class="action-buttons-inline">
+            <button *ngIf="application.status === 'PENDING'" mat-icon-button color="warn" 
+              (click)="withdrawApplication(application.id)" matTooltip="Withdraw">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
