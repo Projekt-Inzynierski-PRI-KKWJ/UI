@@ -1,11 +1,13 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/app.state';
 import { first } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { ApplyToProjectDialogComponent } from '../apply-to-project-dialog/apply-to-project-dialog.component';
+import { ViewApplicationsDialogComponent } from '../view-applications-dialog/view-applications-dialog.component';
 
 @Component({
   selector: 'project-marketplace-details',
@@ -22,6 +24,8 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
 
   isOwner: boolean = false;
   isSupervisor: boolean = false;
+  isStudent: boolean = false;
+  canApply: boolean = false;
 
   currentUser: any = null;
   userHeaders: HttpHeaders = new HttpHeaders();
@@ -31,6 +35,7 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private fb: FormBuilder,
     private store: Store<State>,
+    private dialog: MatDialog,
     public dialogRef: MatDialogRef<ProjectMarketplaceDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { projectId: number }
   ) {
@@ -120,6 +125,12 @@ checkUserPermissions(): void {
                       this.currentUser.role === 'PROJECT_ADMIN' ||
                       this.currentUser.isSupervisor === true;
   
+  this.isStudent = this.currentUser.role === 'STUDENT' || 
+                   this.currentUser.role === 'student';
+  
+  // Can apply if: student AND not owner AND not already accepted
+  this.canApply = this.isStudent && !this.isOwner && !this.project.accepted;
+  
   if (this.currentUser.role === 'PROJECT_ADMIN') {
     console.log('User is PROJECT_ADMIN, granting edit permission');
     this.isOwner = true;
@@ -132,6 +143,8 @@ checkUserPermissions(): void {
     isOwner: this.isOwner,
     userRole: this.currentUser.role,
     isSupervisor: this.isSupervisor,
+    isStudent: this.isStudent,
+    canApply: this.canApply,
     ownerEmail
   });
 }
@@ -261,5 +274,51 @@ checkUserPermissions(): void {
     return members.map(member => 
       `${member.firstName} ${member.lastName}`
     ).join(', ');
+  }
+
+  applyToProject(): void {
+    if (!this.canApply) {
+      console.warn('User cannot apply to this project');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ApplyToProjectDialogComponent, {
+      width: '600px',
+      data: {
+        projectId: this.project.id,
+        projectName: this.project.projectName
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'applied') {
+        // Optionally refresh or close
+        this.dialogRef.close('applied');
+      }
+    });
+  }
+
+  viewApplications(): void {
+    if (!this.isOwner) {
+      console.warn('User is not the owner');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ViewApplicationsDialogComponent, {
+      width: '800px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      data: {
+        projectId: this.project.id,
+        projectName: this.project.projectName
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'updated') {
+        // Optionally refresh project details
+        this.loadProjectDetails();
+      }
+    });
   }
 }

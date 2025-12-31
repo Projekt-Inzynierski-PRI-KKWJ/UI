@@ -34,6 +34,7 @@ import {
   ProjectMarketplaceDetailsComponent
 } from '../project-marketplace-details/project-marketplace-details.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-marketplace',
@@ -59,7 +60,8 @@ export class ProjectMarketplaceComponent implements OnInit {
     private store: Store < State > ,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     this.newProjectForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -314,10 +316,10 @@ export class ProjectMarketplaceComponent implements OnInit {
   }
 
   openMyApplications() {
-    console.log('Moje wnioski');
+    this.router.navigate(['/marketplace/applications']);
   }
 
   openMyProject() {
-    console.log('Mój projekt');
+    this.router.navigate(['/marketplace/my-projects']);
   }
 }

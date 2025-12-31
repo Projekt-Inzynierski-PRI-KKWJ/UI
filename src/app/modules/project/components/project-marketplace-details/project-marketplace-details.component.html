@@ -176,7 +176,7 @@
 
     <div class="action-buttons">
       <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="view_applications"
-        *ngIf="isOwner && !project.accepted">
+        *ngIf="isOwner && !project.accepted" (click)="viewApplications()">
         Zobacz wnioski
       </button>
 
@@ -184,6 +184,13 @@
       <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="edit_project"
         *ngIf="isOwner && !project.accepted" (click)="enableEditMode()">
         Edytuj projekt
+      </button>
+
+      <!-- Przycisk Apply dla studentów (nie właściciela) -->
+      <button mat-raised-button color="accent" class="translate" data-translate="apply_to_project"
+        *ngIf="canApply" (click)="applyToProject()">
+        <mat-icon>send</mat-icon>
+        Aplikuj do projektu
       </button>
 
       <!-- Przycisk dla promotora do akceptacji -->

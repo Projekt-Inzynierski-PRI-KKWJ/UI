@@ -1,0 +1,87 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div>
+      <h2 class="translate" data-translate="view_applications">View Applications</h2>
+      <p class="project-name">{{ data.projectName }}</p>
+    </div>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p class="translate" data-translate="loading">Loading...</p>
+    </div>
+
+    <!-- No Applications -->
+    <div *ngIf="!isLoading && applications.length === 0" class="empty-state">
+      <mat-icon>people_outline</mat-icon>
+      <h3 class="translate" data-translate="no_applications">No Applications Yet</h3>
+      <p class="translate" data-translate="no_applications_received">No one has applied to this project yet.</p>
+    </div>
+
+    <!-- Applications List -->
+    <div *ngIf="!isLoading && applications.length > 0" class="applications-list">
+      <div *ngFor="let application of applications" class="applicant-card">
+        <div class="applicant-header">
+          <div class="applicant-info">
+            <div class="applicant-avatar">
+              {{ application.firstName.charAt(0) }}{{ application.lastName.charAt(0) }}
+            </div>
+            <div>
+              <h3>{{ application.firstName }} {{ application.lastName }}</h3>
+              <p class="index-number" *ngIf="application.indexNumber">{{ application.indexNumber }}</p>
+            </div>
+          </div>
+          <span class="application-date">{{ formatDate(application.applicationDate) }}</span>
+        </div>
+
+        <div class="applicant-details">
+          <div class="detail-section">
+            <mat-icon>email</mat-icon>
+            <div>
+              <label class="translate" data-translate="contact_email">Contact Email</label>
+              <p>{{ application.contactData }}</p>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <mat-icon>school</mat-icon>
+            <div>
+              <label class="translate" data-translate="your_skills">Skills</label>
+              <p class="skills-text">{{ application.skills }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="application.otherInformation" class="detail-section">
+            <mat-icon>info</mat-icon>
+            <div>
+              <label class="translate" data-translate="additional_information">Additional Information</label>
+              <p>{{ application.otherInformation }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="applicant-actions">
+          <button mat-raised-button color="primary" 
+            (click)="approveApplication(application.id)"
+            [disabled]="processingApplicationId === application.id">
+            <mat-icon *ngIf="processingApplicationId !== application.id">check_circle</mat-icon>
+            <mat-spinner *ngIf="processingApplicationId === application.id" diameter="20"></mat-spinner>
+            <span class="translate" data-translate="approve">Approve</span>
+          </button>
+          <button mat-raised-button color="warn"
+            (click)="rejectApplication(application.id)"
+            [disabled]="processingApplicationId === application.id">
+            <mat-icon *ngIf="processingApplicationId !== application.id">cancel</mat-icon>
+            <mat-spinner *ngIf="processingApplicationId === application.id" diameter="20"></mat-spinner>
+            <span class="translate" data-translate="reject">Reject</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -12,6 +12,8 @@ import { studentResolver } from '../user/resolvers/student.resolver';
 import { supervisorResolver } from '../user/resolvers/supervisor.resolver';
 import { ProjectAddCriteriaComponent } from './components/project-add-criteria/project-add-criteria.component';
 import { ProjectMarketplaceComponent } from './components/project-marketplace/project-marketplace.component';
+import { MyApplicationsComponent } from './components/my-applications/my-applications.component';
+import { MyProjectsComponent } from './components/my-projects/my-projects.component';
 
 const routes: Routes = [
   { 
@@ -52,6 +54,14 @@ const routes: Routes = [
   { 
     path: 'marketplace',
     component: ProjectMarketplaceComponent
+  },
+  { 
+    path: 'marketplace/applications',
+    component: MyApplicationsComponent
+  },
+  { 
+    path: 'marketplace/my-projects',
+    component: MyProjectsComponent
   },
   { path: '', component: ProjectComponent },
 ];
