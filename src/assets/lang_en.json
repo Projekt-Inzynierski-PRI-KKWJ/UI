@@ -105,7 +105,6 @@
     "loading_projects": "Loading projects...",
     "no_projects_found": "No projects found",
     "try_changing_search_term": "Try changing the search term",
-    "my_applications": "My applications",
     "my_project": "My project",
     "my_projects": "My Projects",
     "no_projects_yet": "No Projects Yet",
@@ -190,7 +189,6 @@
     "defenseDay": "Defense Day",
     "evaluationPhase": "Evaluation Phase",
     "Documentation": "Documentation",
-    "all": "All columns",
     "additional_defense_day": "Additional defense day",
     "add_day": "Add day",
     "time": "Time",
@@ -236,5 +234,17 @@
     "back-end": "Back-end",
     "Full-stack": "Full-stack",
     "selected_criteria": "Selected criteria",
-    "active": "Active"
+    "active": "Active",
+    "accept_projects": "Accept projects",
+    "supervisor_accept_title": "Accept Projects",
+    "no_supervisor_projects": "No projects to review",
+    "accept_action": "Accept",
+    "reject_action": "Reject",
+    "search_placeholder_accept": "Type project name or owner...",
+    "status_accepted": "ACCEPTED",
+    "status_pending": "PENDING",
+    "no_supervisor_projects_message": "No projects assigned to this supervisor."
+    ,
+    "confirm_accept_project": "Confirm project acceptance",
+    "confirm_reject_project": "Confirm project rejection"
 }

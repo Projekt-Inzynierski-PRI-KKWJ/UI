@@ -105,7 +105,6 @@
     "loading_projects": "Ładowanie projektów...",
     "no_projects_found": "Nie znaleziono projektów",
     "try_changing_search_term": "Spróbuj zmienić frazę wyszukiwania",
-    "my_applications": "Moje wnioski",
     "my_project": "Mój projekt",
     "my_projects": "Moje Projekty",
     "no_projects_yet": "Brak Projektów",
@@ -190,7 +189,6 @@
     "defenseDay": "Dzień obrony",
     "evaluationPhase": "Faza ewaluacji",
     "Documentation": "Dokumentacja",
-    "all": "Wszystkie kolumny",
     "additional_defense_day": "Dodatkowy dzień obrony",
     "add_day": "Dodaj dzień",
     "time": "Czas",
@@ -236,5 +234,17 @@
     "back-end": "Back-end",
     "Full-stack": "Full-stack",
     "selected_criteria": "Wybrane kryteria",
-    "active": "Aktywna"
+    "active": "Aktywna",
+    "accept_projects": "Akceptuj projekty",
+    "supervisor_accept_title": "Akceptacja projektów",
+    "no_supervisor_projects": "Brak projektów do przeglądu",
+    "accept_action": "Akceptuj",
+    "reject_action": "Odrzuć",
+    "search_placeholder_accept": "Wpisz nazwę projektu lub właściciela...",
+    "status_accepted": "ZAAKCEPTOWANY",
+    "status_pending": "OCZEKUJE",
+    "no_supervisor_projects_message": "Brak projektów przypisanych do opiekuna."
+    ,
+    "confirm_accept_project": "Potwierdź akceptację projektu",
+    "confirm_reject_project": "Potwierdź odrzucenie projektu"
 }
