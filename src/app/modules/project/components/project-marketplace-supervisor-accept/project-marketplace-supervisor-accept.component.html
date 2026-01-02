@@ -1,0 +1,66 @@
+<div class="marketplace-container">
+  <div class="marketplace-card">
+    <div class="header-section">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="translate" data-translate="supervisor_accept_title">Akceptacja projektów</h1>
+    </div>
+
+    <div class="search-bar">
+      <mat-form-field appearance="outline" class="search-field">
+      <mat-label class="translate" data-translate="search">Szukaj</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Wpisz nazwę projektu lub właściciela...">
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="results-section">
+      <div *ngIf="loading" class="loading-section">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="translate" data-translate="loading">Ładowanie...</p>
+      </div>
+
+      <div *ngIf="!loading && filteredProjects.length === 0" class="empty-state">
+        <mat-icon>description</mat-icon>
+          <h2 class="translate" data-translate="no_supervisor_projects">Brak projektów do przeglądu</h2>
+          <p class="translate" data-translate="no_supervisor_projects_message">Brak projektów przypisanych do opiekuna.</p>
+      </div>
+
+      <div *ngIf="!loading && filteredProjects.length > 0" class="minimal-projects">
+        <div *ngFor="let p of filteredProjects" class="minimal-project" (click)="openProjectDetails(p.id)">
+          <mat-icon class="minimal-icon" [style.color]="getStatusColor(p)">{{ getStatusIcon(p) }}</mat-icon>
+          <div class="project-info">
+            <div class="project-title-row">
+              <span class="minimal-name">{{ p.projectName || p.name || ('Projekt #' + p.id) }}</span>
+            </div>
+            <div class="project-details">
+              <span class="technologies" *ngIf="p.technologies && p.technologies.length > 0">
+                <mat-icon>code</mat-icon>
+                {{ p.technologies.join(', ') }}
+              </span>
+              <div class="project-owner">Właściciel: {{ p.ownerDetails?.firstName }} {{ p.ownerDetails?.lastName }}</div>
+            </div>
+          </div>
+
+          <div class="status-badge-inline" [style.background-color]="getStatusColor(p)" [attr.data-translate]="p.accepted ? 'status_accepted' : 'status_pending'">
+            {{ p.accepted ? 'ZAAKCEPTOWANY' : 'OCZEKUJE' }}
+          </div>
+
+          <span class="minimal-date">{{ formatDate(p.creationDate || p.creation_date) }}</span>
+
+          <div class="action-buttons-inline">
+            <button mat-flat-button color="primary" (click)="$event.stopPropagation(); acceptProject(p)" [disabled]="p.accepted">
+              <span class="translate" data-translate="accept_action">Akceptuj</span>
+            </button>
+            <button mat-stroked-button color="warn" (click)="$event.stopPropagation(); rejectProject(p)">
+              <span class="translate" data-translate="reject_action">Odrzuć</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

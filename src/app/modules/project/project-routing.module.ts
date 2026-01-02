@@ -14,6 +14,7 @@ import { ProjectAddCriteriaComponent } from './components/project-add-criteria/p
 import { ProjectMarketplaceComponent } from './components/project-marketplace/project-marketplace.component';
 import { MyApplicationsComponent } from './components/my-applications/my-applications.component';
 import { MyProjectsComponent } from './components/my-projects/my-projects.component';
+import { ProjectMarketplaceSupervisorAcceptComponent } from './components/project-marketplace-supervisor-accept/project-marketplace-supervisor-accept.component';
 
 const routes: Routes = [
   { 
@@ -54,6 +55,10 @@ const routes: Routes = [
   { 
     path: 'marketplace',
     component: ProjectMarketplaceComponent
+  },
+  { 
+    path: 'marketplace/supervisor-accept',
+    component: ProjectMarketplaceSupervisorAcceptComponent
   },
   { 
     path: 'marketplace/applications',

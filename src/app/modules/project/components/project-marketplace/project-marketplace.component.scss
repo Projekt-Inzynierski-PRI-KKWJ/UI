@@ -30,21 +30,42 @@
   100% { transform: rotate(360deg); }
 }
 
+.marketplace-title {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  font-weight: 500;
+  font-size: 24px;
+  color: #333;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
 .search-bar {
+  width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 32px;
 
+  .search-bar mat-form-field {
+    width: 100%;
+  }
+  
   .search-field {
-    width: 65%;
-    max-width: 650px;
+    width: 100%;
+    max-width: 1000px;
   }
 }
 
 .results-section {
-  padding: 0 110px;
   max-width: 1000px;
   margin: 0 auto;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
 
   .results-header {
     font-size: 15px;
@@ -65,14 +86,15 @@
 }
 
 .actions-panel {
-  position: absolute;
-  top: 40px;
-  right: 40px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
-  align-items: flex-end;
+  justify-content: center;
+  align-items: flex-start;
   gap: 24px;
+  max-width: 1000px;
+  width: 100%;
+  margin: 30px auto;
 
   .action-item {
     display: flex;
@@ -93,7 +115,7 @@
 
     span {
       font-size: 13px;
-      margin-top: 6px;
+      margin-top: 8px;
       color: #333;
       text-align: center;
       width: 110px;
@@ -165,6 +187,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   gap: 12px;
+  border-bottom: 1px solid #e0e0e0;
 
   &:hover {
     background: #f0f7ff;
@@ -365,7 +388,7 @@ label .section-label {
 
 @media (max-width: 768px) {
   .results-section {
-    padding: 0;
+    padding: 12px;
   }
   .minimal-project {
     padding-left: 0;

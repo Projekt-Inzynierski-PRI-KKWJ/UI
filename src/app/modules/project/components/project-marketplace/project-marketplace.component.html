@@ -1,5 +1,8 @@
 <div class="marketplace-container">
   <div class="marketplace-card">
+    <div class="header-section">
+      <h1 class="translate marketplace-title" data-translate="project_marketplace">Giełda projektów</h1>
+    </div>
     <div class="search-bar">
       <mat-form-field appearance="outline" class="search-field">
         <mat-label class="translate" data-translate="find_project">Znajdź projekt</mat-label>
@@ -8,6 +11,36 @@
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
+    </div>
+
+    <div class="actions-panel">
+      <div class="action-item">
+        <button mat-fab color="primary" (click)="openAddProjectDialog()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <span class="translate" data-translate="submit_a_new_project">Zgłoś nowy projekt</span>
+      </div>
+
+      <div class="action-item">
+        <button mat-fab color="primary" (click)="openMyApplications()">
+          <mat-icon>description</mat-icon>
+        </button>
+        <span class="translate" data-translate="my_applications">Moje wnioski</span>
+      </div>
+
+      <div class="action-item">
+        <button mat-fab color="primary" (click)="openMyProject()">
+          <mat-icon>assignment</mat-icon>
+        </button>
+        <span class="translate" data-translate="my_project">Mój projekt</span>
+      </div>
+
+      <div class="action-item" *ngIf="isSupervisor">
+        <button mat-fab color="accent" (click)="openSupervisorAccept()">
+          <mat-icon>check_circle</mat-icon>
+        </button>
+        <span class="translate" data-translate="accept_projects">Akceptuj projekty</span>
+      </div>
     </div>
 
     <div class="results-section">
@@ -55,31 +88,10 @@
       </div>
     </div>
 
-    <div class="actions-panel">
-      <div class="action-item">
-        <button mat-fab color="primary" (click)="openAddProjectDialog()">
-          <mat-icon>add</mat-icon>
-        </button>
-        <span class="translate" data-translate="submit_a_new_project">Zgłoś nowy projekt</span>
-      </div>
-
-      <div class="action-item">
-        <button mat-fab color="primary" (click)="openMyApplications()">
-          <mat-icon>description</mat-icon>
-        </button>
-        <span class="translate" data-translate="my_applications">Moje wnioski</span>
-      </div>
-
-      <div class="action-item">
-        <button mat-fab color="primary" (click)="openMyProject()">
-          <mat-icon>assignment</mat-icon>
-        </button>
-        <span class="translate" data-translate="my_project">Mój projekt</span>
-      </div>
-    </div>
+    
 
     <!-- Debug Section -->
-    <div class="debug-section" style="margin-top:80px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+    <div class="debug-section" style="margin-top:80px; padding: 20px; background: #f5f5f5; border-radius: 8px; max-width: 1000px; margin-left: auto; margin-right: auto;">
       <h3 style="margin-top: 0;">🔍 Backend API Tester</h3>
 
       <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">

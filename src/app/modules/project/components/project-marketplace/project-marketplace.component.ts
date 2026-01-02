@@ -42,6 +42,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./project-marketplace.component.scss']
 })
 export class ProjectMarketplaceComponent implements OnInit {
+  currentUser: any = null;
+  isSupervisor: boolean = false;
   searchTerm: string = '';
   projects: Project[] = [];
   filteredProjects: Project[] = [];
@@ -76,6 +78,8 @@ export class ProjectMarketplaceComponent implements OnInit {
     this.loadProjects();
 
     this.store.select('user').pipe(first()).subscribe(user => {
+      this.currentUser = user;
+      this.isSupervisor = !!user && (user.role === 'SUPERVISOR' || user.role === 'PROJECT_ADMIN');
       this.userHeaders = {
         'study-year': user.actualYear,
         'index-number': user.indexNumber,
@@ -321,5 +325,9 @@ export class ProjectMarketplaceComponent implements OnInit {
 
   openMyProject() {
     this.router.navigate(['/marketplace/my-projects']);
+  }
+
+  openSupervisorAccept() {
+    this.router.navigate(['/marketplace/supervisor-accept']);
   }
 }

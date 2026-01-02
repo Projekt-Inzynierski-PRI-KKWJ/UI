@@ -41,6 +41,7 @@ import { ExternalLinkHistoryComponent } from './components/external-link-history
 import { ProjectAddCriteriaComponent } from './components/project-add-criteria/project-add-criteria.component';
 import { ProjectCriteriaComponent } from './components/project-criteria/project-criteria.component';
 import { ProjectMarketplaceComponent } from './components/project-marketplace/project-marketplace.component';
+import { ProjectMarketplaceSupervisorAcceptComponent } from './components/project-marketplace-supervisor-accept/project-marketplace-supervisor-accept.component';
 import { MatListModule } from '@angular/material/list';
 import { ProjectMarketplaceDetailsComponent } from './components/project-marketplace-details/project-marketplace-details.component';
 import { ApplyToProjectDialogComponent } from './components/apply-to-project-dialog/apply-to-project-dialog.component';
@@ -65,6 +66,7 @@ import { MyProjectsComponent } from './components/my-projects/my-projects.compon
     ProjectAddCriteriaComponent,
     ProjectCriteriaComponent,
     ProjectMarketplaceComponent,
+    ProjectMarketplaceSupervisorAcceptComponent,
     ProjectMarketplaceDetailsComponent,
     ApplyToProjectDialogComponent,
     MyApplicationsComponent,
