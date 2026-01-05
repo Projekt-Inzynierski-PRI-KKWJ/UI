@@ -97,10 +97,10 @@
       </button>
       <button mat-raised-button color="primary" (click)="submitProjectUpdate()"
         [disabled]="isSubmitting || editProjectForm.invalid" class="btn-indigo" type="button">
-        <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+        <mat-icon *ngIf="!isSubmitting">save</mat-icon>
         <mat-icon *ngIf="isSubmitting" class="spinner">refresh</mat-icon>
-        <span class="translate" [attr.data-translate]="isSubmitting ? 'sending' : 'send_to_supervisor'">
-          {{ isSubmitting ? 'Wysyłanie...' : 'Wyślij do promotora' }}
+        <span class="translate" [attr.data-translate]="isSubmitting ? 'sending' : 'save_changes'">
+          {{ isSubmitting ? 'Wysyłanie...' : 'Zapisz zmiany' }}
         </span>
       </button>
     </div>
@@ -175,15 +175,14 @@
     </div>
 
     <div class="action-buttons">
+      <div class="submit-to-supervisor" *ngIf="isOwner && !project.accepted && !isEditMode">
+        <button mat-stroked-button color="primary" class="translate" data-translate="send_to_supervisor" (click)="submitToSupervisor()" [disabled]="isSubmitting || project.accepted">
+          Wyślij do promotora
+        </button>
+      </div>
       <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="view_applications"
         *ngIf="isOwner && !project.accepted" (click)="viewApplications()">
         Zobacz wnioski
-      </button>
-
-      <!-- Przycisk edycji tylko dla właściciela i gdy projekt nie jest zaakceptowany -->
-      <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="edit_project"
-        *ngIf="isOwner && !project.accepted" (click)="enableEditMode()">
-        Edytuj projekt
       </button>
 
       <!-- Przycisk Apply dla studentów (nie właściciela) -->
@@ -193,11 +192,6 @@
         Aplikuj do projektu
       </button>
 
-      <!-- Przycisk dla promotora do akceptacji -->
-      <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="accept_project"
-        *ngIf="isSupervisor && !project.accepted">
-        Zaakceptuj projekt
-      </button>
     </div>
   </div>
 </div>

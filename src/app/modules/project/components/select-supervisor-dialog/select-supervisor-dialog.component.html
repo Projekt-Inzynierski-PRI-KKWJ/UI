@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Wybierz opiekuna</h2>
+<mat-dialog-content>
+  <div *ngIf="isLoading">Ładowanie opiekunów...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <mat-form-field appearance="fill" style="width:100%" *ngIf="!isLoading && supervisors.length>0">
+    <mat-label>Opiekun</mat-label>
+    <mat-select [(value)]="selectedSupervisorId">
+      <mat-option *ngFor="let s of supervisors" [value]="s.id">{{ s.name || (s.firstName + ' ' + s.lastName) || s.email }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="!isLoading && supervisors.length===0">Brak dostępnych opiekunów.</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Anuluj</button>
+  <button mat-raised-button color="primary" (click)="confirm()" [disabled]="!selectedSupervisorId">Wyślij</button>
+</mat-dialog-actions>

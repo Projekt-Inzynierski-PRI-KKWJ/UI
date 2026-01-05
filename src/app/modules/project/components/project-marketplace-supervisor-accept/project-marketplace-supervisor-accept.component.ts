@@ -40,7 +40,7 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
 
       this.currentUser = user;
 
-      this.loadMarketplaceProjects();
+      this.loadSupervisorProjects();
     });
   }
 
@@ -100,12 +100,16 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
   }
 
   private mapProject(project: any) {
+    const status = this.normalizeStatus(project.status || project.marketStatus || project.projectMarketStatus || project.marketplaceStatus || project.state);
+    const accepted = status === 'APPROVED_BY_SUPERVISOR' ? true : (project.accepted === true || project.accepted === 'true' || false);
+
     return {
       id: project.id,
+      status,
       name: project.projectName || project.name,
       ownerDetails: project.ownerDetails || project.owner || null,
       supervisor: this.createSupervisorFromOwner(project.ownerDetails || project.owner || {}),
-      accepted: project.accepted === true || project.accepted === 'true' || false,
+      accepted,
       description: project.projectDescription || project.description,
       technologies: project.technologies || [],
       maxMembers: project.maxMembers,
@@ -117,6 +121,10 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
     };
   }
 
+  private normalizeStatus(status: any): string {
+    return (status || '').toString().toUpperCase();
+  }
+
   loadSupervisorProjects(): void {
     this.loading = true;
     this.http.get('./pri/api/project-market/supervisor/projects?page=0&size=100', { headers: this.userHeaders })
@@ -124,7 +132,6 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
         next: (resp: any) => {
           console.log('Supervisor projects response:', resp);
 
-          // support multiple possible shapes returned by backend
           let items: any[] = [];
           if (resp && resp.content && Array.isArray(resp.content)) {
             items = resp.content;
@@ -180,6 +187,11 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
   }
 
   acceptProject(project: any): void {
+    if (!this.isPending(project)) {
+      this.snackBar.open('Projekt nie oczekuje na decyzję opiekuna', 'OK', { duration: 2500 });
+      return;
+    }
+
     const dialogRef = this.dialog.open(AreYouSureDialogComponent, { data: { actionKey: 'confirm_accept_project', actionName: 'Potwierdź akceptację projektu' } });
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
@@ -188,7 +200,9 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
       .subscribe({
         next: () => {
           project.accepted = true;
+          project.status = 'APPROVED_BY_SUPERVISOR';
           this.snackBar.open('Projekt zaakceptowany', 'OK', { duration: 2500 });
+          this.loadSupervisorProjects();
         },
         error: (err) => {
           console.error('Accept failed', err);
@@ -199,6 +213,11 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
   }
 
   rejectProject(project: any): void {
+    if (!this.isPending(project)) {
+      this.snackBar.open('Projekt nie oczekuje na decyzję opiekuna', 'OK', { duration: 2500 });
+      return;
+    }
+
     const dialogRef = this.dialog.open(AreYouSureDialogComponent, { data: { actionKey: 'confirm_reject_project', actionName: 'Potwierdź odrzucenie projektu' } });
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
@@ -207,7 +226,9 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
       .subscribe({
         next: () => {
           project.accepted = false;
+          project.status = 'REJECTED_BY_SUPERVISOR';
           this.snackBar.open('Projekt odrzucony', 'OK', { duration: 2500 });
+          this.loadSupervisorProjects();
         },
         error: (err) => {
           console.error('Reject failed', err);
@@ -232,7 +253,7 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'updated' || result === 'applied') {
-        this.loadMarketplaceProjects();
+        this.loadSupervisorProjects();
       }
     });
   }
@@ -257,12 +278,28 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
       return d.toLocaleDateString('pl-PL');
     }
 
+    isPending(project: any): boolean {
+      return this.normalizeStatus(project?.status) === 'SENT_FOR_APPROVAL_TO_SUPERVISOR';
+    }
+
     getStatusColor(project: any): string {
-      if (project.accepted) return '#2e7d32';
+      const status = this.normalizeStatus(project?.status);
+      if (status === 'APPROVED_BY_SUPERVISOR' || project.accepted) return '#2e7d32';
+      if (status === 'REJECTED_BY_SUPERVISOR') return '#c62828';
       return '#f57c00';
     }
 
     getStatusIcon(project: any): string {
-      return project.accepted ? 'check_circle' : 'pending';
+      const status = this.normalizeStatus(project?.status);
+      if (status === 'APPROVED_BY_SUPERVISOR' || project.accepted) return 'check_circle';
+      if (status === 'REJECTED_BY_SUPERVISOR') return 'cancel';
+      return 'pending';
+    }
+
+    getStatusLabel(project: any): string {
+      const status = this.normalizeStatus(project?.status);
+      if (status === 'APPROVED_BY_SUPERVISOR' || project.accepted) return 'ZAAKCEPTOWANY';
+      if (status === 'REJECTED_BY_SUPERVISOR') return 'ODRZUCONY';
+      return 'OCZEKUJE';
     }
 }

@@ -1,6 +1,9 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AreYouSureDialogComponent } from '../../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
+import { SelectSupervisorDialogComponent } from '../select-supervisor-dialog/select-supervisor-dialog.component';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/app.state';
@@ -24,6 +27,8 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
 
   isOwner: boolean = false;
   isSupervisor: boolean = false;
+  isCoordinator: boolean = false;
+  canAcceptProjectAction: boolean = false;
   isStudent: boolean = false;
   canApply: boolean = false;
 
@@ -37,6 +42,7 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ProjectMarketplaceDetailsComponent>,
+    private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: { projectId: number }
   ) {
     this.editProjectForm = this.fb.group({
@@ -45,6 +51,41 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
       technologies: this.fb.array([this.fb.control('', Validators.required)]),
       contactData: ['', [Validators.required, Validators.email]],
       maxMembers: [3, [Validators.required, Validators.min(1), Validators.max(10)]]
+    });
+  }
+
+  submitToSupervisor(): void {
+    if (!this.project) return;
+    const dialogRef = this.dialog.open(SelectSupervisorDialogComponent, {
+      width: '600px',
+      data: { projectId: this.project.id, headers: this.userHeaders }
+    });
+
+    dialogRef.afterClosed().subscribe((selectedSupervisorId: any) => {
+      if (!selectedSupervisorId) return;
+
+      this.isSubmitting = true;
+
+      let headers = this.userHeaders;
+      if (this.currentUser && this.currentUser.token && typeof headers?.set === 'function') {
+        headers = headers.set('Authorization', `Bearer ${this.currentUser.token}`);
+      }
+
+      const url = `./pri/api/project-market/market/${this.project.id}/submit/${selectedSupervisorId}`;
+
+      this.http.patch(url, null, { headers: headers, withCredentials: true })
+        .subscribe({
+          next: () => {
+            this.isSubmitting = false;
+            this.dialogRef.close('updated');
+          },
+          error: (err) => {
+            console.error('Submit to supervisor failed', err);
+            this.isSubmitting = false;
+            const msg = err?.error?.errorMessage || 'Nie udało się wysłać zgłoszenia';
+            this.snackBar.open(msg, 'OK', { duration: 4000 });
+          }
+        });
     });
   }
 
@@ -120,10 +161,12 @@ checkUserPermissions(): void {
     });
   }
 
-  this.isSupervisor = this.currentUser.role === 'supervisor' || 
-                      this.currentUser.role === 'teacher' ||
-                      this.currentUser.role === 'PROJECT_ADMIN' ||
-                      this.currentUser.isSupervisor === true;
+  const role = (this.currentUser.role || '').toString().toUpperCase();
+  this.isSupervisor = role === 'SUPERVISOR' || this.currentUser.isSupervisor === true || role === 'TEACHER' || role === 'PROJECT_ADMIN';
+  this.isCoordinator = role === 'COORDINATOR';
+
+  // Only supervisors and coordinators should be able to accept projects
+  this.canAcceptProjectAction = (role === 'SUPERVISOR' || role === 'COORDINATOR' || this.currentUser.isSupervisor === true);
   
   this.isStudent = this.currentUser.role === 'STUDENT' || 
                    this.currentUser.role === 'student';
@@ -203,8 +246,7 @@ checkUserPermissions(): void {
       return;
     }
 
-    event?.preventDefault();
-
+    // preventDefault is not available in this context
     this.isSubmitting = true;
     const formValue = this.editProjectForm.value;
     
@@ -220,10 +262,17 @@ checkUserPermissions(): void {
     };
 
     console.log('Updating project with data:', projectData);
-    console.log('Headers:', this.userHeaders.keys());
+    // Ensure Authorization header present when available and include credentials (cookies)
+    let headers = this.userHeaders;
+    if (this.currentUser && this.currentUser.token && typeof headers?.set === 'function') {
+      headers = headers.set('Authorization', `Bearer ${this.currentUser.token}`);
+    }
+
+    console.log('Headers keys:', headers.keys ? headers.keys() : headers);
 
     this.http.put(`./pri/api/project-market/project/${this.project.id}`, projectData, {
-      headers: this.userHeaders
+      headers: headers,
+      withCredentials: true
     })
       .subscribe({
         next: (response) => {

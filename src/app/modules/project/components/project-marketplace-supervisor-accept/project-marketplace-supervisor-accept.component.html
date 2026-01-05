@@ -45,17 +45,17 @@
             </div>
           </div>
 
-          <div class="status-badge-inline" [style.background-color]="getStatusColor(p)" [attr.data-translate]="p.accepted ? 'status_accepted' : 'status_pending'">
-            {{ p.accepted ? 'ZAAKCEPTOWANY' : 'OCZEKUJE' }}
+          <div class="status-badge-inline" [style.background-color]="getStatusColor(p)" [attr.data-translate]="getStatusLabel(p).toLowerCase()">
+            {{ getStatusLabel(p) }}
           </div>
 
           <span class="minimal-date">{{ formatDate(p.creationDate || p.creation_date) }}</span>
 
           <div class="action-buttons-inline">
-            <button mat-flat-button color="primary" (click)="$event.stopPropagation(); acceptProject(p)" [disabled]="p.accepted">
+            <button mat-flat-button color="primary" (click)="$event.stopPropagation(); acceptProject(p)" [disabled]="!isPending(p)">
               <span class="translate" data-translate="accept_action">Akceptuj</span>
             </button>
-            <button mat-stroked-button color="warn" (click)="$event.stopPropagation(); rejectProject(p)">
+            <button mat-stroked-button color="warn" (click)="$event.stopPropagation(); rejectProject(p)" [disabled]="!isPending(p)">
               <span class="translate" data-translate="reject_action">Odrzuć</span>
             </button>
           </div>

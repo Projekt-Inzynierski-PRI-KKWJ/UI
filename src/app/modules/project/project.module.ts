@@ -45,6 +45,7 @@ import { ProjectMarketplaceSupervisorAcceptComponent } from './components/projec
 import { MatListModule } from '@angular/material/list';
 import { ProjectMarketplaceDetailsComponent } from './components/project-marketplace-details/project-marketplace-details.component';
 import { ApplyToProjectDialogComponent } from './components/apply-to-project-dialog/apply-to-project-dialog.component';
+import { SelectSupervisorDialogComponent } from './components/select-supervisor-dialog/select-supervisor-dialog.component';
 import { MyApplicationsComponent } from './components/my-applications/my-applications.component';
 import { ViewApplicationsDialogComponent } from './components/view-applications-dialog/view-applications-dialog.component';
 import { MyProjectsComponent } from './components/my-projects/my-projects.component';
@@ -68,6 +69,7 @@ import { MyProjectsComponent } from './components/my-projects/my-projects.compon
     ProjectMarketplaceComponent,
     ProjectMarketplaceSupervisorAcceptComponent,
     ProjectMarketplaceDetailsComponent,
+    SelectSupervisorDialogComponent,
     ApplyToProjectDialogComponent,
     MyApplicationsComponent,
     ViewApplicationsDialogComponent,
