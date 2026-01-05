@@ -243,8 +243,7 @@
     "search_placeholder_accept": "Wpisz nazwę projektu lub właściciela...",
     "status_accepted": "ZAAKCEPTOWANY",
     "status_pending": "OCZEKUJE",
-    "no_supervisor_projects_message": "Brak projektów przypisanych do opiekuna."
-    ,
+    "no_supervisor_projects_message": "Brak projektów przypisanych do opiekuna.",
     "confirm_accept_project": "Potwierdź akceptację projektu",
     "confirm_reject_project": "Potwierdź odrzucenie projektu"
 }
