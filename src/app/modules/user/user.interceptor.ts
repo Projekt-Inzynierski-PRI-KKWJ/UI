@@ -8,15 +8,10 @@ import { State } from 'src/app/app.state';
 export class UserInterceptor implements HttpInterceptor {
     constructor(private store: Store<State>) { }
 
-    // user.interceptor.ts
-
 intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
   return this.store.select('user').pipe(
     first(),
     mergeMap(user => {
-      // 1. Check if user exists
-      // 2. Skip for initialization calls
-      // 3. Skip for local assets (translations)
       if (!user || req.url.includes('/initialization') || req.url.includes('assets/')) {
         return next.handle(req);
       }
