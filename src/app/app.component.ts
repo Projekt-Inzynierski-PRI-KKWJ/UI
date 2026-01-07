@@ -86,7 +86,6 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
     this.mobileQuery.addEventListener('change', this._mobileQueryListener);
 
     this.store.select('user').subscribe(user => {
-      // Sprawdzaj, czy user istnieje, zanim zaczniesz robić .split() lub map()
       if (user && user.actualYear) {
         this.user = user;
         this.learningMode = user.actualYear.split('#')[0];

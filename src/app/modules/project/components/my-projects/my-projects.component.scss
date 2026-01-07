@@ -1,0 +1,258 @@
+.marketplace-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+}
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.marketplace-card {
+  position: relative;
+  background-color: #ffffff;
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  min-height: 70vh;
+}
+
+.header-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 0 110px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+
+  .back-button {
+    color: #666;
+    
+    &:hover {
+      color: #333;
+      background-color: #f5f5f5;
+    }
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+
+  .search-field {
+    width: 100%;
+    max-width: 1000px;
+  }
+}
+
+.results-section {
+  padding: 0 110px;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: 300px;
+}
+
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #bdbdbd;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    margin: 0 0 8px 0;
+    color: #666;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: #999;
+    max-width: 400px;
+  }
+
+  button {
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+  }
+}
+
+.minimal-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.minimal-project {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  gap: 16px;
+
+  &:hover {
+    background-color: #f0f7ff;
+  }
+
+  .minimal-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .project-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .project-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .minimal-name {
+        font-weight: 500;
+        font-size: 14px;
+        color: #333;
+        transition: color 0.2s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover {
+          color: #1976d2;
+        }
+      }
+    }
+
+    .project-details {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: #666;
+
+      .technologies,
+      .members {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          color: #999;
+        }
+      }
+    }
+  }
+
+  .status-badge-inline {
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
+    color: white;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .minimal-date {
+    color: #999;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .minimal-arrow {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #ccc;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  &:hover .minimal-arrow {
+    transform: translateX(4px);
+  }
+}
+
+@media (max-width: 960px) {
+  .marketplace-card {
+    padding: 24px;
+  }
+
+  .header-section,
+  .results-section {
+    padding: 0 20px;
+  }
+
+  .search-bar .search-field {
+    width: 90%;
+  }
+
+  .minimal-project {
+    flex-wrap: wrap;
+    
+    .project-info {
+      flex-basis: 100%;
+    }
+
+    .status-badge-inline,
+    .minimal-date,
+    .minimal-arrow {
+      margin-top: 8px;
+    }
+  }
+}

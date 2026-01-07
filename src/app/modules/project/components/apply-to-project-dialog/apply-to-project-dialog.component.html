@@ -1,0 +1,63 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 class="translate" data-translate="apply_to_project">Apply to Project</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <div class="project-info">
+      <mat-icon>work</mat-icon>
+      <span>{{ data.projectName }}</span>
+    </div>
+
+    <form [formGroup]="applicationForm">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label class="translate" data-translate="contact_email">Contact Email</mat-label>
+        <input matInput formControlName="contactData" type="email" placeholder="your.email@st.amu.edu.pl">
+        <mat-hint class="translate" data-translate="email_hint">We'll use this to contact you</mat-hint>
+        <mat-error *ngIf="applicationForm.get('contactData')?.hasError('required')" class="translate" data-translate="this_field_is_required">
+          This field is required
+        </mat-error>
+        <mat-error *ngIf="applicationForm.get('contactData')?.hasError('email')" class="translate" data-translate="please_enter_a_valid_email_address">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label class="translate" data-translate="your_skills">Your Skills</mat-label>
+        <textarea matInput formControlName="skills" rows="4" 
+          placeholder="Describe your relevant skills and experience..."></textarea>
+        <mat-hint class="translate" data-translate="skills_hint">Include programming languages, frameworks, and relevant experience</mat-hint>
+        <mat-error *ngIf="applicationForm.get('skills')?.hasError('required')" class="translate" data-translate="this_field_is_required">
+          This field is required
+        </mat-error>
+        <mat-error *ngIf="applicationForm.get('skills')?.hasError('minlength')" class="translate" data-translate="minimum_10_characters">
+          Please provide at least 10 characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label class="translate" data-translate="additional_information">Additional Information (optional)</mat-label>
+        <textarea matInput formControlName="otherInformation" rows="3" 
+          placeholder="Any other information you'd like to share..."></textarea>
+        <mat-hint class="translate" data-translate="other_info_hint">Portfolio links, GitHub profile, etc.</mat-hint>
+      </mat-form-field>
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-button (click)="close()" [disabled]="isSubmitting" class="translate" data-translate="cancel">
+      Cancel
+    </button>
+    <button mat-raised-button color="primary" (click)="submitApplication()" 
+      [disabled]="isSubmitting || applicationForm.invalid">
+      <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+      <mat-icon *ngIf="isSubmitting" class="spinner">refresh</mat-icon>
+      <span class="translate" [attr.data-translate]="isSubmitting ? 'submitting' : 'submit_application'">
+        {{ isSubmitting ? 'Submitting...' : 'Submit Application' }}
+      </span>
+    </button>
+  </div>
+</div>

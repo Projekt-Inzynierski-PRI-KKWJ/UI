@@ -34,6 +34,7 @@ import {
   ProjectMarketplaceDetailsComponent
 } from '../project-marketplace-details/project-marketplace-details.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project-marketplace',
@@ -41,6 +42,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./project-marketplace.component.scss']
 })
 export class ProjectMarketplaceComponent implements OnInit {
+  currentUser: any = null;
+  isSupervisor: boolean = false;
+  canOpenSupervisorAccept: boolean = false;
   searchTerm: string = '';
   projects: Project[] = [];
   filteredProjects: Project[] = [];
@@ -53,13 +57,15 @@ export class ProjectMarketplaceComponent implements OnInit {
   newProjectForm: FormGroup;
   isSubmitting: boolean = false;
   loadingProjects: boolean = false;
+  supervisors: any[] = [];
 
   constructor(
     private http: HttpClient,
     private store: Store < State > ,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     this.newProjectForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -74,11 +80,30 @@ export class ProjectMarketplaceComponent implements OnInit {
     this.loadProjects();
 
     this.store.select('user').pipe(first()).subscribe(user => {
+      this.currentUser = user;
+      const role = (user?.role || '').toString().toUpperCase();
+      this.isSupervisor = !!user && (role === 'SUPERVISOR' || role === 'PROJECT_ADMIN' || role === 'COORDINATOR');
+      this.canOpenSupervisorAccept = !!user && (role === 'SUPERVISOR' || role === 'COORDINATOR');
       this.userHeaders = {
         'study-year': user.actualYear,
         'index-number': user.indexNumber,
         'lang': user.lang
       };
+      this.loadSupervisors();
+    });
+  }
+
+  loadSupervisors() {
+    this.http.get('./pri/user/supervisor', { headers: this.userHeaders }).subscribe({
+      next: (resp: any) => {
+        if (Array.isArray(resp)) this.supervisors = resp;
+        else if (resp && resp.content && Array.isArray(resp.content)) this.supervisors = resp.content;
+        else this.supervisors = [];
+      },
+      error: (err) => {
+        console.error('Failed to load supervisors', err);
+        this.supervisors = [];
+      }
     });
   }
 
@@ -275,29 +300,29 @@ export class ProjectMarketplaceComponent implements OnInit {
 
     this.isSubmitting = true;
     const formValue = this.newProjectForm.value;
-    const projectData = {
+
+    const projectData: any = {
       name: formValue.name,
       description: formValue.description,
       technologies: formValue.technologies.filter((t: string) => t.trim() !== ''),
       studyYear: this.userHeaders['study-year'] || '2024/2025',
       contactData: formValue.contactData,
-      maxMembers: formValue.maxMembers,
-      accepted: false
+      maxMembers: formValue.maxMembers
     };
 
+    // Create project (do not auto-submit to supervisor)
     this.http.post('./pri/api/project-market/project', projectData)
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
           console.log('Project created successfully:', response);
-          this.closeNewProjectDialog();
-          this.refreshProjects();
-
           this.snackBar.open('Projekt został pomyślnie dodany!', 'Zamknij', {
             duration: 3000,
             horizontalPosition: 'center',
             verticalPosition: 'top',
             panelClass: ['success-snackbar']
           });
+          this.closeNewProjectDialog();
+          this.refreshProjects();
         },
         error: (error) => {
           console.error('Failed to create project:', error);
@@ -314,10 +339,14 @@ export class ProjectMarketplaceComponent implements OnInit {
   }
 
   openMyApplications() {
-    console.log('Moje wnioski');
+    this.router.navigate(['/marketplace/applications']);
   }
 
   openMyProject() {
-    console.log('Mój projekt');
+    this.router.navigate(['/marketplace/my-projects']);
+  }
+
+  openSupervisorAccept() {
+    this.router.navigate(['/marketplace/supervisor-accept']);
   }
 }

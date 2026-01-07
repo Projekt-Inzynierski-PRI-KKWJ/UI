@@ -1,0 +1,62 @@
+.dialog-container {
+  padding: 0;
+  max-width: 600px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+.dialog-content {
+  padding: 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+
+  .project-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-weight: 500;
+    color: #424242;
+
+    mat-icon {
+      color: #4050b5;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

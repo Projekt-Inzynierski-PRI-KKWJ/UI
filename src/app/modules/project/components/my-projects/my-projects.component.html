@@ -1,0 +1,78 @@
+<div class="marketplace-container">
+  <div class="marketplace-card">
+    <div class="header-section">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="translate" data-translate="my_projects">My Projects</h1>
+    </div>
+
+    <div class="search-bar">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label class="translate" data-translate="search">Search</mat-label>
+        <input matInput [(ngModel)]="searchTerm" placeholder="Search projects...">
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="results-section">
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="loading-section">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="translate" data-translate="loading">Loading...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && projects.length === 0" class="empty-state">
+        <mat-icon>folder_open</mat-icon>
+        <h2 class="translate" data-translate="no_projects_yet">No Projects Yet</h2>
+        <p class="translate" data-translate="no_projects_message">You haven't created any projects. Create one to get started!</p>
+        <button mat-raised-button color="primary" (click)="goToMarketplace()">
+          <mat-icon>add</mat-icon>
+          <span class="translate" data-translate="create_project">Create Project</span>
+        </button>
+      </div>
+
+      <!-- No Filtered Results -->
+      <div *ngIf="!isLoading && projects.length > 0 && filteredProjects.length === 0" class="empty-state">
+        <mat-icon>filter_list_off</mat-icon>
+        <h2 class="translate" data-translate="no_results">No Results</h2>
+        <p class="translate" data-translate="no_search_results">No projects match your search</p>
+      </div>
+
+      <!-- Projects List -->
+      <div *ngIf="!isLoading && filteredProjects.length > 0" class="minimal-projects">
+        <div *ngFor="let project of filteredProjects" class="minimal-project" (click)="viewProjectDetails(project.id)">
+          <mat-icon class="minimal-icon" style="color: #2196F3;">
+            folder
+          </mat-icon>
+          
+          <div class="project-info">
+            <div class="project-title-row">
+              <span class="minimal-name">{{ project.projectName }}</span>
+            </div>
+            <div class="project-details">
+              <span class="description" *ngIf="project.projectDescription">
+                {{ project.projectDescription }}
+              </span>
+              <span class="owner" *ngIf="project.ownerDetails">
+                <mat-icon>person</mat-icon>
+                {{ getOwnerName(project) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="status-badge-inline" style="background-color: #4CAF50;">
+            Active
+          </div>
+          
+          <span class="minimal-date" *ngIf="project.availableSlots">{{ project.availableSlots }} slots</span>
+
+          <mat-icon class="minimal-arrow">navigate_next</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

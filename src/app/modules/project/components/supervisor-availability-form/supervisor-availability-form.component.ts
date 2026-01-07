@@ -1,7 +1,6 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { SupervisorAvailability } from '../../models/supervisor-availability.model';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Supervisor } from 'src/app/modules/user/models/supervisor.model';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/app.state';
