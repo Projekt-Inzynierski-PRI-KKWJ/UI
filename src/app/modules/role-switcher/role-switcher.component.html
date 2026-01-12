@@ -1,0 +1,23 @@
+<ng-container *ngIf="currentUser$ | async as user">
+  <div *ngIf="user.role === 'COORDINATOR'" class="role-switcher-wrapper">
+    <mat-form-field
+      appearance="fill"
+      class="role-switcher"
+      floatLabel="always"
+    >
+      <mat-label>View as</mat-label>
+
+      <mat-select
+        [value]="user.indexNumber"
+        (selectionChange)="onRoleChange($event.value, user.indexNumber)"
+      >
+        <mat-option
+          *ngFor="let u of users$ | async"
+          [value]="u.indexNumber"
+        >
+          {{ u.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</ng-container>

@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProjectModule } from './modules/project/project.module';
+import { RoleSwitcherModule } from './modules/role-switcher/role-switcher.module';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { ProjectModule } from './modules/project/project.module';
     FormsModule,
     MatSelectModule,
     MatSnackBarModule,
-    ProjectModule
+    ProjectModule,
+    RoleSwitcherModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: UserInterceptor, multi: true },

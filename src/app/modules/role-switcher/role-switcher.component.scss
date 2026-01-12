@@ -1,0 +1,30 @@
+.role-switcher-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.role-switcher {
+  width: 180px;
+}
+
+.role-switcher .mat-form-field-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.role-switcher .mat-select-value {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* strzałka */
+.role-switcher .mat-select-arrow {
+  color: #fff;
+}
+
+/* underline / fill background */
+.role-switcher .mat-form-field-flex {
+  background-color: transparent;
+}

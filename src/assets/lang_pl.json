@@ -143,7 +143,7 @@
     "reset_database": "Resetuj bazę danych",
     "critical_operation": "⚠️ Operacja krytyczna",
     "confirm": "Potwierdź",
-    "critical_operation_warning": "Jest to <strong>operacja krytyczna</strong>.<br>Ta operacja zresetuje bazę danych, wszystkie tabele zostaną usunięte i odtworzone, po czym wszyscy koordynatorzy zostaną ponownie dodani. <br>Ta akcja usunie <strong>wszystkie dane</strong> oprócz koordynatorów z bazy danych <strong>na zawsze</strong>, to naprawdę naprawdę długo, czy na pewno chcesz to zrobić?<br><br><strong>Czy na pewno chcesz kontynuować?</strong>",
+    "critical_operation_warning": "Jest to <strong>operacja krytyczna</strong>.<br>Ta operacja zresetuje bazę danych, wszystkie tabele zostaną usunięte i odtworzone, po czym wszyscy koordynatorzy zostaną ponownie dodani. <br>Ta akcja usunie <strong>wszystkie dane</strong> oprócz koordynatorów z bazy danych <strong>na zawsze</strong>, to naprawdę bardzo długo, czy na pewno chcesz to zrobić?<br><br><strong>Czy na pewno chcesz kontynuować?</strong>",
     "defense_day": "Dzień obrony",
     "evaluation_phase": "Faza ewaluacji",
     "committee": "Komisja",
