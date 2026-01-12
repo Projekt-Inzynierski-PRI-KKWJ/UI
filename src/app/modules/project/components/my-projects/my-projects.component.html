@@ -64,8 +64,8 @@
             </div>
           </div>
 
-          <div class="status-badge-inline" style="background-color: #4CAF50;">
-            Active
+          <div class="status-badge-inline" [style.background-color]="getStatusColor(project.status)">
+            {{ getStatusLabel(project.status) }}
           </div>
           
           <span class="minimal-date" *ngIf="project.availableSlots">{{ project.availableSlots }} slots</span>

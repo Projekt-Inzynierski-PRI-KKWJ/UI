@@ -11,24 +11,39 @@
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label class="translate" data-translate="availability_filter">Status dostępności</mat-label>
+        <mat-select [(ngModel)]="availabilityFilter" (selectionChange)="onAvailabilityFilterChange()">
+          <mat-option value="all">
+            <span class="translate" data-translate="all_projects">Wszystkie projekty</span>
+          </mat-option>
+          <mat-option value="open">
+            <span class="translate" data-translate="open_projects">Dostępne (otwarte)</span>
+          </mat-option>
+          <mat-option value="closed">
+            <span class="translate" data-translate="closed_projects">Niedostępne (zamknięte)</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
 
     <div class="actions-panel">
-      <div class="action-item">
+      <div class="action-item" *ngIf="currentUser?.role !== 'SUPERVISOR'">
         <button mat-fab color="primary" (click)="openAddProjectDialog()">
           <mat-icon>add</mat-icon>
         </button>
         <span class="translate" data-translate="submit_a_new_project">Zgłoś nowy projekt</span>
       </div>
 
-      <div class="action-item">
+      <div class="action-item" *ngIf="currentUser?.role !== 'SUPERVISOR'">
         <button mat-fab color="primary" (click)="openMyApplications()">
           <mat-icon>description</mat-icon>
         </button>
         <span class="translate" data-translate="my_applications">Moje wnioski</span>
       </div>
 
-      <div class="action-item">
+      <div class="action-item" *ngIf="currentUser?.role !== 'SUPERVISOR'">
         <button mat-fab color="primary" (click)="openMyProject()">
           <mat-icon>assignment</mat-icon>
         </button>
@@ -68,17 +83,24 @@
       <!-- Projects list -->
       <div class="minimal-projects" *ngIf="!loadingProjects && filteredProjects.length > 0">
         <div *ngFor="let project of filteredProjects" class="minimal-project" (click)="openProjectDetails(project.id)">
-          <mat-icon class="minimal-icon" [style.color]="project.accepted ? '#4CAF50' : '#FF9800'">
-            {{ project.accepted ? 'check_circle' : 'pending' }}
+          <mat-icon class="minimal-icon" [style.color]="hasAvailableSlots(project) ? '#4CAF50' : '#FF6B6B'">
+            {{ hasAvailableSlots(project) ? 'check_circle' : 'cancel' }}
           </mat-icon>
           <div class="project-info">
             <div class="project-title-row">
               <span class="minimal-name">{{ project.name }}</span>
+              <span class="availability-badge translate" [class.open]="hasAvailableSlots(project)" [class.closed]="!hasAvailableSlots(project)" [attr.data-translate]="hasAvailableSlots(project) ? 'available' : 'unavailable'">
+                {{ hasAvailableSlots(project) ? 'Dostępne' : 'Niedostępne' }}
+              </span>
             </div>
             <div class="project-details">
               <span class="technologies" *ngIf="project.technologies && project.technologies.length > 0">
                 <mat-icon>code</mat-icon>
                 {{ project.technologies.join(', ') }}
+              </span>
+              <span class="slots-info">
+                <mat-icon>people</mat-icon>
+                {{ project.currentMembersCount || project.currentMembers?.length || 0 }}/{{ project.maxMembers }}
               </span>
             </div>
           </div>

@@ -48,6 +48,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 32px;
 
   .search-bar mat-form-field {
@@ -55,8 +57,13 @@
   }
   
   .search-field {
-    width: 100%;
-    max-width: 1000px;
+    flex: 2;
+    max-width: 600px;
+  }
+
+  .filter-field {
+    flex: 1;
+    max-width: 300px;
   }
 }
 
@@ -200,10 +207,71 @@
     height: 20px;
   }
 
-  .minimal-name {
+  .project-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .project-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .minimal-name {
     font-weight: 500;
     color: #333;
+  }
+
+  .availability-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    
+    &.open {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    &.closed {
+      background: #ffebee;
+      color: #c62828;
+    }
+  }
+
+  .project-details {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #666;
+
+    .technologies {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .slots-info {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
   }
 
   .minimal-id {
@@ -340,43 +408,16 @@ label .section-label {
   }
 }
 
-.centered-custom-modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  .mat-mdc-dialog-container, 
-  .mat-dialog-container {
-    padding: 0 !important;
-    overflow: hidden;
-    border-radius: 8px !important;
-  }
-}
-
-.cdk-global-overlay-wrapper {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-}
-
 ::ng-deep .centered-custom-modal {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-
   .mat-mdc-dialog-container {
     overflow: hidden !important;
     display: flex;
     flex-direction: column;
     --mdc-dialog-container-shape: 12px;
     padding: 0 !important;
+    max-height: 90vh !important;
+    margin-top: 10vh !important;
   }
-}
-
-::ng-deep .cdk-global-overlay-wrapper {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
 }
 
 .project-title-row {

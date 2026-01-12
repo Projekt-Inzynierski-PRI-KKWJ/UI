@@ -101,6 +101,17 @@
     "no_applications": "Brak wniosków",
     "no_applications_received": "Nikt jeszcze nie aplikował do tego projektu.",
     "find_project": "Znajdź projekt",
+    "availability_filter": "Status dostępności",
+    "all_projects": "Wszystkie projekty",
+    "open_projects": "Dostępne (otwarte)",
+    "closed_projects": "Niedostępne (zamknięte)",
+    "available": "Dostępne",
+    "unavailable": "Niedostępne",
+    "owner": "Właściciel",
+    "status_accepted": "ZAAKCEPTOWANY",
+    "status_rejected": "ODRZUCONY",
+    "status_pending": "OCZEKUJE",
+    "members_count": "członków",
     "results_for": "Wyniki dla",
     "loading_projects": "Ładowanie projektów...",
     "no_projects_found": "Nie znaleziono projektów",
@@ -245,5 +256,6 @@
     "status_pending": "OCZEKUJE",
     "no_supervisor_projects_message": "Brak projektów przypisanych do opiekuna.",
     "confirm_accept_project": "Potwierdź akceptację projektu",
-    "confirm_reject_project": "Potwierdź odrzucenie projektu"
+    "confirm_reject_project": "Potwierdź odrzucenie projektu",
+    "feedback_action": "Opinia"
 }

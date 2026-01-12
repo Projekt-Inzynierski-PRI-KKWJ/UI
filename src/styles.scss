@@ -45,3 +45,10 @@ button[mat-icon-button] {
 .error-snackbar .mat-mdc-button-touch-target, .success-snackbar .mat-mdc-button-touch-target {
     color: white;
 }
+
+/* Global styles for centered dialogs */
+.cdk-global-overlay-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

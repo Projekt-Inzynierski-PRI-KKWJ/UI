@@ -238,6 +238,27 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
     });
   }
 
+  provideFeedback(project: any): void {
+    const feedback = prompt('Wprowadź opinię do projektu:', project.supervisorFeedback || '');
+    if (feedback === null) return;
+
+    this.http.patch(`./pri/api/project-market/supervisor/${project.id}/feedback`, feedback, {
+      headers: this.userHeaders.set('Content-Type', 'text/plain'),
+      withCredentials: true
+    })
+    .subscribe({
+      next: () => {
+        project.supervisorFeedback = feedback;
+        this.snackBar.open('Opinia została zapisana', 'OK', { duration: 2500 });
+        this.loadSupervisorProjects();
+      },
+      error: (err) => {
+        console.error('Feedback failed', err);
+        this.snackBar.open('Nie udało się zapisać opinii', 'OK', { duration: 3000 });
+      }
+    });
+  }
+
   openProjectDetails(projectId: number | string | undefined): void {
     if (!projectId) return;
 
@@ -301,5 +322,12 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
       if (status === 'APPROVED_BY_SUPERVISOR' || project.accepted) return 'ZAAKCEPTOWANY';
       if (status === 'REJECTED_BY_SUPERVISOR') return 'ODRZUCONY';
       return 'OCZEKUJE';
+    }
+
+    getStatusTranslationKey(project: any): string {
+      const status = this.normalizeStatus(project?.status);
+      if (status === 'APPROVED_BY_SUPERVISOR' || project.accepted) return 'status_accepted';
+      if (status === 'REJECTED_BY_SUPERVISOR') return 'status_rejected';
+      return 'status_pending';
     }
 }
