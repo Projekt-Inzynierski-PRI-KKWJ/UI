@@ -31,6 +31,7 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
   canAcceptProjectAction: boolean = false;
   isStudent: boolean = false;
   canApply: boolean = false;
+  canLeaveProject: boolean = false;
 
   currentUser: any = null;
   userHeaders: HttpHeaders = new HttpHeaders();
@@ -48,7 +49,7 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
     this.editProjectForm = this.fb.group({
       projectName: ['', [Validators.required, Validators.minLength(3)]],
       projectDescription: ['', [Validators.required, Validators.minLength(10)]],
-      technologies: this.fb.array([this.fb.control('', Validators.required)]),
+      technologies: this.fb.array([this.fb.control('')]),
       contactData: ['', [Validators.required, Validators.email]],
       maxMembers: [3, [Validators.required, Validators.min(1), Validators.max(10)]]
     });
@@ -103,10 +104,15 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
     this.storeSubscription = this.store.select('user').pipe(first()).subscribe(user => {
       this.currentUser = user;
       this.userHeaders = new HttpHeaders({
-        'study-year': user.actualYear || '',
-        'index-number': user.indexNumber || '',
-        'lang': user.lang || 'pl'
+        'study-year': user?.actualYear || '',
+        'index-number': user?.indexNumber || '',
+        'lang': user?.lang || 'pl'
       });
+
+      // Prefill email if available and not already set
+      if (user?.email && !this.editProjectForm.get('contactData')?.value) {
+        this.editProjectForm.patchValue({ contactData: user.email });
+      }
 
       this.loadProjectDetails();
     });
@@ -148,16 +154,15 @@ checkUserPermissions(): void {
 
   const userIndex = this.currentUser.indexNumber;
 
-  const ownerEmail = this.project.ownerDetails?.email;
-
-  const ownerIndex = ownerEmail ? ownerEmail.split('@')[0] : null;
+  // Use indexNumber directly from ownerDetails
+  const ownerIndex = this.project.ownerDetails?.indexNumber;
 
   this.isOwner = userIndex === ownerIndex;
 
+  // Also check if user is in currentMembers list
   if (!this.isOwner && this.project.currentMembers) {
     this.isOwner = this.project.currentMembers.some((member: any) => {
-      const memberIndex = member.email ? member.email.split('@')[0] : null;
-      return userIndex === memberIndex;
+      return userIndex === member.indexNumber;
     });
   }
 
@@ -171,8 +176,20 @@ checkUserPermissions(): void {
   this.isStudent = this.currentUser.role === 'STUDENT' || 
                    this.currentUser.role === 'student';
   
-  // Can apply if: student AND not owner AND not already accepted
-  this.canApply = this.isStudent && !this.isOwner && !this.project.accepted;
+  // Determine if user is a member (in currentMembers list)
+  const isMember = this.isOwner || (this.project.currentMembers?.some((member: any) => 
+    userIndex === member.indexNumber) || false);
+  
+  // Check if project is active and has available slots
+  const projectStatus = (this.project.status || '').toString().toUpperCase();
+  const isProjectActive = projectStatus === 'ACTIVE' || projectStatus === '';
+  const hasAvailableSlots = this.hasAvailableSlots();
+  
+  // Can apply if: student AND not a member AND project not approved AND project is active AND has slots
+  this.canApply = this.isStudent && !isMember && !this.isProjectApproved() && isProjectActive && hasAvailableSlots;
+  
+  // Can leave if: student AND is member BUT NOT owner AND project not approved
+  this.canLeaveProject = this.isStudent && isMember && !this.isOwner && !this.isProjectApproved();
   
   if (this.currentUser.role === 'PROJECT_ADMIN') {
     console.log('User is PROJECT_ADMIN, granting edit permission');
@@ -188,8 +205,39 @@ checkUserPermissions(): void {
     isSupervisor: this.isSupervisor,
     isStudent: this.isStudent,
     canApply: this.canApply,
-    ownerEmail
+    canLeaveProject: this.canLeaveProject,
+    projectStatus: this.project.status
   });
+}
+
+isProjectApproved(): boolean {
+  return this.project?.status === 'APPROVED_BY_SUPERVISOR';
+}
+
+isProjectActive(): boolean {
+  return this.project?.status === 'ACTIVE';
+}
+
+canViewSupervisorFeedback(): boolean {
+  // Supervisors and coordinators can always see feedback
+  if (this.isSupervisor || this.isCoordinator) {
+    return true;
+  }
+  
+  // Students can only see feedback if they are project members
+  if (this.isStudent) {
+    const userIndex = this.currentUser?.indexNumber;
+    if (!userIndex) return false;
+    
+    // Check if user is the owner
+    if (this.isOwner) return true;
+    
+    // Check if user is in currentMembers list
+    return this.project.currentMembers?.some((member: any) => 
+      userIndex === member.indexNumber) || false;
+  }
+  
+  return false;
 }
 
   prefillForm(): void {
@@ -207,10 +255,10 @@ checkUserPermissions(): void {
     
     if (this.project.technologies && this.project.technologies.length > 0) {
       this.project.technologies.forEach((tech: string) => {
-        techArray.push(this.fb.control(tech, Validators.required));
+        techArray.push(this.fb.control(tech));
       });
     } else {
-      techArray.push(this.fb.control('', Validators.required));
+      techArray.push(this.fb.control(''));
     }
   }
 
@@ -219,7 +267,7 @@ checkUserPermissions(): void {
   }
 
   addTechnology(): void {
-    this.technologies.push(this.fb.control('', Validators.required));
+    this.technologies.push(this.fb.control(''));
   }
 
   removeTechnology(index: number): void {
@@ -251,14 +299,12 @@ checkUserPermissions(): void {
     const formValue = this.editProjectForm.value;
     
     const projectData = {
-      id: this.project.id,
-      projectName: formValue.projectName,
-      projectDescription: formValue.projectDescription,
+      name: formValue.projectName,
+      description: formValue.projectDescription,
       technologies: formValue.technologies.filter((t: string) => t.trim() !== ''),
       contactData: formValue.contactData,
       maxMembers: formValue.maxMembers,
-      accepted: false,
-      modificationDate: new Date().toISOString()
+      studyYear: this.project.studyYear || this.currentUser?.actualYear || ''
     };
 
     console.log('Updating project with data:', projectData);
@@ -347,6 +393,39 @@ checkUserPermissions(): void {
     });
   }
 
+  leaveProject(): void {
+    const confirmDialogRef = this.dialog.open(AreYouSureDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Leave Project',
+        message: 'Are you sure you want to leave this project? This action cannot be undone.'
+      }
+    });
+
+    confirmDialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.http.delete(`./pri/api/project-market/market/project/${this.project.id}/leave`, {
+          headers: this.userHeaders
+        }).subscribe({
+          next: () => {
+            this.snackBar.open('You have left the project', 'OK', {
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
+            this.dialogRef.close('updated');
+          },
+          error: (error) => {
+            const errorMessage = error.error?.errorMessage || error.message || 'Failed to leave project';
+            this.snackBar.open(`Error: ${errorMessage}`, 'OK', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+      }
+    });
+  }
+
   viewApplications(): void {
     if (!this.isOwner) {
       console.warn('User is not the owner');
@@ -369,5 +448,13 @@ checkUserPermissions(): void {
         this.loadProjectDetails();
       }
     });
+  }
+
+  hasAvailableSlots(): boolean {
+    if (!this.project) return false;
+    const availableSlots = this.project.availableSlots !== undefined 
+      ? this.project.availableSlots 
+      : (this.project.maxMembers - (this.project.currentMembers?.length || 0));
+    return availableSlots > 0;
   }
 }

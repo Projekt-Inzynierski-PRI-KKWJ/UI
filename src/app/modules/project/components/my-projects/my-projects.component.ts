@@ -11,6 +11,7 @@ interface MyProject {
   ownerDetails?: any;
   availableSlots?: string;
   studyYear?: string;
+  status?: string;
 }
 
 @Component({
@@ -94,6 +95,45 @@ export class MyProjectsComponent implements OnInit {
 
   getOwnerName(project: MyProject): string {
     if (!project.ownerDetails) return 'Unknown';
-    return project.ownerDetails.name || 'Unknown';
+    const firstName = project.ownerDetails.firstName || '';
+    const lastName = project.ownerDetails.lastName || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    return fullName || 'Unknown';
+  }
+
+  getStatusLabel(status?: string): string {
+    if (!status) return 'Active';
+    switch (status) {
+      case 'ACTIVE':
+        return 'Active';
+      case 'SENT_FOR_APPROVAL_TO_SUPERVISOR':
+        return 'Pending Approval';
+      case 'APPROVED_BY_SUPERVISOR':
+        return 'Approved';
+      case 'REJECTED_BY_SUPERVISOR':
+        return 'Rejected';
+      case 'CLOSED_BY_OWNER':
+        return 'Closed';
+      default:
+        return status;
+    }
+  }
+
+  getStatusColor(status?: string): string {
+    if (!status) return '#4CAF50';
+    switch (status) {
+      case 'ACTIVE':
+        return '#4CAF50'; // green
+      case 'SENT_FOR_APPROVAL_TO_SUPERVISOR':
+        return '#FF9800'; // orange
+      case 'APPROVED_BY_SUPERVISOR':
+        return '#2196F3'; // blue
+      case 'REJECTED_BY_SUPERVISOR':
+        return '#F44336'; // red
+      case 'CLOSED_BY_OWNER':
+        return '#9E9E9E'; // grey
+      default:
+        return '#4CAF50';
+    }
   }
 }

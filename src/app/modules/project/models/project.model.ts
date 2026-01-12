@@ -21,6 +21,17 @@ export interface Project {
     students?: string | null;
     technologies?: string[];
     description?: string;
+    currentMembers?: any[];
+    currentMembersCount?: number;
+    maxMembers?: number;
+    availableSlots?: number;
+    status?: string;
+    isActive?: boolean;
+    contactData?: string;
+    ownerDetails?: any;
+    creationDate?: string;
+    modificationDate?: string;
+    studyYear?: string;
 }
 
 export interface ProjectDetails {

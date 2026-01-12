@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/app.state';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-apply-to-project-dialog',
@@ -17,17 +20,25 @@ export class ApplyToProjectDialogComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private snackBar: MatSnackBar,
+    private store: Store<State>,
     public dialogRef: MatDialogRef<ApplyToProjectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { projectId: number, projectName: string }
   ) {
     this.applicationForm = this.fb.group({
       contactData: ['', [Validators.required, Validators.email]],
-      skills: ['', [Validators.required, Validators.minLength(10)]],
+      skills: [''],
       otherInformation: ['']
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Prefill email from user store
+    this.store.select('user').pipe(first()).subscribe(user => {
+      if (user?.email) {
+        this.applicationForm.patchValue({ contactData: user.email });
+      }
+    });
+  }
 
   submitApplication(): void {
     if (this.applicationForm.invalid) {

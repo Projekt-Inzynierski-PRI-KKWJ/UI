@@ -123,6 +123,7 @@
         </div>
         <span class="member-name">
           {{ member.firstName }}<br>{{ member.lastName }}
+          <span *ngIf="member.isAdmin" class="admin-badge">ADMIN</span>
         </span>
       </div>
 
@@ -174,14 +175,32 @@
       </span>
     </div>
 
+    <div class="info-section" *ngIf="project.supervisorFeedback && canViewSupervisorFeedback()">
+      <span style="font-weight: 500;" class="translate" data-translate="supervisor_feedback">Opinia promotora</span><span>:</span>
+      <p style="margin-top: 8px; padding: 12px; background-color: #f5f5f5; border-left: 4px solid #2196F3; border-radius: 4px;">
+        {{ project.supervisorFeedback }}
+      </p>
+    </div>
+
     <div class="action-buttons">
-      <div class="submit-to-supervisor" *ngIf="isOwner && !project.accepted && !isEditMode">
-        <button mat-stroked-button color="primary" class="translate" data-translate="send_to_supervisor" (click)="submitToSupervisor()" [disabled]="isSubmitting || project.accepted">
+      <!-- Edit button for owner -->
+      <button mat-raised-button class="btn-indigo translate" data-translate="edit_project"
+        *ngIf="isOwner && !isEditMode && isProjectActive()" (click)="enableEditMode()">
+        <mat-icon>edit</mat-icon>
+        Edytuj projekt
+      </button>
+
+      <!-- Submit to supervisor button -->
+      <div class="submit-to-supervisor" *ngIf="isOwner && isProjectActive() && !isEditMode">
+        <button mat-stroked-button color="primary" class="translate" data-translate="send_to_supervisor" 
+          (click)="submitToSupervisor()" [disabled]="isSubmitting">
           Wyślij do promotora
         </button>
       </div>
+
+      <!-- View applications button -->
       <button mat-raised-button color="primary" class="btn-indigo translate" data-translate="view_applications"
-        *ngIf="isOwner && !project.accepted" (click)="viewApplications()">
+        *ngIf="isOwner && !isProjectApproved()" (click)="viewApplications()">
         Zobacz wnioski
       </button>
 
@@ -190,6 +209,13 @@
         *ngIf="canApply" (click)="applyToProject()">
         <mat-icon>send</mat-icon>
         Aplikuj do projektu
+      </button>
+
+      <!-- Przycisk Leave dla członków (nie administratorów) -->
+      <button mat-raised-button color="warn" class="translate" data-translate="leave_project"
+        *ngIf="canLeaveProject" (click)="leaveProject()">
+        <mat-icon>exit_to_app</mat-icon>
+        Opuść projekt
       </button>
 
     </div>

@@ -41,11 +41,11 @@
                 <mat-icon>code</mat-icon>
                 {{ p.technologies.join(', ') }}
               </span>
-              <div class="project-owner">Właściciel: {{ p.ownerDetails?.firstName }} {{ p.ownerDetails?.lastName }}</div>
+              <div class="project-owner"><span class="translate" data-translate="owner">Właściciel</span>: {{ p.ownerDetails?.firstName }} {{ p.ownerDetails?.lastName }}</div>
             </div>
           </div>
 
-          <div class="status-badge-inline" [style.background-color]="getStatusColor(p)" [attr.data-translate]="getStatusLabel(p).toLowerCase()">
+          <div class="status-badge-inline translate" [style.background-color]="getStatusColor(p)" [attr.data-translate]="getStatusTranslationKey(p)">
             {{ getStatusLabel(p) }}
           </div>
 
@@ -57,6 +57,10 @@
             </button>
             <button mat-stroked-button color="warn" (click)="$event.stopPropagation(); rejectProject(p)" [disabled]="!isPending(p)">
               <span class="translate" data-translate="reject_action">Odrzuć</span>
+            </button>
+            <button mat-stroked-button color="accent" (click)="$event.stopPropagation(); provideFeedback(p)">
+              <mat-icon>comment</mat-icon>
+              <span class="translate" data-translate="feedback_action">Opinia</span>
             </button>
           </div>
         </div>

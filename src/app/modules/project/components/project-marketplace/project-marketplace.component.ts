@@ -46,6 +46,7 @@ export class ProjectMarketplaceComponent implements OnInit {
   isSupervisor: boolean = false;
   canOpenSupervisorAccept: boolean = false;
   searchTerm: string = '';
+  availabilityFilter: string = 'all'; // 'all', 'open', 'closed'
   projects: Project[] = [];
   filteredProjects: Project[] = [];
   debugResponse: any = null;
@@ -70,7 +71,7 @@ export class ProjectMarketplaceComponent implements OnInit {
     this.newProjectForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
-      technologies: this.fb.array([this.fb.control('', Validators.required)]),
+      technologies: this.fb.array([this.fb.control('')]),
       contactData: ['', [Validators.required, Validators.email]],
       maxMembers: [3, [Validators.required, Validators.min(1), Validators.max(10)]]
     });
@@ -89,6 +90,11 @@ export class ProjectMarketplaceComponent implements OnInit {
         'index-number': user.indexNumber,
         'lang': user.lang
       };
+      console.log(user)
+      // Prefill email if available
+      if (user?.email) {
+        this.newProjectForm.patchValue({ contactData: user.email });
+      }
       this.loadSupervisors();
     });
   }
@@ -134,14 +140,101 @@ export class ProjectMarketplaceComponent implements OnInit {
 
   loadProjects() {
     this.loadingProjects = true;
-    this.http.get('./pri/api/project-market/market?page=0&size=100')
+    // Use /all endpoint to get all projects regardless of status
+    this.http.get('./pri/api/project-market/market/all?page=0&size=100')
       .subscribe({
         next: (response: any) => {
           console.log('Projects loaded:', response);
 
           if (response && response.content) {
             if (Array.isArray(response.content) && response.content.length > 0) {
-              this.projects = response.content.map((project: any) => ({
+              this.projects = response.content.map((project: any) => {
+                let currentMembersCount = project.currentMembers?.length || 0;
+                
+                // Parse availableSlots if it's a string like "1/3" (meaning 1 member out of 3 total)
+                let availableSlots = 0;
+                let maxMembers = project.maxMembers;
+                
+                if (typeof project.availableSlots === 'string' && project.availableSlots.includes('/')) {
+                  const parts = project.availableSlots.split('/');
+                  currentMembersCount = parseInt(parts[0]) || 0; // Current members
+                  const totalSlots = parseInt(parts[1]) || 3;     // Total slots
+                  if (!maxMembers) {
+                    maxMembers = totalSlots;
+                  }
+                  // Calculate available slots
+                  availableSlots = totalSlots - currentMembersCount;
+                } else if (typeof project.availableSlots === 'number') {
+                  availableSlots = project.availableSlots;
+                } else {
+                  availableSlots = (maxMembers || 3) - currentMembersCount;
+                }
+                
+                // Check if project is available for applications (only ACTIVE status)
+                const status = (project.status || '').toString().toUpperCase();
+                const isActive = status === 'ACTIVE';
+                
+                // If not active, mark as unavailable (0 slots)
+                if (!isActive) {
+                  availableSlots = 0;
+                }
+                
+                console.log('Project:', project.projectName, {
+                  status,
+                  isActive,
+                  maxMembers,
+                  currentMembersCount,
+                  availableSlotsFromBackend: project.availableSlots,
+                  parsedAvailableSlots: availableSlots
+                });
+
+                return {
+                  id: project.id,
+                  name: project.projectName,
+                  ownerDetails: project.ownerDetails,
+                  supervisor: this.createSupervisorFromOwner(project.ownerDetails),
+                  accepted: false,
+                  description: project.projectDescription,
+                  technologies: project.technologies || [],
+                  maxMembers: maxMembers || 3,
+                  contactData: project.contactData,
+                  currentMembers: project.currentMembers || [],
+                  currentMembersCount: currentMembersCount,
+                  availableSlots: availableSlots,
+                  status: status,
+                  isActive: isActive,
+                  creationDate: project.creationDate,
+                  modificationDate: project.modificationDate,
+                  studyYear: project.studyYear
+                };
+              });
+            } else {
+              this.projects = [];
+            }
+          } else if (Array.isArray(response) && response.length > 0) {
+            this.projects = response.map((project: any) => {
+              let currentMembersCount = project.currentMembers?.length || 0;
+              
+              // Parse availableSlots if it's a string like "1/3" (meaning 1 member out of 3 total)
+              let availableSlots = 0;
+              let maxMembers = project.maxMembers;
+              
+              if (typeof project.availableSlots === 'string' && project.availableSlots.includes('/')) {
+                const parts = project.availableSlots.split('/');
+                currentMembersCount = parseInt(parts[0]) || 0; // Current members
+                const totalSlots = parseInt(parts[1]) || 3;     // Total slots
+                if (!maxMembers) {
+                  maxMembers = totalSlots;
+                }
+                // Calculate available slots
+                availableSlots = totalSlots - currentMembersCount;
+              } else if (typeof project.availableSlots === 'number') {
+                availableSlots = project.availableSlots;
+              } else {
+                availableSlots = (maxMembers || 3) - currentMembersCount;
+              }
+
+              return {
                 id: project.id,
                 name: project.projectName,
                 ownerDetails: project.ownerDetails,
@@ -149,32 +242,16 @@ export class ProjectMarketplaceComponent implements OnInit {
                 accepted: false,
                 description: project.projectDescription,
                 technologies: project.technologies || [],
-                maxMembers: project.maxMembers,
+                maxMembers: maxMembers || 3,
                 contactData: project.contactData,
                 currentMembers: project.currentMembers || [],
+                currentMembersCount: currentMembersCount,
+                availableSlots: availableSlots,
                 creationDate: project.creationDate,
                 modificationDate: project.modificationDate,
                 studyYear: project.studyYear
-              }));
-            } else {
-              this.projects = [];
-            }
-          } else if (Array.isArray(response) && response.length > 0) {
-            this.projects = response.map((project: any) => ({
-              id: project.id,
-              name: project.projectName,
-              ownerDetails: project.ownerDetails,
-              supervisor: this.createSupervisorFromOwner(project.ownerDetails),
-              accepted: false,
-              description: project.projectDescription,
-              technologies: project.technologies || [],
-              maxMembers: project.maxMembers,
-              contactData: project.contactData,
-              currentMembers: project.currentMembers || [],
-              creationDate: project.creationDate,
-              modificationDate: project.modificationDate,
-              studyYear: project.studyYear
-            }));
+              };
+            });
           } else {
             this.projects = [];
           }
@@ -249,11 +326,38 @@ export class ProjectMarketplaceComponent implements OnInit {
 
   searchProjects() {
     const term = this.searchTerm.toLowerCase();
-    this.filteredProjects = this.projects.filter(p =>
+    let filtered = this.projects.filter(p =>
       p.name.toLowerCase().includes(term) ||
       (p.description && p.description.toLowerCase().includes(term)) ||
       (p.technologies && p.technologies.some((tech: string) => tech.toLowerCase().includes(term)))
     );
+
+    // Apply availability filter
+    if (this.availabilityFilter === 'open') {
+      filtered = filtered.filter(p => this.hasAvailableSlots(p));
+    } else if (this.availabilityFilter === 'closed') {
+      filtered = filtered.filter(p => !this.hasAvailableSlots(p));
+    }
+
+    this.filteredProjects = filtered;
+  }
+
+  hasAvailableSlots(project: any): boolean {
+    if (!project) return false;
+    
+    // If availableSlots is already a number, use it
+    if (typeof project.availableSlots === 'number') {
+      return project.availableSlots > 0;
+    }
+    
+    // Otherwise calculate from maxMembers and currentMembers
+    const maxMembers = project.maxMembers || 3;
+    const currentCount = project.currentMembers?.length || 0;
+    return (maxMembers - currentCount) > 0;
+  }
+
+  onAvailabilityFilterChange() {
+    this.searchProjects();
   }
 
   get technologies(): FormArray {
@@ -261,7 +365,7 @@ export class ProjectMarketplaceComponent implements OnInit {
   }
 
   addTechnology() {
-    this.technologies.push(this.fb.control('', Validators.required));
+    this.technologies.push(this.fb.control(''));
   }
 
   removeTechnology(index: number) {
@@ -275,7 +379,7 @@ export class ProjectMarketplaceComponent implements OnInit {
     this.newProjectForm.reset({
       name: '',
       description: '',
-      contactData: '',
+      contactData: this.currentUser?.email || '',
       maxMembers: 3
     });
     while (this.technologies.length > 1) {
