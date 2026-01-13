@@ -33,6 +33,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   assignedProjects: string[] = [];
   areCriteriaLoaded: boolean = false;
   unsubscribe$ = new Subject();
+secondSemesterActive = false;
 
   constructor(
       public dialog: MatDialog, 
@@ -45,11 +46,17 @@ export class ProjectComponent implements OnInit, OnDestroy {
       public app: AppComponent
   ) {}
 
+
+
   ngOnInit(): void {
     this.checkUserRoleAndAssociatedProject();
     this.userService.students$.pipe(takeUntil(this.unsubscribe$)).subscribe(students => this.students = students)
     this.userService.supervisors$.pipe(takeUntil(this.unsubscribe$)).subscribe(supervisors => this.supervisors = supervisors)
     this.checkIfCriteriaLoaded();
+    this.projectService.isSecondSemesterActive()
+    .subscribe(active => {
+    this.secondSemesterActive = active;
+    });
   }
 
   checkUserRoleAndAssociatedProject(): void{

@@ -9,7 +9,8 @@ import { Project, ProjectDetails } from "./models/project.model";
 
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
+
 })
 
 export class ProjectService 
@@ -145,7 +146,11 @@ export class ProjectService
             )
     }
 
-
+ isSecondSemesterActive(): Observable<boolean> {
+    return this.http.get<boolean>(
+      `./pri/project/evaluation/second-semester/active`
+    );
+  }
 
     projects$: Observable<Project[]> = this.http
         .get<Project[]>('./pri/project')

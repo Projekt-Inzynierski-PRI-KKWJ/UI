@@ -18,9 +18,17 @@
             <button *ngIf="showPublishAllButton" (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary" class="translate" data-translate="publish_all">
                 Publish all
             </button>
-            <button *ngIf="showActivateSecondSemesterButton" (click)="openAreYouSureDialog('activateSecondSemester')" mat-raised-button color="primary" class="translate" data-translate="activate_second_semester">
-                Activate second semester
-            </button>
+            <button
+  mat-raised-button
+  color="primary"
+    class="translate" 
+    data-translate="activate_second_semester"
+  *ngIf="user.role === 'COORDINATOR'"
+  [disabled]="secondSemesterActive"
+  (click)="openAreYouSureDialog('activateSecondSemester')">
+
+  Activate second semester
+</button>
             <mat-menu xPosition="before" #supervisorAvailability="matMenu">
                 <div class="supervisor-availability-menu" >
                     <supervisor-availability-list/>
