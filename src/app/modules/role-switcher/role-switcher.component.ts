@@ -5,6 +5,7 @@ import { UserService } from "../user/user.service";
 import { RoleSwitcherService } from "./role-switcher.service";
 import { State } from "src/app/app.state";
 import { Store } from "@ngrx/store";
+import { AppComponent } from "src/app/app.component";
 
 @Component({
   selector: 'app-role-switcher',
@@ -19,7 +20,8 @@ export class RoleSwitcherComponent implements OnInit {
   constructor(
     private store: Store<State>,
     private userService: UserService,
-    private roleSwitcherService: RoleSwitcherService
+    private roleSwitcherService: RoleSwitcherService,
+    private app: AppComponent
   ) {}
 
   ngOnInit() {
@@ -31,18 +33,28 @@ export class RoleSwitcherComponent implements OnInit {
       map(([students, supervisors, me]) => [
         {
           indexNumber: me.indexNumber,
-          label: 'me (coordiantor)'
+          label: 'me',
+          isMe: true
         },
         ...students.map(s => ({
           indexNumber: s.indexNumber,
-          label: `${s.indexNumber} (student)`
+          label: `${s.indexNumber} (student)`,
+          isMe: false
         })),
         ...supervisors.map(s => ({
           indexNumber: s.indexNumber,
-          label: `${s.indexNumber} (supervisor)`
+          label: `${s.indexNumber} (supervisor)`,
+          isMe: false
         }))
       ])
     );
+  }
+
+  getLabel(user: any): string {
+    if (user.isMe) {
+      return `${this.app.translations['me'] || 'me'} (coordinator)`;
+    }
+    return user.label;
   }
 
   onRoleChange(selectedIndex: string, myIndex: string) {

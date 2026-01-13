@@ -1,6 +1,6 @@
 <div class="chart-header">
   <button class="toggle-btn" (click)="toggleChartType()">
-    🔄
+    {{ chartType === 'bar' ? (app.translations['switch_to_line_chart'] || 'Switch to Line Chart') : (app.translations['switch_to_bar_chart'] || 'Switch to Bar Chart') }}
   </button>
 </div>
 
@@ -15,14 +15,14 @@
 <div class="results-lists">
 
   <div class="passed-list">
-    <h3>Passed projects ({{ passedProjects.length }})</h3>
+    <h3><span class="translate" data-translate="passed_projects">Passed projects</span> ({{ passedProjects.length }})</h3>
     <ul>
       <li *ngFor="let p of passedProjects">{{ p }}</li>
     </ul>
   </div>
 
   <div class="failed-list">
-    <h3>Faild projects ({{ failedProjects.length }})</h3>
+    <h3><span class="translate" data-translate="failed_projects">Failed projects</span> ({{ failedProjects.length }})</h3>
     <ul>
       <li *ngFor="let p of failedProjects">{{ p }}</li>
     </ul>
@@ -42,11 +42,11 @@
 <!-- sekcja szczegółów po kliknięciu -->
 <div *ngIf="selectedProject" class="details-wrapper">
 
-  <h2>Project Details: {{ selectedProject.name }}</h2>
+  <h2><span class="translate" data-translate="project_details">Project Details</span>: {{ selectedProject.name }}</h2>
 
   <div class="charts-container">
     <div class="chart-box">
-      <h3>First Semestr Grade</h3>
+      <h3 class="translate" data-translate="first_semester_grade">First Semester Grade</h3>
       <canvas baseChart
               [data]="firstSemesterChartData"
               [options]="chartOptions"
@@ -55,7 +55,7 @@
     </div>
 
     <div class="chart-box">
-      <h3>Second Semestr Grade</h3>
+      <h3 class="translate" data-translate="second_semester_grade">Second Semester Grade</h3>
       <canvas baseChart
               [data]="secondSemesterChartData"
               [options]="chartOptions"
@@ -67,22 +67,22 @@
   <hr>
 
   <div class="info-box">
-    <h3>Information about the project</h3>
-    <p><b>Name:</b> {{ selectedProject.name }}</p>
-    <p><b>Supervisor:</b> {{ selectedProject.supervisor.name }}</p>
-    <p><b>Accepted:</b> {{ selectedProject.accepted ? 'Tak' : 'Nie' }}</p>
-    <p><b>Criteria Met:</b> {{ selectedProject.criteriaMet ? 'Tak' : 'Nie' }}</p>
-    <p><b>Grading Phase:</b> {{ selectedProject.evaluationPhase }}</p>
-    <p><b>Students:</b> {{ selectedProject.students }}</p>
-    <p><b>Room:</b> {{ selectedProject.classroom || 'Brak' }}</p>
-    <p><b>Defence Date:</b> {{ selectedProject.defenseDay || 'Brak' }}</p>
+    <h3 class="translate" data-translate="information_about_project">Information about the project</h3>
+    <p><b class="translate" data-translate="name">Name:</b> {{ selectedProject.name }}</p>
+    <p><b class="translate" data-translate="supervisor">Supervisor:</b> {{ selectedProject.supervisor.name }}</p>
+    <p><b class="translate" data-translate="accepted">Accepted:</b> {{ selectedProject.accepted ? (app.translations['yes'] || 'Tak') : (app.translations['no'] || 'Nie') }}</p>
+    <p><b class="translate" data-translate="criteria_met">Criteria Met:</b> {{ selectedProject.criteriaMet ? (app.translations['yes'] || 'Tak') : (app.translations['no'] || 'Nie') }}</p>
+    <p><b class="translate" data-translate="grading_phase">Grading Phase:</b> {{ selectedProject.evaluationPhase }}</p>
+    <p><b class="translate" data-translate="students">Students:</b> {{ selectedProject.students }}</p>
+    <p><b class="translate" data-translate="room">Room:</b> {{ selectedProject.classroom || (app.translations['none'] || 'Brak') }}</p>
+    <p><b class="translate" data-translate="defence_date">Defence Date:</b> {{ selectedProject.defenseDay || (app.translations['none'] || 'Brak') }}</p>
   </div>
 
-  <h2>SEMESTR 1</h2>
+  <h2 class="translate" data-translate="semester_1">SEMESTER 1</h2>
 
   <div class="charts-row">
     <div class="chart-box small-chart">
-      <h3>Expected</h3>
+      <h3 class="translate" data-translate="expected">Expected</h3>
       <canvas baseChart
               [data]="expectedFirst"
               [options]="chartOptions"
@@ -91,7 +91,7 @@
     </div>
 
     <div class="chart-box small-chart">
-      <h3>Required</h3>
+      <h3 class="translate" data-translate="required">Required</h3>
       <canvas baseChart
               [data]="requiredFirst"
               [options]="chartOptions"
@@ -100,7 +100,7 @@
     </div>
 
     <div class="chart-box small-chart">
-      <h3>Measurable Indicators</h3>
+      <h3 class="translate" data-translate="measureable_indicators">Measureable Indicators</h3>
       <canvas baseChart
               [data]="measurableFirst"
               [options]="chartOptions"
@@ -109,11 +109,11 @@
     </div>
   </div>
 
-  <h2>SEMESTR 2</h2>
+  <h2 class="translate" data-translate="semester_2">SEMESTER 2</h2>
 
   <div class="charts-row">
     <div class="chart-box small-chart">
-      <h3>Expected</h3>
+      <h3 class="translate" data-translate="expected">Expected</h3>
       <canvas baseChart
               [data]="expectedSecond"
               [options]="chartOptions"
@@ -122,7 +122,7 @@
     </div>
 
     <div class="chart-box small-chart">
-      <h3>Required</h3>
+      <h3 class="translate" data-translate="required">Required</h3>
       <canvas baseChart
               [data]="requiredSecond"
               [options]="chartOptions"
@@ -131,7 +131,7 @@
     </div>
 
     <div class="chart-box small-chart">
-      <h3>Measurable Indicators</h3>
+      <h3 class="translate" data-translate="measureable_indicators">Measureable Indicators</h3>
       <canvas baseChart
               [data]="measurableSecond"
               [options]="chartOptions"

@@ -5,17 +5,18 @@
       class="role-switcher"
       floatLabel="always"
     >
-      <mat-label>View as</mat-label>
+      <mat-label class="translate" data-translate="view_as">View as:</mat-label>
 
       <mat-select
         [value]="user.indexNumber"
         (selectionChange)="onRoleChange($event.value, user.indexNumber)"
+        class="role-switcher-select"
       >
         <mat-option
           *ngFor="let u of users$ | async"
           [value]="u.indexNumber"
         >
-          {{ u.label }}
+          {{ getLabel(u) }}
         </mat-option>
       </mat-select>
     </mat-form-field>

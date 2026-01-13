@@ -4,6 +4,7 @@ import { ChartData, ChartOptions } from 'chart.js';
 import { Store } from '@ngrx/store';
 import { selectActualYear } from '../user/state/user.selectors';
 import { Project } from '../project/models/project.model';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-statistics',
@@ -70,10 +71,16 @@ chartOptions: ChartOptions = {
 
   constructor(
     private store: Store,
-    private statisticsService: StatisticsService
+    private statisticsService: StatisticsService,
+    public app: AppComponent
   ) {}
 
   ngOnInit(): void {
+    // Nasłuchuj na zmiany języka
+    this.app.languageChanged$.subscribe(() => {
+      this.refreshCharts();
+    });
+
     this.store.select(selectActualYear).subscribe(studyYear => {
       if (!studyYear) return;
 
@@ -84,17 +91,32 @@ chartOptions: ChartOptions = {
           this.passedProjects = projects.filter(p => p.criteriaMet).map(p => p.name);
           this.failedProjects = projects.filter(p => !p.criteriaMet).map(p => p.name);
 
-          this.criteriaSummaryChartData = this.makeChart(
-            {
-              labels: ['Passed projects', 'Faild projects'],
-              values: [this.passedProjects.length, this.failedProjects.length],
-              colors: ['#4caf50', '#f44336']
-            }, 
-            'Projects'
-          );
+          this.updateMainChart();
         }
       });
     });
+  }
+
+  private refreshCharts(): void {
+    this.updateMainChart();
+
+    if (this.selectedProject) {
+      this.openProject(this.selectedProject);
+    }
+  }
+
+  private updateMainChart(): void {
+    this.criteriaSummaryChartData = this.makeChart(
+      {
+        labels: [
+          this.app.translations['passed_projects'] || 'Passed projects',
+          this.app.translations['failed_projects'] || 'Failed projects'
+        ],
+        values: [this.passedProjects.length, this.failedProjects.length],
+        colors: ['#4caf50', '#f44336']
+      }, 
+      this.app.translations['projects'] || 'Projects'
+    );
   }
 
   openProject(project: Project): void {
@@ -105,20 +127,26 @@ chartOptions: ChartOptions = {
 
     this.firstSemesterChartData = this.makeChart(
       {
-        labels: ['Gained Points', 'Missing Points'],
+        labels: [
+          this.app.translations['gained_points'] || 'Gained Points',
+          this.app.translations['missing_points'] || 'Missing Points'
+        ],
         values: [first, 100 - first],
         colors: [this.colors.gained, this.colors.missing]
       },
-      'Semestr 1'
+      `${this.app.translations['semester'] || 'Semester'} 1`
     );
 
     this.secondSemesterChartData = this.makeChart(
       {
-        labels: ['Gained Points', 'Missing Points'],
+        labels: [
+          this.app.translations['gained_points'] || 'Gained Points',
+          this.app.translations['missing_points'] || 'Missing Points'
+        ],
         values: [second, 100 - second],
         colors: [this.colors.gained, this.colors.missing]
       },
-      'Semestr 2'
+      `${this.app.translations['semester'] || 'Semester'} 2`
     );
 
     this.statisticsService.getProjectCriteria(Number(project.id!)).subscribe(criteria => {
@@ -164,20 +192,24 @@ chartOptions: ChartOptions = {
     const convert = (title: string, obj: any) =>
       this.makeChart(
         {
-          labels: ['Unfinished', 'Partially finished', 'Done'],
+          labels: [
+            this.app.translations['unfinished'] || 'Unfinished',
+            this.app.translations['partially_finished'] || 'Partially finished',
+            this.app.translations['done'] || 'Done'
+          ],
           values: [obj.todo, obj.partial, obj.done],
           colors: [this.colors.todo, this.colors.partial, this.colors.done]
         },
         title
       );
 
-    this.expectedFirst = convert('Expected', map.FIRST.EXPECTED);
-    this.requiredFirst = convert('Required', map.FIRST.REQUIRED);
-    this.measurableFirst = convert('Measurable', map.FIRST.MEASURABLE_IMPLEMENTATION_INDICATORS);
+    this.expectedFirst = convert(this.app.translations['expected'] || 'Expected', map.FIRST.EXPECTED);
+    this.requiredFirst = convert(this.app.translations['required'] || 'Required', map.FIRST.REQUIRED);
+    this.measurableFirst = convert(this.app.translations['measurable'] || 'Measurable', map.FIRST.MEASURABLE_IMPLEMENTATION_INDICATORS);
 
-    this.expectedSecond = convert('Expected', map.SECOND.EXPECTED);
-    this.requiredSecond = convert('Required', map.SECOND.REQUIRED);
-    this.measurableSecond = convert('Measurable', map.SECOND.MEASURABLE_IMPLEMENTATION_INDICATORS);
+    this.expectedSecond = convert(this.app.translations['expected'] || 'Expected', map.SECOND.EXPECTED);
+    this.requiredSecond = convert(this.app.translations['required'] || 'Required', map.SECOND.REQUIRED);
+    this.measurableSecond = convert(this.app.translations['measurable'] || 'Measurable', map.SECOND.MEASURABLE_IMPLEMENTATION_INDICATORS);
   }
 
   // Generator wykresów
@@ -226,13 +258,6 @@ chartOptions: ChartOptions = {
     }
 
     // głowny wykres aktualizacja
-    this.criteriaSummaryChartData = this.makeChart(
-      {
-        labels: ['Passed projects', 'Faild projects'],
-        values: [this.passedProjects.length, this.failedProjects.length],
-        colors: ['#4caf50', '#f44336']
-      },
-      'Projektów'
-    );
+    this.updateMainChart();
   }
 }

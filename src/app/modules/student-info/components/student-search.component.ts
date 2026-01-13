@@ -5,6 +5,7 @@ import { StudentInfo, StudentSearchFilters } from '../models/student-info.model'
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { jsPDF } from 'jspdf';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'student-search',
@@ -27,7 +28,8 @@ export class StudentSearchComponent implements OnInit {
   constructor(
     private studentInfoService: StudentInfoService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public app: AppComponent
   ) {}
 
   ngOnInit(): void {
@@ -116,9 +118,9 @@ export class StudentSearchComponent implements OnInit {
   getProjectName(student: StudentInfo): string {
     if (student.confirmedProjectName) return student.confirmedProjectName;
     if (student.assignedProjectIds && student.assignedProjectIds.length > 0) {
-      return `Assigned to ${student.assignedProjectIds.length} project(s)`;
+      return `${this.app.translations['assigned_to_projects'] || 'Assigned to'} ${student.assignedProjectIds.length} ${this.app.translations['projects_count'] || 'project(s)'}`;
     }
-    return 'No project';
+    return this.app.translations['no_project'] || 'No project';
   }
 
   exportStudentAsPDF(): void {
@@ -169,39 +171,39 @@ export class StudentSearchComponent implements OnInit {
     // Title
     pdf.setFontSize(18);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Student Information Report', margin, yPosition);
+    pdf.text(this.app.translations['student_information_report'] || 'Student Information Report', margin, yPosition);
     yPosition += lineHeight * 2;
 
     // Export date
     pdf.setFontSize(9);
     pdf.setFont('helvetica', 'normal');
     const exportDate = new Date().toLocaleString();
-    pdf.text(`Generated on: ${exportDate}`, margin, yPosition);
+    pdf.text(`${this.app.translations['generated_on'] || 'Generated on'}: ${exportDate}`, margin, yPosition);
     yPosition += lineHeight * 2;
 
     // Personal Information
-    addSection('Personal Information');
-    addText('Full Name: ', student.name || 'N/A');
-    addText('Index Number: ', student.indexNumber || 'N/A');
-    addText('Email: ', student.email || 'N/A');
-    addText('Role: ', student.role || 'N/A');
-    addText('Current Study Year: ', student.actualYear || 'N/A');
+    addSection(this.app.translations['personal_information'] || 'Personal Information');
+    addText(`${this.app.translations['full_name'] || 'Full Name'}: `, student.name || 'N/A');
+    addText(`${this.app.translations['index_number'] || 'Index Number'}: `, student.indexNumber || 'N/A');
+    addText(`${this.app.translations['email'] || 'Email'}: `, student.email || 'N/A');
+    addText(`${this.app.translations['role'] || 'Role'}: `, student.role || 'N/A');
+    addText(`${this.app.translations['current_study_year'] || 'Current Study Year'}: `, student.actualYear || 'N/A');
     
     if (student.studyYears && student.studyYears.length > 0) {
-      addText('All Study Years: ', student.studyYears.join(', '));
+      addText(`${this.app.translations['all_study_years'] || 'All Study Years'}: `, student.studyYears.join(', '));
     }
 
     // Project Information
-    addSection('Project Information');
+    addSection(this.app.translations['project_information'] || 'Project Information');
     
     if (student.confirmedProjectId) {
-      addText('Confirmed Project: ', `${student.confirmedProjectName} (ID: ${student.confirmedProjectId})`);
+      addText(`${this.app.translations['confirmed_project'] || 'Confirmed Project'}: `, `${student.confirmedProjectName} (ID: ${student.confirmedProjectId})`);
     } else {
-      addText('Confirmed Project: ', 'None');
+      addText(`${this.app.translations['confirmed_project'] || 'Confirmed Project'}: `, this.app.translations['none'] || 'None');
     }
 
     if (student.assignedProjectIds && student.assignedProjectIds.length > 0) {
-      addText('Assigned Projects: ', `${student.assignedProjectIds.length} project(s)`);
+      addText(`${this.app.translations['assigned_projects'] || 'Assigned Projects'}: `, `${student.assignedProjectIds.length} ${this.app.translations['projects'] || 'project(s)'}`);
       
       student.assignedProjectNames?.forEach((name, index) => {
         const projectId = student.assignedProjectIds![index];
@@ -210,33 +212,33 @@ export class StudentSearchComponent implements OnInit {
     }
 
     if (student.projectSupervisor) {
-      addText('Supervisor: ', student.projectSupervisor);
+      addText(`${this.app.translations['supervisor'] || 'Supervisor'}: `, student.projectSupervisor);
     }
 
     if (student.defenseDate) {
-      addText('Defense Date: ', student.defenseDate);
+      addText(`${this.app.translations['defense_date'] || 'Defense Date'}: `, student.defenseDate);
     }
 
     if (student.defenseTime) {
-      addText('Defense Time: ', student.defenseTime);
+      addText(`${this.app.translations['defense_time'] || 'Defense Time'}: `, student.defenseTime);
     }
 
     // Grades
-    addSection('Academic Performance');
+    addSection(this.app.translations['academic_performance'] || 'Academic Performance');
     
-    addText('First Semester Grade: ', student.firstSemesterGrade || 'N/A');
-    addText('Second Semester Grade: ', student.secondSemesterGrade || 'N/A');
-    addText('Final Grade: ', student.finalGrade ? student.finalGrade.toString() : 'N/A');
+    addText(`${this.app.translations['first_semester_grade'] || 'First Semester Grade'}: `, student.firstSemesterGrade || 'N/A');
+    addText(`${this.app.translations['second_semester_grade'] || 'Second Semester Grade'}: `, student.secondSemesterGrade || 'N/A');
+    addText(`${this.app.translations['final_grade'] || 'Final Grade'}: `, student.finalGrade ? student.finalGrade.toString() : 'N/A');
 
     // Status
-    addSection('Status');
-    addText('Project Accepted: ', student.accepted ? 'Yes' : 'No');
+    addSection(this.app.translations['status'] || 'Status');
+    addText(`${this.app.translations['project_accepted'] || 'Project Accepted'}: `, student.accepted ? (this.app.translations['yes'] || 'Yes') : (this.app.translations['no'] || 'No'));
 
     // Footer
     yPosition = pdf.internal.pageSize.height - 15;
     pdf.setFontSize(8);
     pdf.setFont('helvetica', 'italic');
-    pdf.text('This is an automatically generated report.', margin, yPosition);
+    pdf.text(this.app.translations['auto_generated_report'] || 'This is an automatically generated report.', margin, yPosition);
 
     // Save the PDF
     const fileName = `student-${student.indexNumber}-${student.name.replace(/\s+/g, '-')}.pdf`;
