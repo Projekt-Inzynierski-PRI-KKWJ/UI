@@ -1,18 +1,17 @@
 # Pri 2.0 - System Frontend Application
 
-
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.8.
 
 ---
 
-## To Run PRI locally (Development server)
+## To Run Frontend PRI Locally (Development server)
 
 1. Create folder named e.g. PRI, in place where you want to store the application files.
 2. Inside create 3 folders: core, UI, deploy.
 3. Clone git UI repository to the UI folder.
 4. Open console (CLI) in UI folder and type `ng serve pri` for a dev server.
 5. The application compiles and hopefully works.
-6. Navigate to `http://localhost:4200/`.
+6. Assuming you have backend runing and database operational, navigate to `http://localhost:4200/`.
 7. First site that should open is initialization page for coordinator/admin of the system. ( If you run the project locally with mock users, use the exact logins specified in "core\pri-application\src\main\resources\ldap-mock-data.ldif" next to "uid:", name and last name specified next to "cn:", "sn:" values. uid=indexNumber. )
 8. After successfull initialization login site should appear, log in to coordinator account.
 9. When in the system, precced to data-feed tab to import supervisors, studnets and criteria in .csv files ( If  runing localy import Test-mock students, supervisors and criteria from the support files folder in deploy directory ).
@@ -61,7 +60,7 @@ Modules:
 * student-info: conteins the logic to display the student information in coordinator/admin view under the tab Student Information.
 * shared: defines the working of confirmation dialog window.
 
-    Every module has a routing module, so routing is separated. If you want to change routing paths for project-related pages, go to./src/app/modules/project/project.routing.module.ts.
+  Every module has a routing module, so routing is separated. If you want to change routing paths for project-related pages, go to./src/app/modules/project/project.routing.module.ts.
 
 State Management:
 
