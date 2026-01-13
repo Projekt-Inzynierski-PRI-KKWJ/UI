@@ -78,6 +78,10 @@
     font-size: 15px;
     margin-bottom: 12px;
     color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
   }
 
   mat-selection-list {
@@ -442,3 +446,10 @@ label .section-label {
   overflow: visible !important;
 }
 
+.no-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+}
