@@ -70,6 +70,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
   translations: {
     [key: string]: string
   } = {};
+  languageChanged$ = new Subject<string>();
 
   private _mobileQueryListener: () => void;
 
@@ -145,6 +146,7 @@ export class AppComponent implements OnDestroy, OnInit, AfterViewInit {
       next: data => {
         this.translations = data;
         this.applyTranslations();
+        this.languageChanged$.next(lang);
         console.log(`🌐 Załadowano tłumaczenia dla języka: ${lang}`);
       },
       error: err => {

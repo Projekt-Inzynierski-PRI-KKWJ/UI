@@ -64,10 +64,10 @@
         <a mat-list-item (click)="navigateTo('defense-schedule')" class="translate" data-translate="defense_schedule">
           <span class="translate-text">Defense schedule</span>
         </a>
-        <a *ngIf="isCoordinator" mat-list-item (click)="navigateTo('statistics')" class="translate" data-translate="statistics_module">
+        <a *ngIf="isCoordinator" mat-list-item (click)="navigateTo('statistics')" class="translate" data-translate="statistics">
           <span class="translate-text">Statistics</span>
         </a>
-        <a *ngIf="isCoordinator || isSupervisor " mat-list-item (click)="navigateTo('student-info')" class="translate" data-translate="student_info">
+        <a *ngIf="isCoordinator || isSupervisor " mat-list-item (click)="navigateTo('student-info')" class="translate" data-translate="student_information">
           <span class="translate-text">Student Information</span>
         </a>
       </mat-nav-list>
