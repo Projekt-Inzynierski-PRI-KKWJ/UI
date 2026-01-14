@@ -1,5 +1,13 @@
+<!-- Przycisk do otwierania modala -->
+<div class="help-button-container">
+  <button mat-raised-button color="accent" (click)="openHelpModal()" class="translate" data-translate="help">
+    <mat-icon>help_outline</mat-icon>
+    <span class="translate" data-translate="project_exchange_help">Pomoc - Giełda Projektów</span>
+  </button>
+</div>
 <div class="marketplace-container">
   <div class="marketplace-card">
+
     <div class="header-section">
       <h1 class="translate marketplace-title" data-translate="project_marketplace">Giełda projektów</h1>
     </div>
@@ -11,7 +19,7 @@
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
-      
+
       <mat-form-field appearance="outline" class="filter-field">
         <mat-label class="translate" data-translate="availability_filter">Status dostępności</mat-label>
         <mat-select [(ngModel)]="availabilityFilter" (selectionChange)="onAvailabilityFilterChange()">
@@ -89,7 +97,9 @@
           <div class="project-info">
             <div class="project-title-row">
               <span class="minimal-name">{{ project.name }}</span>
-              <span class="availability-badge translate" [class.open]="hasAvailableSlots(project)" [class.closed]="!hasAvailableSlots(project)" [attr.data-translate]="hasAvailableSlots(project) ? 'available' : 'unavailable'">
+              <span class="availability-badge translate" [class.open]="hasAvailableSlots(project)"
+                [class.closed]="!hasAvailableSlots(project)"
+                [attr.data-translate]="hasAvailableSlots(project) ? 'available' : 'unavailable'">
                 {{ hasAvailableSlots(project) ? 'Dostępne' : 'Niedostępne' }}
               </span>
             </div>
@@ -110,119 +120,286 @@
       </div>
     </div>
 
-  <!-- New Project Dialog -->
-  <div class="dialog-overlay" *ngIf="showNewProjectDialog" (click)="closeNewProjectDialog()">
-    <div class="dialog-container" (click)="$event.stopPropagation()">
-      <div class="dialog-header">
-        <h2 class="translate" data-translate="submit_a_new_project">Zgłoś nowy projekt</h2>
-        <button mat-icon-button (click)="closeNewProjectDialog()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
+    <!-- New Project Dialog -->
+    <div class="dialog-overlay" *ngIf="showNewProjectDialog" (click)="closeNewProjectDialog()">
+      <div class="dialog-container" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <h2 class="translate" data-translate="submit_a_new_project">Zgłoś nowy projekt</h2>
+          <button mat-icon-button (click)="closeNewProjectDialog()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
 
-      <div class="dialog-content">
-        <label class="section-label translate" data-translate="basic_data">Dane podstawowe</label>
-        <form [formGroup]="newProjectForm">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label class="translate" data-translate="project_name">Nazwa projektu</mat-label>
-            <input matInput formControlName="name" placeholder="Np. System rezerwacji sal">
-            <mat-error *ngIf="newProjectForm.get('name')?.hasError('required')" class="translate"
-              data-translate="this_field_is_required">
-              Nazwa jest wymagana
-            </mat-error>
-            <mat-error *ngIf="newProjectForm.get('name')?.hasError('minlength')" class="translate"
-              data-translate="the_name_must_have_at_least_3_characters">
-              Nazwa musi mieć minimum 3 znaki
-            </mat-error>
-          </mat-form-field>
+        <div class="dialog-content">
+          <label class="section-label translate" data-translate="basic_data">Dane podstawowe</label>
+          <form [formGroup]="newProjectForm">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label class="translate" data-translate="project_name">Nazwa projektu</mat-label>
+              <input matInput formControlName="name" placeholder="Np. System rezerwacji sal">
+              <mat-error *ngIf="newProjectForm.get('name')?.hasError('required')" class="translate"
+                data-translate="this_field_is_required">
+                Nazwa jest wymagana
+              </mat-error>
+              <mat-error *ngIf="newProjectForm.get('name')?.hasError('minlength')" class="translate"
+                data-translate="the_name_must_have_at_least_3_characters">
+                Nazwa musi mieć minimum 3 znaki
+              </mat-error>
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label class="translate" data-translate="project_description">Opis projektu</mat-label>
-            <textarea matInput formControlName="description" rows="4"
-              placeholder="Opisz cel i zakres projektu..."></textarea>
-            <mat-error *ngIf="newProjectForm.get('description')?.hasError('required')" class="translate"
-              data-translate="this_field_is_required">
-              Opis jest wymagany
-            </mat-error>
-            <mat-error *ngIf="newProjectForm.get('description')?.hasError('minlength')" class="translate"
-              data-translate="the_description_must_have_at_least_10_characters">
-              Opis musi mieć minimum 10 znaków
-            </mat-error>
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label class="translate" data-translate="project_description">Opis projektu</mat-label>
+              <textarea matInput formControlName="description" rows="4"
+                placeholder="Opisz cel i zakres projektu..."></textarea>
+              <mat-error *ngIf="newProjectForm.get('description')?.hasError('required')" class="translate"
+                data-translate="this_field_is_required">
+                Opis jest wymagany
+              </mat-error>
+              <mat-error *ngIf="newProjectForm.get('description')?.hasError('minlength')" class="translate"
+                data-translate="the_description_must_have_at_least_10_characters">
+                Opis musi mieć minimum 10 znaków
+              </mat-error>
+            </mat-form-field>
 
-          <label class="section-label translate" data-translate="technologies">Technologie</label>
-          <div class="technologies-section">
+            <label class="section-label translate" data-translate="technologies">Technologie</label>
+            <div class="technologies-section">
 
-            <div formArrayName="technologies">
-              <div *ngFor="let tech of technologies.controls; let i = index" class="technology-row">
-                <mat-form-field appearance="outline" class="tech-input">
-                  <mat-label><span class="translate" data-translate="technology">Technologia</span> {{ i + 1 }}
-                  </mat-label>
-                  <input matInput [formControlName]="i" placeholder="Np. Angular, Java, Python">
-                  <mat-error class="translate" data-translate="this_field_is_required">Pole jest wymagane</mat-error>
-                </mat-form-field>
-                <button mat-icon-button color="warn" (click)="removeTechnology(i)"
-                  [disabled]="technologies.length === 1" type="button">
-                  <mat-icon>remove_circle</mat-icon>
-                </button>
+              <div formArrayName="technologies">
+                <div *ngFor="let tech of technologies.controls; let i = index" class="technology-row">
+                  <mat-form-field appearance="outline" class="tech-input">
+                    <mat-label><span class="translate" data-translate="technology">Technologia</span> {{ i + 1 }}
+                    </mat-label>
+                    <input matInput [formControlName]="i" placeholder="Np. Angular, Java, Python">
+                    <mat-error class="translate" data-translate="this_field_is_required">Pole jest wymagane
+                    </mat-error>
+                  </mat-form-field>
+                  <button mat-icon-button color="warn" (click)="removeTechnology(i)"
+                    [disabled]="technologies.length === 1" type="button">
+                    <mat-icon>remove_circle</mat-icon>
+                  </button>
+                </div>
               </div>
+              <button mat-stroked-button color="primary" (click)="addTechnology()" type="button">
+                <mat-icon>add</mat-icon>
+                <span class="translate" data-translate="add_technology">Dodaj technologię</span>
+              </button>
             </div>
-            <button mat-stroked-button color="primary" (click)="addTechnology()" type="button">
-              <mat-icon>add</mat-icon>
-              <span class="translate" data-translate="add_technology">Dodaj technologię</span>
+
+            <label class="section-label translate" data-translate="contact">Kontakt</label>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label class="translate" data-translate="contact_email">Email kontaktowy</mat-label>
+              <input matInput formControlName="contactData" type="email" placeholder="email@st.amu.edu.pl">
+              <mat-error *ngIf="newProjectForm.get('contactData')?.hasError('required')" class="translate"
+                data-translate="this_field_is_required">
+                Email jest wymagany
+              </mat-error>
+              <mat-error *ngIf="newProjectForm.get('contactData')?.hasError('email')" class="translate"
+                data-translate="please_enter_a_valid_email_address">
+                Podaj poprawny adres email
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Removed supervisor selection as per UX: choose supervisor only when sending to supervisor -->
+
+            <label class="section-label translate" data-translate="candidates">Kandydaci</label>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label class="translate" data-translate="required_number_of_candidates">Wymagana ilość kandydatów
+              </mat-label>
+              <input matInput formControlName="maxMembers" type="number" min="1" max="5">
+              <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('required')" class="translate"
+                data-translate="this_field_is_required">
+                Liczba członków jest wymagana
+              </mat-error>
+              <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('min')" class="translate"
+                data-translate="minimum_1_member">
+                Minimum 1 członek
+              </mat-error>
+              <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('max')" class="translate"
+                data-translate="maximum_5_members">
+                Maksimum 5 członków
+              </mat-error>
+            </mat-form-field>
+          </form>
+        </div>
+
+        <div class="dialog-actions">
+          <button mat-button (click)="closeNewProjectDialog()" [disabled]="isSubmitting" class="translate"
+            data-translate="cancel">
+            Anuluj
+          </button>
+          <button mat-raised-button color="primary" (click)="submitNewProject()"
+            [disabled]="isSubmitting || newProjectForm.invalid">
+            <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+            <mat-icon *ngIf="isSubmitting" class="spinner">refresh</mat-icon>
+            <span class="translate" [attr.data-translate]="isSubmitting ? 'sending' : 'create_submission'">
+              {{ isSubmitting ? 'Wysyłanie...' : 'Utwórz zgłoszenie' }}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal z instrukcjami -->
+    <div class="modal-backdrop" *ngIf="showHelpModal" (click)="closeHelpModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="translate" data-translate="instruction">Instrukcja</h2>
+          <button class="close-button" (click)="closeHelpModal()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="tabs">
+            <button class="tab-button" [class.active]="activeTab === 'owner'" (click)="activeTab = 'owner'">
+              <span class="translate" data-translate="project_owner">Właściciel projektu</span>
+            </button>
+            <button class="tab-button" [class.active]="activeTab === 'student'" (click)="activeTab = 'student'">
+              <span class="translate" data-translate="student">Student</span>
+            </button>
+            <button *ngIf="currentUser?.role === 'SUPERVISOR' || currentUser?.role === 'COORDINATOR'" class="tab-button"
+              [class.active]="activeTab === 'supervisor'" (click)="activeTab = 'supervisor'">
+              <span class="translate" data-translate="supervisor">Opiekun</span>
             </button>
           </div>
 
-          <label class="section-label translate" data-translate="contact">Kontakt</label>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label class="translate" data-translate="contact_email">Email kontaktowy</mat-label>
-            <input matInput formControlName="contactData" type="email" placeholder="email@st.amu.edu.pl">
-            <mat-error *ngIf="newProjectForm.get('contactData')?.hasError('required')" class="translate"
-              data-translate="this_field_is_required">
-              Email jest wymagany
-            </mat-error>
-            <mat-error *ngIf="newProjectForm.get('contactData')?.hasError('email')" class="translate"
-              data-translate="please_enter_a_valid_email_address">
-              Podaj poprawny adres email
-            </mat-error>
-          </mat-form-field>
+          <div class="tab-content">
+            <!-- Instrukcje dla właściciela projektu -->
+            <div *ngIf="activeTab === 'owner'" class="tab-panel">
+              <h3 class="translate" data-translate="project_owner">Właściciel projektu</h3>
 
-          <!-- Removed supervisor selection as per UX: choose supervisor only when sending to supervisor -->
+              <div class="instruction-section">
+                <h4 class="translate" data-translate="adding_new_project">Dodawanie nowego projektu</h4>
+                <p class="translate" data-translate="adding_new_project_desc">Aby utworzyć nowy projekt:</p>
+                <ol>
+                  <li class="translate" data-translate="step_click_submit_project">Kliknij <strong>Submit a new
+                      project</strong>.</li>
+                  <li class="translate" data-translate="step_fill_required_info">Uzupełnij wymagane informacje:</li>
+                  <ul>
+                    <li class="translate" data-translate="project_name">Nazwa projektu</li>
+                    <li class="translate" data-translate="project_description">Opis projektu</li>
+                    <li class="translate" data-translate="project_technologies">Technologie (opcjonalnie, jeśli są
+                      znane)</li>
+                    <li class="translate" data-translate="project_contact">Kontakt do właściciela projektu –
+                      domyślnie Twój adres e-mail st.amu.edu.pl</li>
+                    <li class="translate" data-translate="expected_team_size">Oczekiwana liczba osób w zespole</li>
+                  </ul>
+                  <li class="translate" data-translate="step_save_form">Zapisz formularz, klikając <strong>Create
+                      Submission</strong>. Projekt pojawi się na liście Giełdy Projektów.</li>
+                </ol>
+              </div>
 
-          <label class="section-label translate" data-translate="candidates">Kandydaci</label>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label class="translate" data-translate="required_number_of_candidates">Wymagana ilość kandydatów
-            </mat-label>
-            <input matInput formControlName="maxMembers" type="number" min="1" max="5">
-            <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('required')" class="translate"
-              data-translate="this_field_is_required">
-              Liczba członków jest wymagana
-            </mat-error>
-            <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('min')" class="translate"
-              data-translate="minimum_1_member">
-              Minimum 1 członek
-            </mat-error>
-            <mat-error *ngIf="newProjectForm.get('maxMembers')?.hasError('max')" class="translate"
-              data-translate="maximum_5_members">
-              Maksimum 5 członków
-            </mat-error>
-          </mat-form-field>
-        </form>
-      </div>
+              <div class="instruction-section">
+                <h4 class="translate" data-translate="my_project">My Project – Mój projekt</h4>
+                <p class="translate" data-translate="my_project_desc">Zakładka dostępna wyłącznie dla właściciela
+                  projektu. Umożliwia:</p>
+                <ul>
+                  <li class="translate" data-translate="view_project_details">podgląd szczegółów własnego projektu
+                  </li>
+                  <li class="translate" data-translate="view_candidates">przegląd listy kandydatów – <strong>View
+                      applications</strong></li>
+                  <li class="translate" data-translate="edit_project_option">możliwość edycji projektu –
+                    <strong>Edit project</strong></li>
+                  <li class="translate" data-translate="accept_reject_applications">akceptowanie lub odrzucanie
+                    zgłoszeń kandydatów do zespołu</li>
+                  <li class="translate" data-translate="send_to_supervisor">zgłoszenie projektu do opiekuna
+                    (promotora) – <strong>Send to supervisor</strong></li>
+                </ul>
+              </div>
 
-      <div class="dialog-actions">
-        <button mat-button (click)="closeNewProjectDialog()" [disabled]="isSubmitting" class="translate"
-          data-translate="cancel">
-          Anuluj
-        </button>
-        <button mat-raised-button color="primary" (click)="submitNewProject()"
-          [disabled]="isSubmitting || newProjectForm.invalid">
-          <mat-icon *ngIf="!isSubmitting">send</mat-icon>
-          <mat-icon *ngIf="isSubmitting" class="spinner">refresh</mat-icon>
-          <span class="translate" [attr.data-translate]="isSubmitting ? 'sending' : 'create_submission'">
-            {{ isSubmitting ? 'Wysyłanie...' : 'Utwórz zgłoszenie' }}
-          </span>
-        </button>
+              <div class="instruction-section">
+                <h4 class="translate" data-translate="accepting_rejecting_candidates">Akceptowanie lub odrzucanie
+                  zgłoszeń kandydatów</h4>
+                <p class="translate" data-translate="accept_candidates_desc">Aby zaakceptować kandydatów do
+                  projektu:</p>
+                <ol>
+                  <li class="translate" data-translate="select_project">Wybierz projekt.</li>
+                  <li class="translate" data-translate="go_to_view_applications">Przejdź do <strong>View
+                      applications</strong></li>
+                  <li class="translate" data-translate="approve_reject_candidates">Dla wybranych kandydatów
+                    zatwierdź poprzez <strong>Approve</strong> lub odrzuć poprzez <strong>Reject</strong> wniosek.
+                  </li>
+                </ol>
+              </div>
+
+              <div class="instruction-section">
+                <h4 class="translate" data-translate="submitting_to_supervisor">Zgłoszenie projektu do opiekuna</h4>
+                <p class="translate" data-translate="submit_supervisor_desc">Aby zgłosić projekt do opiekuna:</p>
+                <ol>
+                  <li class="translate" data-translate="select_project_to_submit">Wybierz projekt, który chcesz
+                    przesłać do akceptacji.</li>
+                  <li class="translate" data-translate="click_send_supervisor">Kliknij <strong>Send to
+                      supervisor</strong>.</li>
+                  <li class="translate" data-translate="choose_supervisor">Wskaż wybranego opiekuna z listy.</li>
+                </ol>
+                <p class="note translate" data-translate="supervisor_availability_note"><strong>Uwaga:</strong>
+                  Opiekun musi posiadać określoną i wolną dostępność, aby móc zaakceptować projekt. Informacje o
+                  dostępności znajdują się w zakładce <strong>Project Group → Supervisor availability</strong>.</p>
+              </div>
+            </div>
+
+            <!-- Instrukcje dla studenta -->
+            <div *ngIf="activeTab === 'student'" class="tab-panel">
+              <h3 class="translate" data-translate="student_joining_team">Student dołączający do zespołu</h3>
+
+              <div class="instruction-section">
+                <h4 class="translate" data-translate="joining_project">Dołączanie do projektu</h4>
+                <p class="translate" data-translate="before_joining_desc">Przed dołączeniem do projektu zapoznaj się
+                  z listą aktywnych projektów.</p>
+                <ol>
+                  <li class="translate" data-translate="step_choose_project">Wybierz projekt, który Cię interesuje.
+                    Przejdź klikając na wybrany projekt i dołącz korzystając z <strong>Apply to project</strong>.
+                  </li>
+                  <li class="translate" data-translate="step_fill_fields">Wypełnij wymagane pola.</li>
+                  <li class="translate" data-translate="step_submit_application">Wyślij prośbę o dołączenie do
+                    zespołu poprzez <strong>Submit Application</strong>.</li>
+                </ol>
+                <p class="translate" data-translate="owner_decision">Właściciel projektu podejmuje decyzję o
+                  akceptacji lub odrzuceniu zgłoszenia. Status swojej aplikacji możesz sprawdzić w zakładce
+                  <strong>My Application</strong>.</p>
+              </div>
+
+              <div class="instruction-section">
+                <h4 class="translate" data-translate="my_applications">My Applications</h4>
+                <p class="translate" data-translate="my_applications_desc">Zakładka przeznaczona dla studentów
+                  aplikujących do projektów. Umożliwia sprawdzenie statusu zgłoszeń:</p>
+                <ul>
+                  <li class="translate" data-translate="all_sent_requests">wszystkie wysłane prośby,</li>
+                  <li class="translate" data-translate="pending_applications">zgłoszenia w trakcie rozpatrywania,
+                  </li>
+                  <li class="translate" data-translate="accepted_applications">zgłoszenia zaakceptowane,</li>
+                  <li class="translate" data-translate="rejected_applications">zgłoszenia odrzucone.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Instrukcje dla opiekuna -->
+            <div *ngIf="activeTab === 'supervisor'" class="tab-panel">
+              <h3 class="translate" data-translate="supervisor">Opiekun (Supervisor)</h3>
+
+              <div class="instruction-section">
+                <h4 class="translate" data-translate="accepting_student_projects">Akceptowanie projektów studentów
+                </h4>
+                <p class="translate" data-translate="accept_projects_desc">Aby wyświetlić listę projektów
+                  oczekujących na akceptację:</p>
+                <ol>
+                  <li class="translate" data-translate="go_to_accept_projects">Przejdź do zakładki <strong>Accept
+                      projects</strong>.</li>
+                  <li class="translate" data-translate="select_accept_reject">Wybierz projekt i kliknij
+                    <strong>Accept</strong> lub <strong>Reject</strong>.</li>
+                </ol>
+                <p class="translate" data-translate="after_acceptance">Po akceptacji zostajesz opiekunem
+                  (promotorem) danego projektu, a projekt zostaje automatycznie przeniesiony do zakładki
+                  <strong>Project Groups</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button mat-raised-button color="primary" (click)="closeHelpModal()" class="translate" data-translate="close">
+            Zamknij
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -49,7 +49,8 @@ export class ViewApplicationsDialogComponent implements OnInit {
         },
         error: (error) => {
           console.error('Failed to load applications:', error);
-          this.snackBar.open('Failed to load applications', 'OK', { duration: 3000 });
+          this.snackBar.open('Failed to load applications', 'OK', { duration: 3000,
+              panelClass: ['error-snackbar'] });
           this.isLoading = false;
         }
       });
@@ -64,14 +65,14 @@ export class ViewApplicationsDialogComponent implements OnInit {
     this.http.patch(`./pri/api/project-market/application/${applicationId}/approve`, {})
       .subscribe({
         next: () => {
-          this.snackBar.open('Application approved successfully!', 'OK', { duration: 3000 });
+          this.snackBar.open('Application approved successfully!', 'OK', { duration: 3000, panelClass: ['success-snackbar'] });
           this.processingApplicationId = null;
           this.loadApplications();
           this.dialogRef.close('updated');
         },
         error: (error) => {
           console.error('Failed to approve application:', error);
-          this.snackBar.open('Failed to approve application', 'OK', { duration: 3000 });
+          this.snackBar.open('Failed to approve application', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
           this.processingApplicationId = null;
         }
       });
@@ -86,13 +87,14 @@ export class ViewApplicationsDialogComponent implements OnInit {
     this.http.patch(`./pri/api/project-market/application/${applicationId}/reject`, {})
       .subscribe({
         next: () => {
-          this.snackBar.open('Application rejected', 'OK', { duration: 3000 });
+          this.snackBar.open('Application rejected', 'OK', { duration: 3000,
+              panelClass: ['success-snackbar'] });
           this.processingApplicationId = null;
           this.loadApplications();
         },
         error: (error) => {
           console.error('Failed to reject application:', error);
-          this.snackBar.open('Failed to reject application', 'OK', { duration: 3000 });
+          this.snackBar.open('Failed to reject application', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
           this.processingApplicationId = null;
         }
       });

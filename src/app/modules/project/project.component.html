@@ -1,51 +1,221 @@
 <div>
-    <div class="title-and-add-project-button">
-        <h1 class="translate" data-translate="project_groups">Project groups</h1>
-        <div>
-            <button mat-button [matMenuTriggerFor]="supervisorAvailability" class="translate" data-translate="supervisor_availability">Supervisor availability</button>
-            <button *ngIf="showEditOrAddProjectButton"  
-                    (click)="!areCriteriaLoaded ? null : openProjectForm()" 
-                    mat-raised-button 
-                    color="primary"
-                    [class.saturated-zero]="!areCriteriaLoaded"
-                    [disabled]="!areCriteriaLoaded"
-                    [attr.disabled]="!areCriteriaLoaded ? true : null"
-                    class="translate"
-                    [attr.data-translate]="projectButtonText === 'Add project' ? 'add_project' : 'edit_project'"
-                    [matTooltip]="!areCriteriaLoaded ? (app.translations['tooltip_upload_criteria'] || 'Please upload criteria first') : ''">
-                {{ projectButtonText }}
-            </button>
-            <button *ngIf="showPublishAllButton" (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary" class="translate" data-translate="publish_all">
-                Publish all
-            </button>
-            <button
-  mat-raised-button
-  color="primary"
-    class="translate" 
-    data-translate="activate_second_semester"
-  *ngIf="user.role === 'COORDINATOR'"
-  [disabled]="secondSemesterActive"
-  (click)="openAreYouSureDialog('activateSecondSemester')">
+  <div class="title-and-add-project-button">
+    <h1 class="translate" data-translate="project_groups">Project groups</h1>
+    <div>
+      <button mat-button [matMenuTriggerFor]="supervisorAvailability" class="translate"
+        data-translate="supervisor_availability">Supervisor availability</button>
+      <button *ngIf="showEditOrAddProjectButton" (click)="!areCriteriaLoaded ? null : openProjectForm()"
+        mat-raised-button color="primary" [class.saturated-zero]="!areCriteriaLoaded" [disabled]="!areCriteriaLoaded"
+        [attr.disabled]="!areCriteriaLoaded ? true : null" class="translate"
+        [attr.data-translate]="projectButtonText === 'Add project' ? 'add_project' : 'edit_project'"
+        [matTooltip]="!areCriteriaLoaded ? (app.translations['tooltip_upload_criteria'] || 'Please upload criteria first') : ''">
+        {{ projectButtonText }}
+      </button>
+      <button *ngIf="showPublishAllButton" (click)="openAreYouSureDialog('publish')" mat-raised-button color="primary"
+        class="translate" data-translate="publish_all">
+        Publish all
+      </button>
+      <button mat-raised-button color="primary" class="translate" data-translate="activate_second_semester"
+        *ngIf="user.role === 'COORDINATOR'" [disabled]="secondSemesterActive"
+        (click)="openAreYouSureDialog('activateSecondSemester')">
 
-  Activate second semester
-</button>
-            <mat-menu xPosition="before" #supervisorAvailability="matMenu">
-                <div class="supervisor-availability-menu" >
-                    <supervisor-availability-list/>
-                    <button [class.hidden]="!isCoordinator" (click)="openSupervisorAvailabilityForm()" mat-raised-button color="primary" class="translate" data-translate="edit_availability">
-                        Edit availability
-                    </button>
-                </div>
-            </mat-menu>
+        Activate second semester
+      </button>
+      <!-- Help Button -->
+      <button mat-raised-button color="primary" (click)="openHelpModal()">
+        <mat-icon>help_outline</mat-icon>
+        <span class="translate" data-translate="project_groups_help">Pomoc - Grupy projektowe</span>
+      </button>
+      <mat-menu xPosition="before" #supervisorAvailability="matMenu">
+        <div class="supervisor-availability-menu">
+          <supervisor-availability-list />
+          <button [class.hidden]="!isCoordinator" (click)="openSupervisorAvailabilityForm()" mat-raised-button
+            color="primary" class="translate" data-translate="edit_availability">
+            Edit availability
+          </button>
         </div>
-       
+      </mat-menu>
     </div>
-    <div class="project-list-container">
-<project-list 
-  [assignedProjects]="assignedProjects"
-  [acceptedProjects]="acceptedProjects"
-  [canDelete]="user.role === 'COORDINATOR' || user.role === 'SUPERVISOR'"
-  (remove)="openRemoveDialog($event)"
-/>
+
+  </div>
+  <div class="project-list-container">
+    <project-list [assignedProjects]="assignedProjects" [acceptedProjects]="acceptedProjects"
+      [canDelete]="user.role === 'COORDINATOR' || user.role === 'SUPERVISOR'" (remove)="openRemoveDialog($event)" />
+  </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal-backdrop" *ngIf="showHelpModal" (click)="closeHelpModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="translate" data-translate="instruction">Instrukcja</h2>
+      <button class="close-button" (click)="closeHelpModal()">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
+
+    <div class="modal-tabs">
+      <button class="tab-button translate" [class.active]="activeTab === 'student'" (click)="activeTab = 'student'"
+        data-translate="student">
+        Student
+      </button>
+      <button *ngIf="currentUser?.role === 'SUPERVISOR' || currentUser?.role === 'COORDINATOR'"
+        class="tab-button translate" [class.active]="activeTab === 'supervisor'" (click)="activeTab = 'supervisor'"
+        data-translate="supervisor">
+        Supervisor
+      </button>
+      <button *ngIf="currentUser?.role === 'COORDINATOR'" class="tab-button translate"
+        [class.active]="activeTab === 'coordinator'" (click)="activeTab = 'coordinator'" data-translate="coordinator">
+        Coordinator
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="tab-content">
+        <!-- Student Tab -->
+        <div class="tab-panel" *ngIf="activeTab === 'student'">
+          <h3 class="translate" data-translate="pg_student_title">Student</h3>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_go_to_project">Przejście do projektu</h4>
+            <p class="translate" data-translate="pg_student_open_project">Aby otworzyć projekt, którego jesteś
+              członkiem:</p>
+            <ul>
+              <li class="translate" data-translate="pg_select_project">Wybierz swój projekt z listy.</li>
+              <li class="translate" data-translate="pg_redirected_details">Zostaniesz przeniesiony do widoku szczegółów
+                projektu.</li>
+            </ul>
+          </div>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_edit_project_owner">Edycja projektu (właściciel projektu)</h4>
+            <p class="translate" data-translate="pg_owner_permissions">Jeżeli posiadasz uprawnienia właściciela
+              projektu, możesz:</p>
+            <ul>
+              <li class="translate" data-translate="pg_go_to_edit">przejść do edycji projektu,</li>
+              <li class="translate" data-translate="pg_edit_description">edytować opis projektu,</li>
+              <li class="translate" data-translate="pg_add_links_files">dodawać i aktualizować linki oraz pliki, takie
+                jak:</li>
+            </ul>
+            <ul style="margin-left: 20px;">
+              <li class="translate" data-translate="pg_documentation">dokumentacja projektu,</li>
+              <li class="translate" data-translate="pg_git_repo">repozytorium Git,</li>
+              <li class="translate" data-translate="pg_other_materials">inne materiały projektowe.</li>
+            </ul>
+            <p><strong class="translate" data-translate="note" style="margin-right: 6px;">Uwaga:</strong> <span class="translate"
+                data-translate="pg_versioned_note">Wszystkie linki i pliki są wersjonowane – każda zmiana jest
+                zapisywana i dostępna w historii projektu.</span></p>
+          </div>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_acceptance_criteria">Kryteria akceptacji projektu</h4>
+            <p class="translate" data-translate="pg_add_criteria_desc">Aby dodać kryteria akceptacji projektu:</p>
+            <ul>
+              <li class="translate" data-translate="pg_click_add_criteria">Kliknij <strong>Add criteria</strong>.</li>
+              <li class="translate" data-translate="pg_fill_criteria">Uzupełnij: semestr, oczekiwane kryteria, kryteria
+                wymagane.</li>
+              <li class="translate" data-translate="pg_click_submit">Kliknij <strong>Submit</strong>.</li>
+              <li class="translate" data-translate="pg_criteria_appear">Dodane kryteria pojawią się w zakładce Criteria
+                w danym projekcie.</li>
+            </ul>
+            <p><strong class="translate" data-translate="note" style="margin-right: 6px;">Uwaga:</strong> <span class="translate"
+                data-translate="pg_supervisor_lock">Po wprowadzeniu wszystkich kryteriów opiekun projektu może je
+                zablokować do edycji.</span></p>
+          </div>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_grade_card">Karta oceny projektu</h4>
+            <p class="translate" data-translate="pg_grade_card_desc">W widoku projektu dostępna jest również karta oceny
+              projektu z podziałem na semestry: semestr pierwszy, semestr drugi.</p>
+            <p class="translate" data-translate="pg_filled_by_supervisor">Karta oceny jest wypełniana przez opiekuna
+              projektu.</p>
+          </div>
+        </div>
+
+        <!-- Supervisor Tab -->
+        <div class="tab-panel" *ngIf="activeTab === 'supervisor'">
+          <h3 class="translate" data-translate="pg_supervisor_title">Opiekun projektu (Supervisor)</h3>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_go_to_project">Przejście do projektu</h4>
+            <p class="translate" data-translate="pg_supervisor_open_project">Aby otworzyć projekt, którego jesteś
+              opiekunem:</p>
+            <ul>
+              <li class="translate" data-translate="pg_select_project_supervisor">Wybierz odpowiedni projekt z listy.
+              </li>
+              <li class="translate" data-translate="pg_redirected_details">Zostaniesz przeniesiony do widoku szczegółów
+                projektu.</li>
+            </ul>
+          </div>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_edit_project_supervisor">Edycja projektu (opiekun projektu)</h4>
+            <p class="translate" data-translate="pg_supervisor_permissions">Dla przypisanego projektu możesz:</p>
+            <ul>
+              <li class="translate" data-translate="pg_go_to_edit">przejść do edycji projektu,</li>
+              <li class="translate" data-translate="pg_edit_description">edytować opis projektu,</li>
+              <li class="translate" data-translate="pg_add_links_files_supervisor">dodawać i aktualizować linki oraz
+                pliki, w tym:</li>
+            </ul>
+            <ul style="margin-left: 20px;">
+              <li class="translate" data-translate="pg_documentation">dokumentację projektu,</li>
+              <li class="translate" data-translate="pg_git_repo">repozytorium Git,</li>
+              <li class="translate" data-translate="pg_other_materials">inne materiały projektowe.</li>
+            </ul>
+            <p><strong class="translate" data-translate="note" style="margin-right: 6px;">Uwaga:</strong> <span class="translate"
+                data-translate="pg_versioned_note">Wszystkie linki i pliki są wersjonowane – każda zmiana jest
+                zapisywana i widoczna w historii projektu.</span></p>
+          </div>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_acceptance_criteria">Kryteria akceptacji projektu</h4>
+            <p class="translate" data-translate="pg_add_criteria_desc">Aby dodać kryteria akceptacji projektu:</p>
+            <ul>
+              <li class="translate" data-translate="pg_click_add_criteria">Kliknij <strong>Add criteria</strong>.</li>
+              <li class="translate" data-translate="pg_fill_criteria">Uzupełnij: semestr, oczekiwane kryteria, kryteria
+                wymagane.</li>
+              <li class="translate" data-translate="pg_click_submit">Kliknij <strong>Submit</strong>.</li>
+              <li class="translate" data-translate="pg_criteria_appear_supervisor">Kryteria pojawią się w zakładce
+                Criteria w projekcie.</li>
+            </ul>
+            <p><strong class="translate" data-translate="note" style="margin-right: 6px;">Uwaga:</strong> <span class="translate"
+                data-translate="pg_supervisor_can_lock">Po wprowadzeniu wszystkich kryteriów opiekun może zablokować ich
+                edycję przez studentów, klikając ikonę kłódki przy danym kryterium.</span></p>
+          </div>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_grade_card">Karta oceny projektu</h4>
+            <p class="translate" data-translate="pg_grade_card_supervisor">W widoku projektu znajduje się karta oceny
+              projektu z podziałem na semestry (pierwszy i drugi). Karta ta jest wypełniana przez opiekuna projektu.</p>
+          </div>
+        </div>
+
+        <!-- Coordinator Tab -->
+        <div class="tab-panel" *ngIf="activeTab === 'coordinator'">
+          <h3 class="translate" data-translate="coordinator">Koordynator</h3>
+
+          <div class="instruction-section">
+            <h4 class="translate" data-translate="pg_add_project">Dodawanie projektu</h4>
+            <p class="translate" data-translate="pg_coordinator_add_project">Aby dodać nowy projekt:</p>
+            <ul>
+              <li class="translate" data-translate="pg_fill_data_feed">Uzupełnij wymagane dane w zakładce Data Feed.
+              </li>
+              <li class="translate" data-translate="pg_set_supervisor_availability">Określ dostępność opiekunów
+                (Supervisor Availability) w zakładce Project Groups.</li>
+              <li class="translate" data-translate="pg_go_to_project_group">Przejdź do zakładki Project Group.</li>
+              <li class="translate" data-translate="pg_click_add_project">Kliknij <strong>Add Project</strong>.</li>
+              <li class="translate" data-translate="pg_fill_form_submit">Wypełnij wymagane pola i zatwierdź formularz,
+                klikając <strong>Submit</strong>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button mat-raised-button color="primary" (click)="closeHelpModal()" class="translate" data-translate="close">
+        Zamknij
+      </button>
+    </div>
+  </div>
 </div>

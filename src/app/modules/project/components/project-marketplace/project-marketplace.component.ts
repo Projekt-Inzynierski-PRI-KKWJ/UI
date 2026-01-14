@@ -60,6 +60,10 @@ export class ProjectMarketplaceComponent implements OnInit {
   loadingProjects: boolean = false;
   supervisors: any[] = [];
 
+  // Modal properties
+  showHelpModal = false;
+  activeTab: 'owner' | 'student' | 'supervisor' = 'owner';
+
   constructor(
     private http: HttpClient,
     private store: Store < State > ,
@@ -452,5 +456,27 @@ export class ProjectMarketplaceComponent implements OnInit {
 
   openSupervisorAccept() {
     this.router.navigate(['/marketplace/supervisor-accept']);
+  }
+
+  openHelpModal(): void {
+    console.log('openHelpModal called');
+    this.showHelpModal = true;
+    document.body.classList.add('modal-open');
+    console.log('showHelpModal set to:', this.showHelpModal);
+    // Set default tab based on user role
+    const role = (this.currentUser?.role || '').toString().toUpperCase();
+    console.log('User role:', role);
+    if (role === 'STUDENT' || role === 'PROJECT_ADMIN') {
+      this.activeTab = role === 'PROJECT_ADMIN' ? 'owner' : 'student';
+    } else if (role === 'SUPERVISOR' || role === 'COORDINATOR') {
+      this.activeTab = 'supervisor';
+    }
+    console.log('activeTab set to:', this.activeTab);
+  }
+
+  closeHelpModal(): void {
+    console.log('closeHelpModal called');
+    this.showHelpModal = false;
+    document.body.classList.remove('modal-open');
   }
 }

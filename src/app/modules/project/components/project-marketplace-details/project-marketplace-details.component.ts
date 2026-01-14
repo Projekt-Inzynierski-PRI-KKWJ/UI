@@ -84,7 +84,8 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
             console.error('Submit to supervisor failed', err);
             this.isSubmitting = false;
             const msg = err?.error?.errorMessage || 'Nie udało się wysłać zgłoszenia';
-            this.snackBar.open(msg, 'OK', { duration: 4000 });
+            this.snackBar.open(msg, 'OK', { duration: 4000,
+              panelClass: ['error-snackbar'] });
           }
         });
     });

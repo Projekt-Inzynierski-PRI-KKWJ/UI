@@ -1,5 +1,6 @@
 :host {
     max-width: calc(100% - 300px);
+    position: relative;
 
     mat-spinner {
         margin: 50px auto;

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProjectService } from './project.service';
-import { EMPTY, Subject, map, takeUntil } from 'rxjs';
+import { EMPTY, Subject, map, takeUntil, first } from 'rxjs';
 import { State } from 'src/app/app.state';
 import { Store } from '@ngrx/store';
 import { Supervisor } from '../user/models/supervisor.model';
@@ -36,7 +36,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
   assignedProjects: string[] = [];
   areCriteriaLoaded: boolean = false;
   unsubscribe$ = new Subject<void>();
-secondSemesterActive = false;
+  secondSemesterActive = false;
+  showHelpModal = false;
+  activeTab = 'student';
+  currentUser: any = null;
 
   constructor(
       public dialog: MatDialog, 
@@ -59,6 +62,20 @@ secondSemesterActive = false;
     this.projectService.isSecondSemesterActive()
     .subscribe(active => {
     this.secondSemesterActive = active;
+    });
+
+    // Get current user for help modal
+    this.store.select('user').pipe(first()).subscribe(user => {
+      this.currentUser = user;
+      const role = (user?.role || '').toString().toUpperCase();
+      // Set default active tab based on user role
+      if (role === 'COORDINATOR') {
+        this.activeTab = 'coordinator';
+      } else if (role === 'SUPERVISOR') {
+        this.activeTab = 'supervisor';
+      } else {
+        this.activeTab = 'student';
+      }
     });
   }
 
@@ -188,6 +205,16 @@ removeProject(projectId: string): void {
 
   get showActivateSecondSemesterButton(){
     return this.user.role === 'COORDINATOR'
+  }
+
+  openHelpModal(): void {
+    this.showHelpModal = true;
+    document.body.classList.add('modal-open');
+  }
+
+  closeHelpModal(): void {
+    this.showHelpModal = false;
+    document.body.classList.remove('modal-open');
   }
 
   ngOnDestroy(): void {

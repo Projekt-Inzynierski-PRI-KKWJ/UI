@@ -61,7 +61,8 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
         },
         error: (err) => {
           console.error('Failed to load marketplace projects', err);
-          this.snackBar.open('Błąd podczas ładowania projektów', 'Zamknij', { duration: 3000 });
+          this.snackBar.open('Błąd podczas ładowania projektów', 'Zamknij', { duration: 3000,
+              panelClass: ['error-snackbar'] });
           this.loading = false;
         }
       });
@@ -180,7 +181,8 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
         },
         error: (err) => {
           console.error('Failed to load supervisor projects', err);
-          this.snackBar.open('Błąd podczas ładowania projektów', 'Zamknij', { duration: 3000 });
+          this.snackBar.open('Błąd podczas ładowania projektów', 'Zamknij', { duration: 3000,
+              panelClass: ['error-snackbar'] });
           this.loading = false;
         }
       });
@@ -188,7 +190,8 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
 
   acceptProject(project: any): void {
     if (!this.isPending(project)) {
-      this.snackBar.open('Projekt nie oczekuje na decyzję opiekuna', 'OK', { duration: 2500 });
+      this.snackBar.open('Projekt nie oczekuje na decyzję opiekuna', 'OK', { duration: 2500,
+              panelClass: ['error-snackbar'] });
       return;
     }
 
@@ -201,12 +204,13 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
         next: () => {
           project.accepted = true;
           project.status = 'APPROVED_BY_SUPERVISOR';
-          this.snackBar.open('Projekt zaakceptowany', 'OK', { duration: 2500 });
+          this.snackBar.open('Projekt zaakceptowany', 'OK', { duration: 2500,
+              panelClass: ['success-snackbar'] });
           this.loadSupervisorProjects();
         },
         error: (err) => {
           console.error('Accept failed', err);
-          this.snackBar.open('Nie udało się zaakceptować projektu', 'OK', { duration: 3000 });
+          this.snackBar.open('Nie udało się zaakceptować projektu', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
         }
       });
     });
@@ -214,7 +218,7 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
 
   rejectProject(project: any): void {
     if (!this.isPending(project)) {
-      this.snackBar.open('Projekt nie oczekuje na decyzję opiekuna', 'OK', { duration: 2500 });
+      this.snackBar.open('Projekt nie oczekuje na decyzję opiekuna', 'OK', { duration: 2500, panelClass: ['error-snackbar'] });
       return;
     }
 
@@ -227,12 +231,13 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
         next: () => {
           project.accepted = false;
           project.status = 'REJECTED_BY_SUPERVISOR';
-          this.snackBar.open('Projekt odrzucony', 'OK', { duration: 2500 });
+          this.snackBar.open('Projekt odrzucony', 'OK', { duration: 2500,
+              panelClass: ['success-snackbar'] });
           this.loadSupervisorProjects();
         },
         error: (err) => {
           console.error('Reject failed', err);
-          this.snackBar.open('Nie udało się odrzucić projektu', 'OK', { duration: 3000 });
+          this.snackBar.open('Nie udało się odrzucić projektu', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
         }
       });
     });
@@ -249,12 +254,12 @@ export class ProjectMarketplaceSupervisorAcceptComponent implements OnInit {
     .subscribe({
       next: () => {
         project.supervisorFeedback = feedback;
-        this.snackBar.open('Opinia została zapisana', 'OK', { duration: 2500 });
+        this.snackBar.open('Opinia została zapisana', 'OK', { duration: 2500, panelClass: ['success-snackbar'] });
         this.loadSupervisorProjects();
       },
       error: (err) => {
         console.error('Feedback failed', err);
-        this.snackBar.open('Nie udało się zapisać opinii', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się zapisać opinii', 'OK', { duration: 3000, panelClass: ['error-snackbar'] });
       }
     });
   }

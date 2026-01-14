@@ -430,7 +430,9 @@ export class ProjectFormComponent implements OnInit, OnDestroy {
           .then((response) => {
             console.log(`File uploaded for external link ${externalLinkId}:`, response);
             if (response.message) {
-              this._snackbar.open(response.message, 'close');
+              this._snackbar.open(response.message, 'close', {
+              panelClass: ['success-snackbar']
+              });
             }
           })
           .catch((error) => {
