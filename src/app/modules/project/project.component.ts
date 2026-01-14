@@ -14,6 +14,9 @@ import { AreYouSureDialogComponent } from '../shared/are-you-sure-dialog/are-you
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataFeedService } from '../data-feed/data-feed.service';
 import { AppComponent } from '../../app.component';
+import { ProjectRemoveDialogComponent } from './components/project-remove-dialog/project-remove-dialog.component';
+import { removeProject } from './state/project.actions';
+
 
 @Component({
   selector: 'project',
@@ -32,7 +35,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
   acceptedProjects: string[] = [];
   assignedProjects: string[] = [];
   areCriteriaLoaded: boolean = false;
-  unsubscribe$ = new Subject();
+  unsubscribe$ = new Subject<void>();
 secondSemesterActive = false;
 
   constructor(
@@ -58,6 +61,26 @@ secondSemesterActive = false;
     this.secondSemesterActive = active;
     });
   }
+
+
+openRemoveDialog(projectId: string): void {
+  const dialogRef = this.dialog.open(ProjectRemoveDialogComponent, {
+    width: '400px',
+    data: {
+      projectId
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result === true) {
+      this.removeProject(projectId);
+    }
+  });
+}
+removeProject(projectId: string): void {
+  this.store.dispatch(removeProject({ projectId }));
+}
+
 
   checkUserRoleAndAssociatedProject(): void{
     this.store.select('user').pipe(
@@ -168,7 +191,7 @@ secondSemesterActive = false;
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe$.next(null);
-    this.unsubscribe$.complete()
+this.unsubscribe$.next();
+this.unsubscribe$.complete();
   }
 }

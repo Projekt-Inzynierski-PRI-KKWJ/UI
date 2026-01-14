@@ -41,9 +41,11 @@
        
     </div>
     <div class="project-list-container">
-        <project-list 
-            [assignedProjects]="assignedProjects"
-            [acceptedProjects]="acceptedProjects" 
-        />
+<project-list 
+  [assignedProjects]="assignedProjects"
+  [acceptedProjects]="acceptedProjects"
+  [canDelete]="user.role === 'COORDINATOR' || user.role === 'SUPERVISOR'"
+  (remove)="openRemoveDialog($event)"
+/>
     </div>
 </div>
