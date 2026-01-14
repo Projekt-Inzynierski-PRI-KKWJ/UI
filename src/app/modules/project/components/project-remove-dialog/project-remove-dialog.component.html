@@ -1,21 +1,25 @@
-<h1 mat-dialog-title>Remove project</h1>
-
+<h1 mat-dialog-title class="translate" data-translate="remove_project">Remove project</h1>
 <div mat-dialog-content>
-  <p>
-    Are you sure you want to remove the project:
-    <strong>{{ data.projectName }}</strong>?
-    It will remove this project forever, it's a very very long time.
-    📢 Warning!: Deleting projects that are assigned to defense is not allowed! 
-  </p>
+  <p class="translate" data-translate="are_you_sure_you_want_to_remove_the_project"></p>
+ <mat-form-field>
+  <mat-label
+    class="translate"
+    data-translate="type_yes_to_delete_the_project">
+  </mat-label>
+  <input
+    matInput
+    [(ngModel)]="Field"
+    aria-label="Project removal confirmation input">
+</mat-form-field>
 </div>
-
-<div mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button
-    mat-raised-button
-    color="warn"
-    [mat-dialog-close]="true"
-    cdkFocusInitial>
-    Remove
+<div class="actions" mat-dialog-actions>
+  <button mat-button mat-dialog-close class="translate" data-translate="cancel">Cancel</button>
+  <button 
+    [disabled]="Field !== 'Yes'" 
+    color="primary" mat-raised-button 
+    [mat-dialog-close]="true" 
+    cdkFocusInitial
+    class="translate"
+    data-translate="remove">Remove
   </button>
 </div>

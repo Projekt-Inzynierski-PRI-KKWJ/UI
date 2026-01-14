@@ -7,10 +7,9 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./project-remove-dialog.component.scss']
 })
 export class ProjectRemoveDialogComponent {
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: { projectName: string; projectId: string }
-  ) {}
+  Field = '';
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any){}
+
+
 }
-
-
