@@ -380,6 +380,7 @@ export class ProjectMarketplaceComponent implements OnInit {
 
   openAddProjectDialog() {
     this.showNewProjectDialog = true;
+    document.body.classList.add('modal-open');
     this.newProjectForm.reset({
       name: '',
       description: '',
@@ -395,6 +396,7 @@ export class ProjectMarketplaceComponent implements OnInit {
   closeNewProjectDialog() {
     this.showNewProjectDialog = false;
     this.isSubmitting = false;
+    document.body.classList.remove('modal-open');
   }
 
   submitNewProject() {
