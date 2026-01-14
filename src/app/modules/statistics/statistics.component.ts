@@ -44,6 +44,9 @@ chartOptions: ChartOptions = {
   passedProjects: string[] = [];
   failedProjects: string[] = [];
 
+  // Modal properties
+  showHelpModal = false;
+
   // dane głównego wykresu
   criteriaSummaryChartData: ChartData<'bar' | 'pie' | 'doughnut'> = { labels: [], datasets: [] };
 
@@ -259,5 +262,15 @@ chartOptions: ChartOptions = {
 
     // głowny wykres aktualizacja
     this.updateMainChart();
+  }
+
+  openHelpModal(): void {
+    this.showHelpModal = true;
+    document.body.classList.add('modal-open');
+  }
+
+  closeHelpModal(): void {
+    this.showHelpModal = false;
+    document.body.classList.remove('modal-open');
   }
 }

@@ -1,4 +1,12 @@
 <div class="student-search-container">
+  <!-- Help Button -->
+  <div class="help-button-container">
+    <button mat-raised-button color="primary" (click)="openHelpModal()">
+      <mat-icon>help_outline</mat-icon>
+      <span class="translate" data-translate="student_info_help">Pomoc</span>
+    </button>
+  </div>
+
   <h1 class="translate" data-translate="student_information">Student Information</h1>
 
   <!-- Search and Filters -->
@@ -189,3 +197,46 @@
     <p class="translate" data-translate="adjust_search_filters">Try adjusting your search filters</p>
   </div>
 </div>
+
+
+  <!-- Modal z instrukcjami -->
+  <div class="modal-backdrop" *ngIf="showHelpModal" (click)="closeHelpModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="translate" data-translate="instruction">Instrukcja</h2>
+        <button class="close-button" (click)="closeHelpModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="tab-content">
+          <div class="tab-panel">
+            <h3 class="translate" data-translate="student_info_title">Informacje o studentach</h3>
+            
+            <p class="translate" data-translate="student_info_desc">Widok Informacje o studentach jest dostêpny wy³¹cznie dla koordynatora. Umo¿liwia weryfikacjê danych wszystkich studentów oraz pobranie ich informacji w formacie PDF.</p>
+            
+            <div class="instruction-section">
+              <h4 class="translate" data-translate="view_functionalities">Funkcjonalnoœci widoku</h4>
+              <ul>
+                <li class="translate" data-translate="student_info_review">przegl¹d danych wszystkich studentów,</li>
+                <li class="translate" data-translate="student_info_download_pdf">pobieranie szczegó³owych informacji o studentach w pliku PDF.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="closeHelpModal()"
+          class="translate"
+          data-translate="close"
+        >
+          Zamknij
+        </button>
+      </div>
+    </div>
+  </div>

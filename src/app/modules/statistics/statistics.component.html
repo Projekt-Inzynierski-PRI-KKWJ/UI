@@ -1,3 +1,18 @@
+<div class="statistics-container">
+  <!-- Przycisk do otwierania modala -->
+  <div class="help-button-container">
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="openHelpModal()"
+      class="translate" 
+      data-translate="help"
+    >
+      <mat-icon>help_outline</mat-icon>
+      <span class="translate" data-translate="statistics_help">Pomoc - Statystyka</span>
+    </button>
+  </div>
+
 <div class="chart-header">
   <button class="toggle-btn" (click)="toggleChartType()">
     {{ chartType === 'bar' ? (app.translations['switch_to_line_chart'] || 'Switch to Line Chart') : (app.translations['switch_to_bar_chart'] || 'Switch to Bar Chart') }}
@@ -140,4 +155,48 @@
     </div>
   </div>
 
+</div>
+
+  <!-- Modal z instrukcjami -->
+  <div class="modal-backdrop" *ngIf="showHelpModal" (click)="closeHelpModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="translate" data-translate="instruction">Instrukcja</h2>
+        <button class="close-button" (click)="closeHelpModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="tab-content">
+          <div class="tab-panel">
+            <h3 class="translate" data-translate="statistics_title">Statystyka</h3>
+            
+            <p class="translate" data-translate="statistics_desc">Widok Statystyka jest dost�pny wy��cznie dla koordynatora. Umo�liwia weryfikacj� wynik�w oraz danych wszystkich grup w odniesieniu do poszczeg�lnych kryteri�w projektu.</p>
+            
+            <div class="instruction-section">
+              <h4 class="translate" data-translate="view_functionalities">Funkcjonalno�ci widoku</h4>
+              <ul>
+                <li class="translate" data-translate="stats_review_results">przegl�d wynik�w grup wed�ug zdefiniowanych kryteri�w,</li>
+                <li class="translate" data-translate="stats_chart_analysis">analiza danych w formie wykres�w.</li>
+              </ul>
+              <p class="translate" data-translate="stats_change_view">Aby prze��czy� typ wykresu (s�upkowy / ko�owy), kliknij przycisk <strong>Change view</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="closeHelpModal()"
+          class="translate"
+          data-translate="close"
+        >
+          Zamknij
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

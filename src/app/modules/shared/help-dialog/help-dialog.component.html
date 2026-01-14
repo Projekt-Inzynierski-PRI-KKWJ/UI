@@ -1,0 +1,27 @@
+<div class="help-dialog">
+  <div class="modal-header">
+    <h2>{{ data.title }}</h2>
+    <button class="close-button" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  
+  <div class="modal-body">
+    <div class="tabs" *ngIf="data.tabs.length > 1">
+      <button 
+        *ngFor="let tab of data.tabs"
+        class="tab-button" 
+        [class.active]="activeTab === tab.id"
+        (click)="setActiveTab(tab.id)"
+      >
+        {{ tab.label }}
+      </button>
+    </div>
+    
+    <div class="tab-content">
+      <div *ngFor="let tab of data.tabs" class="tab-panel" [class.active]="activeTab === tab.id">
+        <div [innerHTML]="tab.content"></div>
+      </div>
+    </div>
+  </div>
+</div>

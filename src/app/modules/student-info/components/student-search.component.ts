@@ -25,6 +25,9 @@ export class StudentSearchComponent implements OnInit {
 
   studyYears: string[] = [];
 
+  // Modal properties
+  showHelpModal = false;
+
   constructor(
     private studentInfoService: StudentInfoService,
     private router: Router,
@@ -109,6 +112,16 @@ export class StudentSearchComponent implements OnInit {
     this.searchControl.setValue('');
     this.studyYearFilter.setValue('');
     this.hasProjectFilter.setValue(null);
+  }
+
+  openHelpModal(): void {
+    this.showHelpModal = true;
+    document.body.classList.add('modal-open');
+  }
+
+  closeHelpModal(): void {
+    this.showHelpModal = false;
+    document.body.classList.remove('modal-open');
   }
 
   getFullName(student: StudentInfo): string {

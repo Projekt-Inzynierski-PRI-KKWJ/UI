@@ -1,9 +1,8 @@
 .role-switcher-wrapper {
   display: flex;
   align-items: center;
-  padding: 4px 8px;
   border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: #64b5f6;
 }
 
 .role-switcher {
@@ -26,5 +25,8 @@
 
 /* underline / fill background */
 .role-switcher .mat-form-field-flex {
-  background-color: transparent;
+  background-color: #64b5f6;
+}
+.role-switcher .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #64b5f6;
 }
