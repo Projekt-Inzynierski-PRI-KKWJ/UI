@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -23,6 +23,8 @@ export class ProjectListComponent implements OnDestroy, OnInit{
   @Input() assignedProjects!: string[];
   @Input() page!: string;
   @Input() externalLinkColumnHeaders!: string[];
+  @Input() canDelete = false;
+  @Output() remove = new EventEmitter<string>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   columns = ['name'];
@@ -36,6 +38,10 @@ export class ProjectListComponent implements OnDestroy, OnInit{
     private externalLinkService: ExternalLinkService,
     public app: AppComponent
   ) {}
+  
+onRemove(projectId: string): void {
+  this.remove.emit(projectId);
+}
 
   ngOnInit(): void {
     this.store.dispatch(loadProjects());
@@ -57,7 +63,10 @@ export class ProjectListComponent implements OnDestroy, OnInit{
             }
           })
           this.externalLinkColumnHeaders = externalLinkColumnHeaders
-          this.columns = filters.columns;
+this.columns = this.canDelete
+  ? [...filters.columns, 'actions']
+  : filters.columns;
+
 
           const filteredProjects = mappedProjects.slice().filter(
             project => 
