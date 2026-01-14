@@ -52,3 +52,13 @@ button[mat-icon-button] {
   align-items: center !important;
   justify-content: center !important;
 }
+/* Role switcher custom background */
+.role-switcher .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #6575d8 !important;
+}
+
+.role-switcher .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-floating-label,
+.role-switcher .mdc-text-field--filled:not(.mdc-text-field--disabled) input,
+.role-switcher .mdc-text-field--filled:not(.mdc-text-field--disabled) .mat-mdc-select-value {
+  color: white !important;
+}
