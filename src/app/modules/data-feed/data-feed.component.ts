@@ -78,10 +78,12 @@ export class DataFeedComponent implements OnDestroy {
 
   openHelpModal(): void {
     this.showHelpModal = true;
+    document.body.classList.add('modal-open');
   }
 
   closeHelpModal(): void {
     this.showHelpModal = false;
+    document.body.classList.remove('modal-open');
   }
 
   uploadFiles() {
