@@ -1,5 +1,4 @@
 <div class="statistics-container">
-  <!-- Przycisk do otwierania modala -->
   <div class="help-button-container">
     <button 
       mat-raised-button 
@@ -46,12 +45,22 @@
 </div>
 
 
-<div class="projects-wrapper">
-  <div class="project-card"
-       *ngFor="let p of projects"
-       (click)="openProject(p)">
-    {{ p.name }}
-  </div>
+<div class="project-select-container">
+  <mat-form-field appearance="outline" class="project-select">
+    <mat-label class="translate" data-translate="select_project">
+      Select project
+    </mat-label>
+
+    <mat-select
+      [value]="selectedProject"
+      (selectionChange)="openProject($event.value)">
+
+      <mat-option *ngFor="let p of projects" [value]="p">
+        {{ p.name }}
+      </mat-option>
+
+    </mat-select>
+  </mat-form-field>
 </div>
 
 <!-- sekcja szczegółów po kliknięciu -->

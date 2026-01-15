@@ -374,7 +374,7 @@
     "student_info_review": "review data of all students,",
     "student_info_download_pdf": "download detailed student information as a PDF file.",
     "view_functionalities": "View Functionalities",
-        "project_groups_help": "Help - Project Groups",
+    "project_groups_help": "Help - Project Groups",
     "pg_student_title": "Student",
     "pg_go_to_project": "Go to Project",
     "pg_student_open_project": "To open a project you are a member of:",

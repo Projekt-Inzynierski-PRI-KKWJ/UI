@@ -1,32 +1,68 @@
-<div class="form-page">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="init-form">
+<p
+  class="page-title translate"
+  data-translate="init_coordinator_title">
+  PRI Coordinator Initialization
+</p>
 
-    <h2 class="form-title translate" data-translate="init_coordinator_title">
-      PRI Coordinator Initialization
-    </h2>
+<form
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  class="init-form">
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label class="translate" data-translate="ldap_login">LDAP Login</mat-label>
-      <input matInput formControlName="indexNumber" />
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label class="translate" data-translate="ldap_login">
+      LDAP Login
+    </mat-label>
+     <input
+    matInput
+    formControlName="indexNumber"
+    aria-label="LDAP login" />
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label class="translate" data-translate="first_name">First Name</mat-label>
-      <input matInput formControlName="name" />
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label class="translate" data-translate="first_name">
+      First Name
+    </mat-label>
+      <input
+    matInput
+    formControlName="name"
+    aria-label="First name" />
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label class="translate" data-translate="last_name">Last Name</mat-label>
-      <input matInput formControlName="last_name" />
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label class="translate" data-translate="last_name">
+      Last Name
+    </mat-label>
+  <input
+    matInput
+    formControlName="last_name"
+    aria-label="Last name" />
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label class="translate" data-translate="email">Email</mat-label>
-      <input matInput formControlName="email" />
-    </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label class="translate" data-translate="email">
+      Email
+    </mat-label>
+  <input
+    matInput
+    formControlName="email"
+    aria-label="Email address"
+    type="email" />
+  </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-      <span class="translate" data-translate="initialize_coordinator"> Initialize Coordinator </span>
-    </button>
-  </form>
-</div>
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="form.invalid"
+    cdkFocusInitial>
+    <span class="translate" data-translate="initialize_coordinator">
+      Initialize Coordinator
+    </span>
+  </button>
+
+  <p class="form-info translate" data-translate="login_info">
+    This form initializes the <strong>PRI system coordinator</strong>.
+  </p>
+
+</form>

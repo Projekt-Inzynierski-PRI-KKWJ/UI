@@ -6,18 +6,22 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { NgChartsModule } from 'ng2-charts';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [
     StatisticsComponent
   ],
-  imports: [
-    CommonModule,
-    StatisticsRoutingModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    NgChartsModule 
-  ]
+imports: [
+  CommonModule,
+  StatisticsRoutingModule,
+  MatCardModule,
+  MatButtonModule,
+  MatIconModule,
+  MatSelectModule,
+  MatFormFieldModule,
+  NgChartsModule
+]
 })
 export class StatisticsModule {}

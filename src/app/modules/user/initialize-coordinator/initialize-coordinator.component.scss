@@ -1,29 +1,30 @@
-.form-page {
-  display: flex;
-  margin: auto;
-  justify-content: center;   
-  align-items: center;       
-  min-height: calc(100vh - 64px); 
-  width: 210vh; 
+:host {
+  width: 100%;
+}
+
+.page-title {
+  font-weight: 300;
+  font-size: 60px;
+  text-align: center;
+  margin-bottom: 4rem;
+  margin-top: 1rem;
+  line-height: 1;
 }
 
 .init-form {
-  display: flex;
-  margin: auto;
-  flex-direction: column;
+  width: 320px;
+  display: grid;
   gap: 16px;
-  width: 320px;              
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 0 auto;
 }
 
+button {
+  margin-top: 8px;
+}
 
-.form-title {
+.form-info {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: gray;
   text-align: center;
-  margin-bottom: 16px;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
 }
