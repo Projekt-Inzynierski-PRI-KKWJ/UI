@@ -11,10 +11,10 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 3. Clone git UI repository to the UI folder.
 4. Open console (CLI) in UI folder and type `ng serve pri` for a dev server.
 5. The application compiles and hopefully works.
-6. Assuming you have backend runing and database operational, navigate to `http://localhost:4200/`.
+6. Assuming you have backend running and database operational, navigate to `http://localhost:4200/`.
 7. First site that should open is initialization page for coordinator/admin of the system. ( If you run the project locally with mock users, use the exact logins specified in "core\pri-application\src\main\resources\ldap-mock-data.ldif" next to "uid:", name and last name specified next to "cn:", "sn:" values. uid=indexNumber. )
-8. After successfull initialization login site should appear, log in to coordinator account.
-9. When in the system, precced to data-feed tab to import supervisors, studnets and criteria in .csv files ( If  runing localy import Test-mock students, supervisors and criteria from the support files folder in deploy directory ).
+8. After successful initialization login site should appear, log in to coordinator account.
+9. When in the system, proceed to data-feed tab to import supervisors, students and criteria in .csv files ( If  running locally import Test-mock students, supervisors and criteria from the support files folder in deploy directory ).
 10. Before you will be able to add project you need to configure the supervisor availability in Project tab when clicking on Supervisor Availability button.
 
 📢 IMPORTANT!: Password for mock ldap accounts is: "Haslo123".
@@ -55,9 +55,9 @@ Modules:
 * data-feed: contains file inputs used to import students (csv), supervisors (csv), and grading criteria (json), and contains buttons used to export students and grades.
 * user: contains a login form and role guards that prevent users without entitlements from accessing certain pages.
 * defense-schedule: contains a coordinator's panel used to manage defense schedules, a survey form for supervisors to specify time availability, and a defense list that students use to register for a defense.
-* role-switcher: conteins the functionality that allows the coordinator/admin to switch role witch other users.
-* statistics: conteins the logic to display the charts in coordinator/admin view under the tab Statistics.
-* student-info: conteins the logic to display the student information in coordinator/admin view under the tab Student Information.
+* role-switcher: contains the functionality that allows the coordinator/admin to switch role with other users.
+* statistics: contains the logic to display the charts in coordinator/admin view under the tab Statistics.
+* student-info: contains the logic to display the student information in coordinator/admin view under the tab Student Information.
 * shared: defines the working of confirmation dialog window.
 
   Every module has a routing module, so routing is separated. If you want to change routing paths for project-related pages, go to./src/app/modules/project/project.routing.module.ts.
@@ -66,7 +66,7 @@ State Management:
 
     The application uses the NgRx and the RxJs to update the application state; most actions are related to updating a project list and the user's details. Project and User modules have state folders where actions, reducers, effects, and selectors are kept.
 
-    The RxJs's combineLatest combination operator is used to update a project list view after changing filters's states or making changes to the list data's states.
+    The RxJs's combineLatest combination operator is used to update a project list view after changing filters  states or making changes to the list data's states.
 
     All Observables subscriptions are terminated after destroying components by using the takeUntil operator that waits for`unsubscribe$` subject completion.
 
@@ -76,7 +76,7 @@ Session:
 
 UI components:
 
-    The application uses Angular Material UI components; all modules import the required Material's modules separately.
+    The application uses Angular Material UI components; all modules import the requiredMaterial modules separately.
 
 # Local run for debug:
 
