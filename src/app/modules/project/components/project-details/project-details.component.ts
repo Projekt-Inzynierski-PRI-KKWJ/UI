@@ -140,6 +140,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     this.store.select('user').pipe(takeUntil(this.unsubscribe$)).subscribe(user => {
       this.user = user;
     });
+
+
+    
   }
 
   onGradeChange({grade, criteriaMet, selectedCriteria}: {grade: string, criteriaMet: boolean, selectedCriteria: string}){
