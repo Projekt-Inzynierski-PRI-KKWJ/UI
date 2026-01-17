@@ -125,6 +125,13 @@
           {{ member.firstName }}<br>{{ member.lastName }}
           <span *ngIf="member.isAdmin" class="admin-badge">ADMIN</span>
         </span>
+        <button mat-icon-button color="warn" 
+                *ngIf="isOwner && !member.isAdmin && !isProjectApproved()"
+                (click)="kickMember(member.id)"
+                matTooltip="Usuń członka"
+                class="kick-btn">
+          <mat-icon>person_remove</mat-icon>
+        </button>
       </div>
 
       <div class="member-item empty-slot" *ngIf="(project.currentMembers?.length || 0) < project.maxMembers">
@@ -183,6 +190,14 @@
     </div>
 
     <div class="action-buttons">
+      <!-- Open full project details for approved projects -->
+      <button mat-raised-button color="primary" class="btn-indigo"
+        *ngIf="isProjectApproved() && project.projectId"
+        (click)="openFullProjectDetails()">
+        <mat-icon>open_in_new</mat-icon>
+        <span class="translate" data-translate="manage_project_links">Zarządzaj linkami projektu</span>
+      </button>
+
       <!-- Edit button for owner -->
       <button mat-raised-button class="btn-indigo translate" data-translate="edit_project"
         *ngIf="isOwner && !isEditMode && isProjectActive()" (click)="enableEditMode()">

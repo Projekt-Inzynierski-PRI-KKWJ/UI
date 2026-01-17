@@ -60,6 +60,7 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    position: relative;
 
     .avatar-circle {
       mat-icon {
@@ -86,6 +87,21 @@
         border-radius: 8px;
         margin-top: 4px;
         letter-spacing: 0.5px;
+      }
+    }
+
+    .kick-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
     }
 
