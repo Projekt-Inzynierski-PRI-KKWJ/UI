@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProjectMarketplaceDetailsComponent } from '../project-marketplace-details/project-marketplace-details.component';
 
 interface Application {
@@ -31,7 +32,8 @@ export class MyApplicationsComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -153,8 +155,25 @@ export class MyApplicationsComponent implements OnInit {
       return;
     }
 
-    // TODO: Implement withdraw endpoint when available
-    console.log('Withdraw application:', applicationId);
+    this.http.delete(`./pri/api/project-market/application/${applicationId}/withdraw`, {
+      withCredentials: true
+    }).subscribe({
+      next: () => {
+        this.snackBar.open('Application withdrawn successfully', 'OK', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+        this.loadApplications();
+      },
+      error: (error) => {
+        console.error('Failed to withdraw application:', error);
+        const errorMessage = error.error?.errorMessage || error.message || 'Failed to withdraw application';
+        this.snackBar.open(`Error: ${errorMessage}`, 'OK', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
   }
 
   goToMarketplace(): void {

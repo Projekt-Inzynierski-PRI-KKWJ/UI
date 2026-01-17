@@ -11,6 +11,7 @@ import { first } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { ApplyToProjectDialogComponent } from '../apply-to-project-dialog/apply-to-project-dialog.component';
 import { ViewApplicationsDialogComponent } from '../view-applications-dialog/view-applications-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'project-marketplace-details',
@@ -42,6 +43,7 @@ export class ProjectMarketplaceDetailsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private store: Store<State>,
     private dialog: MatDialog,
+    private router: Router,
     public dialogRef: MatDialogRef<ProjectMarketplaceDetailsComponent>,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: { projectId: number }
@@ -160,11 +162,15 @@ checkUserPermissions(): void {
 
   this.isOwner = userIndex === ownerIndex;
 
-  // Also check if user is in currentMembers list
+  // Also check if user is the ADMIN in currentMembers list (not just any member!)
   if (!this.isOwner && this.project.currentMembers) {
-    this.isOwner = this.project.currentMembers.some((member: any) => {
-      return userIndex === member.indexNumber;
-    });
+    const currentUserMember = this.project.currentMembers.find((member: any) => 
+      userIndex === member.indexNumber
+    );
+    // Only set isOwner if this user is the admin
+    if (currentUserMember?.isAdmin) {
+      this.isOwner = true;
+    }
   }
 
   const role = (this.currentUser.role || '').toString().toUpperCase();
@@ -178,8 +184,8 @@ checkUserPermissions(): void {
                    this.currentUser.role === 'student';
   
   // Determine if user is a member (in currentMembers list)
-  const isMember = this.isOwner || (this.project.currentMembers?.some((member: any) => 
-    userIndex === member.indexNumber) || false);
+  const isMember = this.project.currentMembers?.some((member: any) => 
+    userIndex === member.indexNumber) || false;
   
   // Check if project is active and has available slots
   const projectStatus = (this.project.status || '').toString().toUpperCase();
@@ -427,6 +433,39 @@ canViewSupervisorFeedback(): boolean {
     });
   }
 
+  kickMember(studentId: number): void {
+    const confirmDialogRef = this.dialog.open(AreYouSureDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Kick Member',
+        message: 'Are you sure you want to remove this member from the project?'
+      }
+    });
+
+    confirmDialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.http.delete(`./pri/api/project-market/market/${this.project.id}/kick/${studentId}`, {
+          headers: this.userHeaders
+        }).subscribe({
+          next: () => {
+            this.snackBar.open('Member has been removed', 'OK', {
+              duration: 3000,
+              panelClass: ['success-snackbar']
+            });
+            this.loadProjectDetails();
+          },
+          error: (error) => {
+            const errorMessage = error.error?.errorMessage || error.message || 'Failed to remove member';
+            this.snackBar.open(`Error: ${errorMessage}`, 'OK', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
+            });
+          }
+        });
+      }
+    });
+  }
+
   viewApplications(): void {
     if (!this.isOwner) {
       console.warn('User is not the owner');
@@ -457,5 +496,14 @@ canViewSupervisorFeedback(): boolean {
       ? this.project.availableSlots 
       : (this.project.maxMembers - (this.project.currentMembers?.length || 0));
     return availableSlots > 0;
+  }
+
+  openFullProjectDetails(): void {
+    if (!this.project || !this.project.accepted || !this.project.projectId) {
+      console.error('Cannot open full details: project not approved or project ID missing');
+      return;
+    }
+    this.dialogRef.close();
+    this.router.navigate([{outlets: {modal: `projects/details/${this.project.projectId}`}}]);
   }
 }
