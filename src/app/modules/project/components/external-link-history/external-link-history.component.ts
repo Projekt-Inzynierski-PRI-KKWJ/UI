@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { ExternalLinkHistory } from '../../models/external-link-history.model';
 import { ExternalLinkService } from '../../services/external-link.service';
@@ -8,7 +8,8 @@ import { AppComponent } from '../../../../app.component';
 @Component({
   selector: 'external-link-history',
   templateUrl: './external-link-history.component.html',
-  styleUrls: ['./external-link-history.component.scss']
+  styleUrls: ['./external-link-history.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExternalLinkHistoryComponent implements OnInit, OnDestroy {
   @Input() externalLinkId!: string;
