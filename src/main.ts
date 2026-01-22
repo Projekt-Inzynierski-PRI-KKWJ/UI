@@ -3,7 +3,8 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 
 
-// This needs to stay here, because it allows for dynamic configuration of paths 
+// This needs to stay here, because it allows for dynamic 
+// configuration of paths in production environment
 const base = document.querySelector('base');
 
 if (base) {
