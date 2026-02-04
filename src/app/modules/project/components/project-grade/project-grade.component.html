@@ -24,14 +24,14 @@
     <tbody>
         <ng-container *ngFor="let section of data.sections;">
             <tr class="section-name-row">
-                <td><h2>{{ section.name }}</h2></td>
+                <td><h2>{{ section.name }} ({{ section.gradeWeight }})</h2></td>
                 <td></td>
             </tr>
             <ng-container *ngFor="let criteriaGroup of section.criteriaGroups;">
                 <tr>
                     <td class="criteria-group-name">
                         <h3>
-                            {{ criteriaGroup.name }}
+                            {{ criteriaGroup.name }} ({{ criteriaGroup.gradeWeight }})
                             <p><span class="translate" data-translate="modification_date">Modification date</span>: {{ criteriaGroup.modificationDate }}</p>
                         </h3>
                        
